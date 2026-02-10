@@ -9,7 +9,9 @@
     "xxxeslint:fix": "./node_modules/eslint/bin/eslint.js --fix public/js/p3",
     "xxxeslint:test": "./node_modules/eslint/bin/eslint.js public/js/p3",
     "xxxtest:intern": "./node_modules/.bin/intern",
-    "postinstall": "./post_install.sh"
+    "postinstall": "./post_install.sh",
+    "nextstrain": "npx auspice view --datasetDir ./datasets",
+    "build:nextstrain": "npx auspice build --extend ./auspice-custom/extend.json"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -50,7 +52,8 @@
     "rql": "^0.3.3",
     "serve-favicon": "^2.5.0",
     "underscore": "^1.13.6",
-    "webcola": "^3.4.0"
+    "webcola": "^3.4.0",
+    "auspice": "^2.68.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

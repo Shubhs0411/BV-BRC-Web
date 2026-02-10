@@ -17,6 +17,7 @@ var google = require('./routes/google');
 var workspace = require('./routes/workspace');
 var outbreaks = require('./routes/outbreaks');
 var viewers = require('./routes/viewers');
+var auspice = require('./routes/auspice');
 var remotePage = require('./routes/remotePage');
 var search = require('./routes/search');
 var contentViewer = require('./routes/content');
@@ -144,6 +145,67 @@ app.use('/public/pdfs/', [
 ]);
 app.use('/patric/', express.static(path.join(__dirname, 'public/patric/')));
 app.use('/public/', express.static(path.join(__dirname, 'public/')));
+
+// Embedded Nextstrain/Auspice viewer (no separate server)
+app.use('/charon', auspice);
+// Use the custom Auspice build produced by `npm run build:nextstrain` (output: ./dist)
+var auspiceDist = path.join(__dirname, 'dist');
+// Keep favicon served from the Auspice package itself
+var auspiceBase = path.join(__dirname, 'node_modules', 'auspice');
+// Auspice runtime loads chunks at /dist/* (absolute); serve same assets at both paths
+app.use('/dist', express.static(auspiceDist));
+app.use('/nextstrain-viewer/dist', express.static(auspiceDist));
+app.get('/nextstrain-viewer/favicon.png', function (req, res) {
+  res.sendFile(path.join(auspiceBase, 'favicon.png'));
+});
+// Serve the Auspice index.html for any route under /nextstrain-viewer
+// so client-side routing (e.g. /nextstrain-viewer/dengue/all) works.
+app.get(['/nextstrain-viewer', '/nextstrain-viewer/', '/nextstrain-viewer/*'], function (req, res) {
+  var fs = require('fs');
+  var indexPath = path.join(auspiceDist, 'index.html');
+  fs.readFile(indexPath, 'utf8', function (err, html) {
+    if (err) return res.status(500).send('Auspice build not found');
+    html = html.replace(/href="\/favicon\.png"/g, 'href="/nextstrain-viewer/favicon.png"');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.type('html').send(html);
+  });
+});
+
+// If Auspice navigates to dataset paths like /zika or /dengue/all inside the iframe,
+// route those through the Auspice index as well, but only when the first path segment
+// matches a known dataset root so we don't interfere with normal BV-BRC routes.
+var auspiceGetAvailable = require('auspice/cli/server/getAvailable');
+var auspiceDatasetsPath = path.join(__dirname, 'datasets');
+
+// Helper to decide whether a root path segment is a known dataset root
+function handleAuspiceRoot(req, res, next) {
+  auspiceGetAvailable.getAvailableDatasets(auspiceDatasetsPath).then(function (datasets) {
+    if (!datasets || !datasets.length) return next();
+    var roots = {};
+    datasets.forEach(function (d) {
+      var root = (d.request || '').split('/')[0];
+      if (root) roots[root] = true;
+    });
+    if (!roots[req.params.dataset]) {
+      return next();
+    }
+    var fs = require('fs');
+    var indexPath = path.join(auspiceDist, 'index.html');
+    fs.readFile(indexPath, 'utf8', function (err, html) {
+      if (err) return res.status(500).send('Auspice build not found');
+      html = html.replace(/href="\/favicon\.png"/g, 'href="/nextstrain-viewer/favicon.png"');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.type('html').send(html);
+    });
+  }).catch(function () {
+    next();
+  });
+}
+
+// Match /zika and /dengue/all etc and route to Auspice when the first segment is a dataset root
+app.get('/:dataset', handleAuspiceRoot);
+app.get('/:dataset/*', handleAuspiceRoot);
+
 app.use('/', routes);
 // app.use('/home-prev', prevHome);
 app.post('/reportProblem', reportProblem);

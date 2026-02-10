@@ -2,14 +2,14 @@ define([
   'dojo/_base/declare', 'dojo/_base/lang', 'dojo/request/xhr', 'dojox/xml/DomParser', 'dojo/dom-construct',
   '../../../util/PathJoin', '../../viewer/TabViewerBase', '../OutbreaksOverview', '../OutbreaksTab',
   'dojo/text!./OverviewDetails.html', 'dojo/text!./Resources.html', 'dojo/text!./News.html', 'dojo/text!./Contents.html',
-  'dojo/text!./Data.html', 'dojo/text!./CommandLineTool.html', '../OutbreaksTabContainer', '../OutbreaksPhylogenyTreeViewer',
+  'dojo/text!./Data.html', 'dojo/text!./CommandLineTool.html', '../OutbreaksTabContainer', '../OutbreaksPhylogenyTreeViewer', '../OutbreaksNextstrainTab',
   '../OutbreaksGeoMap', '../OutbreaksGeoMapInfo', 'dojo/text!./OutbreaksGeoMapInfo.html',
   'dojo/text!./GeoMapHeader.html', 'dojo/text!./GeoMapFooter.html'
 ], function (
   declare, lang, xhr, domParser, domConstruct,
   PathJoin, TabViewerBase, OutbreaksOverview, OutbreaksTab,
   OverviewDetailsTemplate, ResourcesTemplate, NewsTemplate, ContentsTemplate,
-  DataTemplate, CommandLineToolTemplate, OutbreaksTabContainer, OutbreaksPhylogenyTreeViewer,
+  DataTemplate, CommandLineToolTemplate, OutbreaksTabContainer, OutbreaksPhylogenyTreeViewer, OutbreaksNextstrainTab,
   OutbreaksGeoMap, OutbreaksGeoMapInfo, OutbreaksGeoMapInfoTemplate,
   GeoMapHeaderTemplate, GeoMapFooterTemplate
 ) {
@@ -255,6 +255,11 @@ define([
         templateString: ResourcesTemplate
       });
 
+      this.nextstrain = new OutbreaksNextstrainTab({
+        title: 'Nextstrain',
+        id: this.viewer.id + '_nextstrain'
+      });
+
       this.map = new OutbreaksGeoMap({
         title: 'Map of Seq. Isolates',
         id: this.viewer.id + '_map',
@@ -274,6 +279,7 @@ define([
       this.viewer.addChild(this.phylogenetics);
       this.viewer.addChild(this.data);
       this.viewer.addChild(this.resources);
+      this.viewer.addChild(this.nextstrain);
       this.viewer.addChild(this.clt);
 
       // Fetch geomap data
