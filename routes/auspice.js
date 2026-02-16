@@ -21,19 +21,21 @@ const getNarrative = require('auspice/cli/server/getNarrative').setUpGetNarrativ
 });
 
 // Normalize prefixes that accidentally include the viewer path.
-// Example: prefix="nextstrain-viewer/dengue/all" -> "/dengue/all"
+// Example: prefix="nextstrain-viewer/zika" -> "zika" (getDatasetHelpers reads req.url, so we must rewrite it)
 router.get('/getDataset', (req, res, next) => {
-  if (req.query && typeof req.query.prefix === 'string') {
-    let p = req.query.prefix;
-    // remove leading & trailing slashes
-    p = p.replace(/^\/+|\/+$/g, '');
+  const rawPrefix = req.query && typeof req.query.prefix === 'string' ? req.query.prefix : '';
+  if (rawPrefix) {
+    let p = rawPrefix.replace(/^\/+|\/+$/g, '');
     const viewerPrefix = 'nextstrain-viewer/';
     if (p.startsWith(viewerPrefix)) {
-      // strip the viewer path so Auspice sees just the dataset path
-      req.query.prefix = '/' + p.slice(viewerPrefix.length);
-    } else {
-      // restore normalized value (with single leading slash) for other prefixes
-      req.query.prefix = '/' + p;
+      p = p.slice(viewerPrefix.length);
+    }
+    // Rewrite req.url so interpretRequest() sees the correct prefix (it parses req.url, not req.query)
+    const q = req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?') + 1) : '';
+    // Match prefix=... at start of query or after & (query string has no leading ?)
+    const newQuery = q.replace(/(^|&)prefix=[^&]*/i, '$1prefix=' + encodeURIComponent(p));
+    if (newQuery !== q) {
+      req.url = req.url.split('?')[0] + '?' + newQuery;
     }
   }
   return getDatasetAuspice(req, res, next);

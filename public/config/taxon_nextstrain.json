@@ -1,0 +1,26 @@
+[
+  {
+    "taxon_id": 64320,
+    "alias_ids": ["64320"],
+    "dataset": {
+      "name": "Zika virus genomic surveillance",
+      "paths": { "nextstrain_path": "zika" }
+    }
+  },
+  {
+    "taxon_id": 12637,
+    "alias_ids": ["12637"],
+    "dataset": {
+      "name": "Dengue virus",
+      "paths": { "nextstrain_path": "dengue_all" }
+    }
+  },
+  {
+    "taxon_id": 11235,
+    "alias_ids": ["11235"],
+    "dataset": {
+      "name": "Measles morbillivirus",
+      "paths": { "nextstrain_path": "measles" }
+    }
+  }
+]

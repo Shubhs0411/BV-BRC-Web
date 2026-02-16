@@ -1,10 +1,10 @@
 define([
   'dojo/_base/declare', 'dojo/_base/Deferred', 'dojo/request', 'dojo/_base/lang', 'dojo/topic',
-  './_GenomeList', '../Phylogeny', '../../util/PathJoin', '../../store/SFVTViruses',
+  './_GenomeList', '../PhylogenyNextstrainOrTree', '../../util/PathJoin', '../../store/SFVTViruses',
   '../TaxonomyTreeGridContainer', '../TaxonomyOverview', '../../util/QueryToEnglish'
 ], function (
   declare, Deferred, xhr, lang, Topic,
-  GenomeList, Phylogeny, PathJoin, SFVTViruses,
+  GenomeList, PhylogenyNextstrainOrTree, PathJoin, SFVTViruses,
   TaxonomyTreeGrid, TaxonomyOverview, QueryToEnglish
 ) {
   return declare([GenomeList], {
@@ -18,7 +18,7 @@ define([
     postCreate: function () {
       this.inherited(arguments);
 
-      this.phylogeny = new Phylogeny({
+      this.phylogeny = new PhylogenyNextstrainOrTree({
         title: 'Phylogeny',
         id: this.viewer.id + '_phylogeny',
         state: this.state
@@ -29,6 +29,7 @@ define([
         id: this.viewer.id + '_taxontree',
         state: this.state
       });
+      // Option C: bacteria always get Phylogeny tab; add it here so it's present on initial load
       this.viewer.addChild(this.phylogeny, 1);
       this.viewer.addChild(this.taxontree, 2);
 
@@ -55,6 +56,7 @@ define([
     changeToBacteriaContext: function () {
       this.overview.set('context', 'bacteria');
 
+      // Option C: bacteria always get Phylogeny tab
       this.viewer.addChild(this.phylogeny, 1);
       this.viewer.addChild(this.amr, 4);
       this.viewer.addChild(this.sequences, 5)
@@ -121,17 +123,99 @@ define([
         }
       }
 
-      // switch tab configuration & view context
+      // Option C (hybrid): bacteria always have Phylogeny tab; viruses only when tree exists (Nextstrain or phyloxml)
       if (this.taxonomy.lineage_names.includes('Bacteria') && this.context === 'virus') {
-        this.set('context', 'bacteria')
+        this.set('context', 'bacteria');
         this.changeToBacteriaContext();
-      } else if (this.taxonomy.lineage_names.includes('Viruses') && this.context === 'bacteria') {
-        this.set('context', 'virus');
-        this.changeToVirusContext();
+      } else if (this.taxonomy.lineage_names.includes('Viruses')) {
+        if (this.context === 'bacteria') {
+          this.set('context', 'virus');
+          this.changeToVirusContext();
+        } else {
+          try { this.viewer.removeChild(this.phylogeny); } catch (e) {}
+        }
+        this._addPhylogenyTabIfHasTree();
       }
 
       this.taxonomy = this.state.taxonomy = taxonomy;
       this.setActivePanelState();
+    },
+
+    _nextstrainConfigCache: null,
+    _taxonTreeDictCache: null,
+    /** Add Phylogeny tab only when this taxon has a tree: Nextstrain config (e.g. zika) or phyloxml entry in taxon_tree_dict. Used for viruses only (Option C); bacteria always have the tab. */
+    _addPhylogenyTabIfHasTree: function () {
+      var taxonId = String(this.state.taxon_id || this.taxon_id || '');
+      if (!taxonId) return;
+      var self = this;
+      var addPhylogenyTab = function () {
+        self.viewer.addChild(self.phylogeny, 1);
+      };
+      var hasNextstrain = function (config) {
+        var list = Array.isArray(config) ? config : (config ? [config] : []);
+        var entry = list.filter(function (e) {
+          var id = (e.taxon_id != null) ? String(e.taxon_id) : '';
+          var aliases = e.alias_ids || [];
+          return id === taxonId || aliases.indexOf(taxonId) !== -1;
+        })[0];
+        return !!(entry && entry.dataset && entry.dataset.paths && entry.dataset.paths.nextstrain_path);
+      };
+      var hasPhyloxmlTree = function (dict) {
+        return dict && typeof dict === 'object' && Object.prototype.hasOwnProperty.call(dict, taxonId);
+      };
+      var tryAddFromNextstrain = function (config) {
+        if (hasNextstrain(config)) {
+          addPhylogenyTab();
+          return true;
+        }
+        return false;
+      };
+      var tryAddFromPhyloxmlDict = function (dict) {
+        if (hasPhyloxmlTree(dict)) {
+          addPhylogenyTab();
+          return true;
+        }
+        return false;
+      };
+      if (this._nextstrainConfigCache && tryAddFromNextstrain(this._nextstrainConfigCache)) {
+        return;
+      }
+      if (!this._nextstrainConfigCache) {
+        xhr.get('/public/config/taxon_nextstrain.json', {
+          handleAs: 'json',
+          headers: { accept: 'application/json' }
+        }).then(lang.hitch(this, function (config) {
+          this._nextstrainConfigCache = config;
+          if (tryAddFromNextstrain(config)) return;
+          if (this._taxonTreeDictCache) {
+            tryAddFromPhyloxmlDict(this._taxonTreeDictCache);
+          } else {
+            this._fetchTaxonTreeDictThenAdd(tryAddFromPhyloxmlDict);
+          }
+        }), lang.hitch(this, function () {
+          this._nextstrainConfigCache = [];
+          if (this._taxonTreeDictCache) {
+            tryAddFromPhyloxmlDict(this._taxonTreeDictCache);
+          } else {
+            this._fetchTaxonTreeDictThenAdd(tryAddFromPhyloxmlDict);
+          }
+        }));
+      } else {
+        if (this._taxonTreeDictCache) {
+          tryAddFromPhyloxmlDict(this._taxonTreeDictCache);
+        } else {
+          this._fetchTaxonTreeDictThenAdd(tryAddFromPhyloxmlDict);
+        }
+      }
+    },
+    _fetchTaxonTreeDictThenAdd: function (tryAddFromPhyloxmlDict) {
+      var treeDictUrl = 'https://www.bv-brc.org/api/content/bvbrc_phylogeny_tab/taxon_tree_dict.json?version=012324';
+      xhr.get(treeDictUrl, { handleAs: 'json', headers: { accept: 'application/json' } }).then(lang.hitch(this, function (dict) {
+        this._taxonTreeDictCache = dict && typeof dict === 'object' ? dict : {};
+        tryAddFromPhyloxmlDict(this._taxonTreeDictCache);
+      }), lang.hitch(this, function () {
+        this._taxonTreeDictCache = {};
+      }));
     },
     onSetQuery: function (attr, oldVal, newVal) {
       // prevent default action
@@ -302,7 +386,6 @@ define([
           } else {
             console.warn('MISSING activeQueryState for PANEL: ' + active);
           }
-          console.log('Active Query' + activeQueryState);
           break;
       }
 
