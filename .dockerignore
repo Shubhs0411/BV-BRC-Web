@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+Dockerfile*
+.dockerignore
+.git
+.gitignore
+.cursor
+dist
+
+# Local tooling / editor artifacts
+.vscode
+.idea
+
+# Test artifacts
+coverage
+jest-results
+
