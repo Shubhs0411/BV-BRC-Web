@@ -129,6 +129,16 @@ app.use('/js/' + packageJSON.version + '/', [
   express.static(path.join(__dirname, 'public/js/'),staticHeaders)
 ]);
 
+// Serve npm packages under /js/ from node_modules (avoids symlinks on WSL/Windows)
+var jsNpmPackages = [
+  'bvbrc_js_client', 'cytoscape-context-menus', 'cytoscape-cola', 'cytoscape-cose-bilkent',
+  'cytoscape-dagre', 'cytoscape-panzoom', 'html2canvas', 'jquery', 'markdown-it', 'phyloxml', 'webcola'
+];
+// dagre: served from public/js/dagre.js (copy of node_modules/dagre/dist/dagre.min.js via restore-generated.js)
+jsNpmPackages.forEach(function (pkg) {
+  app.use('/js/' + pkg, express.static(path.join(__dirname, 'node_modules', pkg)));
+});
+
 app.use('/js/', express.static(path.join(__dirname, 'public/js/')));
 app.use('/patric/images', express.static(path.join(__dirname, 'public/patric/images/'), {
   maxage: '365d',
@@ -160,16 +170,28 @@ app.get('/nextstrain-viewer/favicon.png', function (req, res) {
 });
 // Serve the Auspice index.html for any route under /nextstrain-viewer
 // so client-side routing (e.g. /nextstrain-viewer/dengue/all) works.
-app.get(['/nextstrain-viewer', '/nextstrain-viewer/', '/nextstrain-viewer/*'], function (req, res) {
+function sendAuspiceIndex(req, res) {
   var fs = require('fs');
   var indexPath = path.join(auspiceDist, 'index.html');
   fs.readFile(indexPath, 'utf8', function (err, html) {
-    if (err) return res.status(500).send('Auspice build not found');
+    if (err) {
+      res.setHeader('Cache-Control', 'no-cache');
+      res.type('html').status(200).send(
+        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Nextstrain viewer</title></head><body style="font-family:sans-serif;padding:2rem;max-width:40em;">' +
+        '<h1>Nextstrain viewer not built</h1>' +
+        '<p>The embedded Nextstrain/Auspice viewer has not been built yet. Build it with:</p>' +
+        '<pre style="background:#f0f0f0;padding:0.75rem;">npm run build:nextstrain</pre>' +
+        '<p>Optional: add datasets under <code>./datasets/</code> and run the build to view them here.</p>' +
+        '</body></html>'
+      );
+      return;
+    }
     html = html.replace(/href="\/favicon\.png"/g, 'href="/nextstrain-viewer/favicon.png"');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.type('html').send(html);
   });
-});
+}
+app.get(['/nextstrain-viewer', '/nextstrain-viewer/', '/nextstrain-viewer/*'], sendAuspiceIndex);
 
 // If Auspice navigates to dataset paths like /zika or /dengue/all inside the iframe,
 // route those through the Auspice index as well, but only when the first path segment
@@ -192,7 +214,13 @@ function handleAuspiceRoot(req, res, next) {
     var fs = require('fs');
     var indexPath = path.join(auspiceDist, 'index.html');
     fs.readFile(indexPath, 'utf8', function (err, html) {
-      if (err) return res.status(500).send('Auspice build not found');
+      if (err) {
+        res.setHeader('Cache-Control', 'no-cache');
+        return res.type('html').status(200).send(
+          '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Nextstrain</title></head><body style="font-family:sans-serif;padding:2rem;">' +
+          '<p>Nextstrain viewer not built. Run: <code>npm run build:nextstrain</code></p></body></html>'
+        );
+      }
       html = html.replace(/href="\/favicon\.png"/g, 'href="/nextstrain-viewer/favicon.png"');
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.type('html').send(html);

@@ -20,7 +20,7 @@ This will:
   - `app.js`, `bin/`, `routes/`, `views/`, `public/`
   - `dist/` (Auspice build)
   - `datasets/` (Nextstrain JSON datasets)
-  - `config.js`, `p3-web.conf.sample`, and `p3-web.conf` (if present at build time)
+  - `config.js`, `p3-web.conf.sample`; `p3-web.conf` is created in the image as `{}` (app uses defaults).
 
 ---
 
@@ -72,7 +72,7 @@ The app reads configuration via `config.js`, which uses `nconf` to load (in orde
 In the Docker image:
 
 - `p3-web.conf.sample` is always present (for reference).
-- If a `p3-web.conf` existed at build time, it is copied into the image as the default config.
+- `p3-web.conf` is created in the image as valid JSON `{}` so the app starts without a custom config; override at runtime if needed.
 
 To override at runtime, you can either:
 

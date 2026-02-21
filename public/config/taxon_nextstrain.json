@@ -22,5 +22,69 @@
       "name": "Measles morbillivirus",
       "paths": { "nextstrain_path": "measles" }
     }
+  },
+  {
+    "taxon_id": 12341,
+    "alias_ids": ["12341"],
+    "dataset": {
+      "name": "H3N2 segment 1",
+      "paths": { "nextstrain_path": "h3n2/segment1" }
+    }
+  },
+  {
+    "taxon_id": 12342,
+    "alias_ids": ["12342"],
+    "dataset": {
+      "name": "H3N2 segment 2",
+      "paths": { "nextstrain_path": "h3n2/segment2" }
+    }
+  },
+  {
+    "taxon_id": 12343,
+    "alias_ids": ["12343"],
+    "dataset": {
+      "name": "H3N2 segment 3",
+      "paths": { "nextstrain_path": "h3n2/segment3" }
+    }
+  },
+  {
+    "taxon_id": 12344,
+    "alias_ids": ["12344"],
+    "dataset": {
+      "name": "H3N2 segment 4",
+      "paths": { "nextstrain_path": "h3n2/segment4" }
+    }
+  },
+  {
+    "taxon_id": 12345,
+    "alias_ids": ["12345"],
+    "dataset": {
+      "name": "H3N2 segment 5",
+      "paths": { "nextstrain_path": "h3n2/segment5" }
+    }
+  },
+  {
+    "taxon_id": 12346,
+    "alias_ids": ["12346"],
+    "dataset": {
+      "name": "H3N2 segment 6",
+      "paths": { "nextstrain_path": "h3n2/segment6" }
+    }
+  },
+  {
+    "taxon_id": 12347,
+    "alias_ids": ["12347"],
+    "dataset": {
+      "name": "H3N2 segment 7",
+      "paths": { "nextstrain_path": "h3n2/segment7" }
+    }
+  },
+  {
+    "taxon_id": 12348,
+    "alias_ids": ["12348"],
+    "dataset": {
+      "name": "H3N2 segment 8",
+      "paths": { "nextstrain_path": "h3n2/segment8" }
+    }
   }
 ]

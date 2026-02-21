@@ -9,7 +9,7 @@
     "xxxeslint:fix": "./node_modules/eslint/bin/eslint.js --fix public/js/p3",
     "xxxeslint:test": "./node_modules/eslint/bin/eslint.js public/js/p3",
     "xxxtest:intern": "./node_modules/.bin/intern",
-    "postinstall": "./post_install.sh",
+    "postinstall": "node scripts/restore-generated.js",
     "nextstrain": "npx auspice view --datasetDir ./datasets",
     "build:nextstrain": "npx auspice build --extend ./auspice-custom/extend.json"
   },
