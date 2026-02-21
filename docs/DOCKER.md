@@ -2,6 +2,8 @@
 
 This document explains how to run the BV-BRC web app (including the embedded Nextstrain/Auspice viewer) using the provided `Dockerfile`.
 
+**Prerequisites:** Docker installed (e.g. [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine).
+
 ---
 
 ### 1. Build the image
@@ -11,6 +13,8 @@ From the project root:
 ```bash
 docker build -t bvbrc-web .
 ```
+
+The first build may take several minutes (npm install, Auspice build). If the build fails, try `docker build --no-cache -t bvbrc-web .`.
 
 This will:
 
@@ -99,6 +103,7 @@ After starting the container, verify:
 - **Phylogeny tab**
   - For a bacterium, the Phylogeny tab appears and shows the legacy phyloxml tree.
   - For a virus with a Nextstrain dataset (e.g. Zika, Dengue, Measles), the Phylogeny tab appears, the Nextstrain iframe loads, and the tree is visible.
+  - H3N2 segment datasets (if present in `datasets/`) are mapped to taxon IDs 12341–12348; try e.g. `http://localhost:3000/view/Taxonomy/12344` for segment 4.
 - **Charon API**
   - `/charon/getAvailable` returns a JSON list of datasets.
   - `/charon/getDataset?prefix=nextstrain-viewer/zika` returns the JSON for `datasets/zika.json`.
