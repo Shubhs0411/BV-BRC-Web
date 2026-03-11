@@ -4,7 +4,11 @@
  */
 const path = require('path');
 const express = require('express');
+const compression = require('compression');
 const router = express.Router();
+
+// compress all responses from the auspice router, including dataset JSONs
+router.use(compression());
 
 const datasetsPath = path.resolve(__dirname, '..', 'datasets');
 const narrativesPath = path.resolve(__dirname, '..', 'datasets', 'narratives');

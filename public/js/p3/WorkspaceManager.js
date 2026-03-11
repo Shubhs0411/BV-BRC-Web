@@ -1471,7 +1471,7 @@ define([
     init: function (apiUrl, token, userId) {
       this.activeSearchFilter = null; // Reset search filter on init
       if (!apiUrl || !token || !userId) {
-        console.log('Unable to initialize workspace manager. Args: ', arguments);
+        // Expected when not logged in; workspace features will be unavailable
         return;
       }
 

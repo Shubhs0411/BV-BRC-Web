@@ -1,3 +1,5 @@
+// Google Maps: if you see RefererNotAllowedMapError on localhost, add http://localhost:3000/* to
+// Application restrictions > HTTP referrers in Google Cloud Console for this API key.
 define([
   'dojo/_base/declare', 'dijit/_WidgetBase', 'dojo/on', 'dijit/_OnDijitClickMixin', 'dijit/_WidgetsInTemplateMixin',
   'dojo/dom', 'dojo/dom-class', 'dijit/_TemplatedMixin', 'dojox/dtl/_Templated', 'dojo/dom-construct', 'dojo/dom-style', 'dojo/mouse',

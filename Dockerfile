@@ -13,6 +13,9 @@ RUN npm install
 COPY . .
 RUN node scripts/restore-generated.js
 
+# Normalize Nextstrain/Auspice dataset geo_resolutions during build, so any new segment files are safe
+RUN node scripts/normalize_geo_resolutions.js
+
 # Build embedded Auspice/Nextstrain viewer into ./dist
 RUN npm run build:nextstrain
 

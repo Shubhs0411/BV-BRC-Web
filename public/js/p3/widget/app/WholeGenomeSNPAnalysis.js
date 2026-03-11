@@ -60,25 +60,25 @@ define([
 
     onAddGenomeGroup: function () {
       console.log("Fetching genome group path...");
-      
+
       var path = this.input_genome_group;
       if (!path) {
         console.warn("No genome group path provided.");
         return;
       }
-    
+
       when(WorkspaceManager.getObject(path), lang.hitch(this, function (res) {
         if (typeof res.data === "string") {
           res.data = JSON.parse(res.data);
         }
-    
+
         if (res?.data?.id_list?.genome_id) {
           var newGenomeIds = res.data.id_list.genome_id;
           this.checkBacterialGenomes(newGenomeIds, groupType, false, path);
         }
       }));
     },
-    
+
 
         // function is from phylogenetic tree
         //  TO DO update to check genome
