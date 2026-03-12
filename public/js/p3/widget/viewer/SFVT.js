@@ -392,7 +392,7 @@ define([
 
             console.log(`sf_name: ${variantType.sf_name}`);
             for (let i = 0; i < cleanedSequence.length; i++) {
-              const coordinateField = columns[i + 2]?.field;
+              const coordinateField = columns[i + 2] && columns[i + 2].field;
               if (!coordinateField) continue;
 
               let vtValue = '';

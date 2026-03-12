@@ -104,7 +104,7 @@ define([
           res.data = JSON.parse(res.data);
         }
 
-        if (res?.data?.id_list?.genome_id) {
+        if (res && res.data && res.data.id_list && res.data.id_list.genome_id) {
           var newGenomeIds = res.data.id_list.genome_id;
           this.checkBacterialGenomes(newGenomeIds, groupType, false, path);
         }
