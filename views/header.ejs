@@ -977,16 +977,16 @@
 		title;
 	%>
 
-	<% if (pageDescription?.length > 0) {%>
+	<% if (pageDescription && pageDescription.length > 0) {%>
 		<meta name="description" content="<%= pageDescription %>"/>
 	<% } %>
-	<% if (robots?.length > 0) { %>
+	<% if (robots && robots.length > 0) { %>
 		<meta name="robots" content="<%= robots %>"/>
 	<% } %>
-	<% if (keywords?.length > 0) { %>
+	<% if (keywords && keywords.length > 0) { %>
 		<meta name="keywords" content="<%= keywords %>"/>
 	<% } %>
-	<% if (title?.length > 0) { %>
+	<% if (title && title.length > 0) { %>
 		<meta name="title" content="<%= title %>"/>
 	<% } %>
 

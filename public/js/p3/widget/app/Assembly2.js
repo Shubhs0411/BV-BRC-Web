@@ -119,12 +119,71 @@ define([
           this.read2.set('disabled', true);
         }
       }));
+      this.onRecipeChange();
       this._started = true;
       this.form_flag = false;
       try {
         this.intakeRerunForm();
       } catch (error) {
         console.error(error);
+      }
+    },
+
+    getReferenceMode: function () {
+      if (this.reference_mode_fasta && this.reference_mode_fasta.get('checked')) {
+        return 'fasta';
+      }
+      if (this.reference_mode_search && this.reference_mode_search.get('checked')) {
+        return 'search';
+      }
+      return 'genbank';
+    },
+
+    onReferenceModeChange: function () {
+      var mode = this.getReferenceMode();
+      if (this.reference_genbank_row) {
+        this.reference_genbank_row.style.display = (mode == 'genbank') ? 'block' : 'none';
+      }
+      if (this.reference_fasta_row) {
+        this.reference_fasta_row.style.display = (mode == 'fasta') ? 'block' : 'none';
+      }
+      if (this.reference_search_row) {
+        this.reference_search_row.style.display = (mode == 'search') ? 'block' : 'none';
+      }
+      this.checkParameterRequiredFields();
+    },
+
+    onReferenceFieldChange: function () {
+      this.checkParameterRequiredFields();
+    },
+
+    validateGenbankAccession: function (accession) {
+      if (!accession) return false;
+      var value = String(accession).trim().toUpperCase();
+      return /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/.test(value);
+    },
+
+    validateReferenceFastaPath: function (pathValue) {
+      if (!pathValue) return false;
+      var value = String(pathValue).trim().toLowerCase();
+      return /\.(fa|fna|fasta|ffn|faa)$/.test(value);
+    },
+
+    applyReferenceSelection: function (assembly_values) {
+      if (this.recipe.value != 'reference-guided') return;
+      var mode = this.getReferenceMode();
+      assembly_values.assembly_strategy = 'reference-guided';
+      assembly_values.reference_mode = mode;
+
+      if (mode == 'genbank') {
+        var accession = this.reference_genbank_accession && this.reference_genbank_accession.get('value');
+        assembly_values.reference_assembly = accession;
+        assembly_values.reference_genbank_accession = accession;
+      }
+      else if (mode == 'fasta') {
+        var fastaPath = this.reference_fasta_file && this.reference_fasta_file.searchBox && this.reference_fasta_file.searchBox.get('value');
+        assembly_values.reference_assembly = fastaPath;
+        assembly_values.reference_fasta_file = fastaPath;
       }
     },
 
@@ -138,6 +197,7 @@ define([
 
       // Generic JSON parameters are added to assembly values in this function
       assembly_values = this.checkBaseParameters(values, assembly_values);
+      this.applyReferenceSelection(assembly_values);
 
       if (!this.form_flag) {
         this.ingestAttachPoints(this.paramToAttachPt, assembly_values, true);
@@ -441,7 +501,38 @@ define([
     },
 
     checkParameterRequiredFields: function () {
-      if (this.output_path.get('value') && this.output_file.get('displayedValue') ) {
+      var hasOutputPath = this.output_path.get('value');
+      var hasOutputName = this.output_file.get('displayedValue');
+      var hasReference = true;
+
+      if (this.recipe && this.recipe.value == 'reference-guided') {
+        var mode = this.getReferenceMode();
+        if (this.reference_section) {
+          this.reference_section.style.display = 'block';
+        }
+        if (mode == 'genbank') {
+          var accession = this.reference_genbank_accession && this.reference_genbank_accession.get('value');
+          hasReference = this.validateGenbankAccession(accession);
+          if (this.reference_genbank_accession) {
+            this.reference_genbank_accession.set('state', hasReference || !accession ? '' : 'Error');
+          }
+        }
+        else if (mode == 'fasta') {
+          var fastaPath = this.reference_fasta_file && this.reference_fasta_file.searchBox && this.reference_fasta_file.searchBox.get('value');
+          hasReference = this.validateReferenceFastaPath(fastaPath);
+          if (this.reference_fasta_file && this.reference_fasta_file.searchBox) {
+            this.reference_fasta_file.searchBox._set('state', hasReference || !fastaPath ? '' : 'Error');
+          }
+        }
+        else {
+          hasReference = false; // phase II placeholder
+        }
+      }
+      else if (this.reference_section) {
+        this.reference_section.style.display = 'none';
+      }
+
+      if (hasOutputPath && hasOutputName && hasReference) {
         this.validate();
       }
       else {
@@ -462,12 +553,12 @@ define([
     onRecipeChange: function () {
       if (this.recipe.value == 'canu') {
         this.genome_size_block.style.display = 'block';
-        this.checkParameterRequiredFields();
       }
       else {
         this.genome_size_block.style.display = 'none';
-        this.checkParameterRequiredFields();
       }
+      this.onReferenceModeChange();
+      this.checkParameterRequiredFields();
     },
 
     onGenomeSizeUnitsChange: function () {
