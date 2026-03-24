@@ -78,7 +78,13 @@ define([
     validateGenbankAccession: function (accession) {
       if (!accession) return false;
       var value = String(accession).trim().toUpperCase();
-      return /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/.test(value);
+      if (!value) return false;
+      var accessionPattern = /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/;
+      var accessionList = value.split(';');
+      return accessionList.every(function (item) {
+        var token = item.trim();
+        return token && accessionPattern.test(token);
+      });
     },
 
     validateReferenceFastaPath: function (pathValue) {
@@ -120,13 +126,11 @@ define([
         assemblyValues.module = values.module;
       } else if (values.strategy === 'reference-guided') {
         const mode = this.getReferenceMode();
-        assemblyValues.assembly_strategy = 'reference-guided';
-        assemblyValues.reference_mode = mode;
+        assemblyValues.strategy = 'reference_guided';
+        assemblyValues.reference_type = mode;
         if (mode === 'genbank') {
-          assemblyValues.reference_assembly = values.reference_genbank_accession;
           assemblyValues.reference_genbank_accession = values.reference_genbank_accession;
         } else if (mode === 'fasta') {
-          assemblyValues.reference_assembly = values.reference_fasta_file;
           assemblyValues.reference_fasta_file = values.reference_fasta_file;
         }
       }
@@ -144,7 +148,7 @@ define([
         if (this.isSRAValid) {
           // Validate SRR accession id
           //this.onAddSRR();
-          assemblyValues.srr_id = values.srr_accession;
+          assemblyValues.sra_id = values.srr_accession;
         } else {
           return false;
         }

@@ -82,7 +82,7 @@
                             style="width:400px" required="true" data-dojo-attach-event="onChange:onStrategyChange">
                         <!--?<option value="auto">Auto</option>-->
                         <option value="irma">IRMA</option>
-                        <option value="reference-guided">Reference guided assembly</option>
+                        <option value="reference-guided">Reference Guided Assembly</option>
                     </select>
                 </div>
                 <div class="appRow" data-dojo-attach-point="irma_module_row">
@@ -105,8 +105,6 @@
                             <label class="paramlabel" style="margin-right:8px;">Genbank Accession</label>
                             <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="reference_mode_fasta" name="reference_mode" value="fasta" data-dojo-attach-event="onChange:onReferenceModeChange" />
                             <label class="paramlabel" style="margin-right:8px;">Upload FASTA File</label>
-                            <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="reference_mode_search" name="reference_mode" value="search" data-dojo-attach-event="onChange:onReferenceModeChange" />
-                            <label class="paramlabel">Search for Reference</label>
                         </div>
                     </div>
                     <div class="appRow" data-dojo-attach-point="reference_genbank_row">
@@ -126,14 +124,6 @@
                              required="false"
                              data-dojo-props="type:['feature_dna_fasta', 'genome_dna_fasta', 'contigs'],multi:false,promptMessage:'Select or upload FASTA file to your workspace.',placeHolder:'FASTA file'"
                              data-dojo-attach-event="onChange:onReferenceFieldChange"></div>
-                    </div>
-                    <div class="appRow" data-dojo-attach-point="reference_search_row" style="display:none;">
-                        <div data-dojo-type="dijit/form/ValidationTextBox"
-                             data-dojo-attach-point="reference_search_placeholder"
-                             style="width:400px"
-                             required="false"
-                             disabled="true"
-                             data-dojo-props="placeHolder:'Search for reference (PHASE II)'"></div>
                     </div>
                 </div>
                 <div class="appRow">

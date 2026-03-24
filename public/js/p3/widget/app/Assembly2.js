@@ -160,7 +160,13 @@ define([
     validateGenbankAccession: function (accession) {
       if (!accession) return false;
       var value = String(accession).trim().toUpperCase();
-      return /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/.test(value);
+      if (!value) return false;
+      var accessionPattern = /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/;
+      var accessionList = value.split(';');
+      return accessionList.every(function (item) {
+        var token = item.trim();
+        return token && accessionPattern.test(token);
+      });
     },
 
     validateReferenceFastaPath: function (pathValue) {
@@ -172,17 +178,15 @@ define([
     applyReferenceSelection: function (assembly_values) {
       if (this.recipe.value != 'reference-guided') return;
       var mode = this.getReferenceMode();
-      assembly_values.assembly_strategy = 'reference-guided';
-      assembly_values.reference_mode = mode;
+      assembly_values.strategy = 'reference_guided';
+      assembly_values.reference_type = mode;
 
       if (mode == 'genbank') {
         var accession = this.reference_genbank_accession && this.reference_genbank_accession.get('value');
-        assembly_values.reference_assembly = accession;
         assembly_values.reference_genbank_accession = accession;
       }
       else if (mode == 'fasta') {
         var fastaPath = this.reference_fasta_file && this.reference_fasta_file.searchBox && this.reference_fasta_file.searchBox.get('value');
-        assembly_values.reference_assembly = fastaPath;
         assembly_values.reference_fasta_file = fastaPath;
       }
     },
