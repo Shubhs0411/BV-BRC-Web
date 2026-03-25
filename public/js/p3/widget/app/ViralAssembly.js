@@ -36,8 +36,6 @@ define([
       this.inherited(arguments);
       var _self = this;
       _self.defaultPath = WorkspaceManager.getDefaultFolder() || _self.activeWorkspacePath;
-      _self.output_path.set('value', _self.defaultPath);
-      this.onStrategyChange();
       this._started = true;
       this.form_flag = false;
       try {
@@ -45,52 +43,6 @@ define([
       } catch (error) {
         console.error(error);
       }
-    },
-
-    getReferenceMode: function () {
-      if (this.reference_mode_fasta && this.reference_mode_fasta.get('checked')) {
-        return 'fasta';
-      }
-      if (this.reference_mode_search && this.reference_mode_search.get('checked')) {
-        return 'search';
-      }
-      return 'genbank';
-    },
-
-    onReferenceModeChange: function () {
-      var mode = this.getReferenceMode();
-      if (this.reference_genbank_row) {
-        this.reference_genbank_row.style.display = (mode == 'genbank') ? 'block' : 'none';
-      }
-      if (this.reference_fasta_row) {
-        this.reference_fasta_row.style.display = (mode == 'fasta') ? 'block' : 'none';
-      }
-      if (this.reference_search_row) {
-        this.reference_search_row.style.display = (mode == 'search') ? 'block' : 'none';
-      }
-      this.checkParameterRequiredFields();
-    },
-
-    onReferenceFieldChange: function () {
-      this.checkParameterRequiredFields();
-    },
-
-    validateGenbankAccession: function (accession) {
-      if (!accession) return false;
-      var value = String(accession).trim().toUpperCase();
-      if (!value) return false;
-      var accessionPattern = /^[A-Z]{1,4}_?\d+(?:\.\d+)?$/;
-      var accessionList = value.split(';');
-      return accessionList.every(function (item) {
-        var token = item.trim();
-        return token && accessionPattern.test(token);
-      });
-    },
-
-    validateReferenceFastaPath: function (pathValue) {
-      if (!pathValue) return false;
-      var value = String(pathValue).trim().toLowerCase();
-      return /\.(fa|fna|fasta|ffn|faa)$/.test(value);
     },
 
     inputTypeChanged: function () {
@@ -118,22 +70,10 @@ define([
 
       let assemblyValues = {
         strategy: values.strategy,
+        module: values.module,
         output_path: values.output_path,
         output_file: values.output_file
       };
-
-      if (values.strategy === 'irma') {
-        assemblyValues.module = values.module;
-      } else if (values.strategy === 'reference-guided') {
-        const mode = this.getReferenceMode();
-        assemblyValues.strategy = 'reference_guided';
-        assemblyValues.reference_type = mode;
-        if (mode === 'genbank') {
-          assemblyValues.reference_genbank_accession = values.reference_genbank_accession;
-        } else if (mode === 'fasta') {
-          assemblyValues.reference_fasta_file = values.reference_fasta_file;
-        }
-      }
 
       if (values.inputType === 'pairedRead') {
         assemblyValues.paired_end_lib = {
@@ -148,7 +88,7 @@ define([
         if (this.isSRAValid) {
           // Validate SRR accession id
           //this.onAddSRR();
-          assemblyValues.sra_id = values.srr_accession;
+          assemblyValues.srr_id = values.srr_accession;
         } else {
           return false;
         }
@@ -164,44 +104,7 @@ define([
     },
 
     checkParameterRequiredFields: function () {
-      var hasOutputPath = this.output_path.get('value');
-      var hasOutputName = this.output_file.get('displayedValue');
-      var strategy = this.strategy && this.strategy.get('value');
-      var hasReference = true;
-
-      if (strategy === 'reference-guided') {
-        if (this.reference_section) {
-          this.reference_section.style.display = 'block';
-        }
-        if (this.irma_module_row) {
-          this.irma_module_row.style.display = 'none';
-        }
-        var mode = this.getReferenceMode();
-        if (mode === 'genbank') {
-          var accession = this.reference_genbank_accession && this.reference_genbank_accession.get('value');
-          hasReference = this.validateGenbankAccession(accession);
-          if (this.reference_genbank_accession) {
-            this.reference_genbank_accession.set('state', hasReference || !accession ? '' : 'Error');
-          }
-        } else if (mode === 'fasta') {
-          var fastaPath = this.reference_fasta_file && this.reference_fasta_file.searchBox && this.reference_fasta_file.searchBox.get('value');
-          hasReference = this.validateReferenceFastaPath(fastaPath);
-          if (this.reference_fasta_file && this.reference_fasta_file.searchBox) {
-            this.reference_fasta_file.searchBox._set('state', hasReference || !fastaPath ? '' : 'Error');
-          }
-        } else {
-          hasReference = false; // PHASE II placeholder
-        }
-      } else {
-        if (this.reference_section) {
-          this.reference_section.style.display = 'none';
-        }
-        if (this.irma_module_row) {
-          this.irma_module_row.style.display = 'block';
-        }
-      }
-
-      if (hasOutputPath && hasOutputName && hasReference) {
+      if (this.output_path.get('value') && this.output_file.get('displayedValue')) {
         this.validate();
       } else {
         if (this.submitButton) {
@@ -221,10 +124,11 @@ define([
     },
 
     onStrategyChange: function () {
-      if (this.strategy.value === 'reference-guided') {
-        this.onReferenceModeChange();
+      if (this.strategy.value == 'canu') {
+        this.checkParameterRequiredFields();
+      } else {
+        this.checkParameterRequiredFields();
       }
-      this.checkParameterRequiredFields();
     },
 
     onSRRChange: function () {

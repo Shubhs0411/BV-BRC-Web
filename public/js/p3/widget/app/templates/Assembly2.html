@@ -146,47 +146,7 @@
                   <option value="single-cell">MDA (single-cell)</option>
                   <option value="flye">Flye</option>
                   <option value="megahit">MegaHit</option>
-                  <option value="reference-guided">Reference guided assembly</option>
                 </select>
-              </div>
-              <div data-dojo-attach-point="reference_section" style="display:none">
-                <div class="appRow">
-                  <label class="paramlabel">Reference</label><br>
-                  <div style="margin-top:5px;">
-                    <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="reference_mode_genbank" name="reference_mode" value="genbank" checked="checked" data-dojo-attach-event="onChange:onReferenceModeChange" />
-                    <label class="paramlabel" style="margin-right:8px;">Genbank Accession</label>
-                    <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="reference_mode_fasta" name="reference_mode" value="fasta" data-dojo-attach-event="onChange:onReferenceModeChange" />
-                    <label class="paramlabel" style="margin-right:8px;">Upload FASTA File</label>
-                    <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="reference_mode_search" name="reference_mode" value="search" data-dojo-attach-event="onChange:onReferenceModeChange" />
-                    <label class="paramlabel">Search for Reference</label>
-                  </div>
-                </div>
-                <div class="appRow" data-dojo-attach-point="reference_genbank_row">
-                  <div data-dojo-type="dijit/form/ValidationTextBox"
-                       name="reference_genbank_accession"
-                       data-dojo-attach-point="reference_genbank_accession"
-                       style="width:300px"
-                       required="false"
-                       data-dojo-props="intermediateChanges:true, trim:true, placeHolder:'Genbank Accession'"
-                       data-dojo-attach-event="onChange:onReferenceFieldChange"></div>
-                </div>
-                <div class="appRow" data-dojo-attach-point="reference_fasta_row" style="display:none">
-                  <div data-dojo-type="p3/widget/WorkspaceObjectSelector"
-                       name="reference_fasta_file"
-                       data-dojo-attach-point="reference_fasta_file"
-                       style="width:300px"
-                       required="false"
-                       data-dojo-props="type:['feature_dna_fasta', 'genome_dna_fasta', 'contigs'],multi:false,promptMessage:'Select or upload FASTA file to your workspace.',placeHolder:'FASTA file'"
-                       data-dojo-attach-event="onChange:onReferenceFieldChange"></div>
-                </div>
-                <div class="appRow" data-dojo-attach-point="reference_search_row" style="display:none">
-                  <div data-dojo-type="dijit/form/ValidationTextBox"
-                       data-dojo-attach-point="reference_search_placeholder"
-                       style="width:300px"
-                       required="false"
-                       disabled="true"
-                       data-dojo-props="placeHolder:'Search for reference (PHASE II)'"></div>
-                </div>
               </div>
               <div class="appRow">
                 <label class="paramlabel">Output Folder</label><br>
