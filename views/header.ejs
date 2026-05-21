@@ -5,6 +5,9 @@
 	]
 	%>
 
+	<!-- Leaflet CSS for mapping -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 	<% if (request && request.production){ %>
 	  <% load_css.forEach(function(url){ %>
 		<link rel='stylesheet' href="/js/<%- request.package.version %>/<%- url %>" />

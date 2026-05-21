@@ -4,8 +4,7 @@ define([
   'dojo/text!./templates/SurveillanceDataMap.html', './mapsInfoWindows/LocationInfoWindowSingle',
   './mapsInfoWindows/LocationInfoWindowShortList', './mapsInfoWindows/LocationInfoWindowSummary',
   'dojo/json', 'dojo/text!/public/js/p3/resources/surveillancemap/flyaways.json', 'dijit/form/CheckBox', 'dijit/ColorPalette',
-  '../util/PathJoin', 'dojo/request', 'dojo/_base/lang',
-  'https://maps.googleapis.com/maps/api/js?key=AIzaSyAo6Eq83tcpiWufvVpw_uuqdoRfWbFXfQ8&sensor=false&libraries=drawing'
+  '../util/PathJoin', 'dojo/request', 'dojo/_base/lang'
 ], function (
   declare, WidgetBase, on, OnDijitClickMixin, _WidgetsInTemplateMixin,
   dom, domClass, Templated, DtlTemplated, domConstruct, domStyle, mouse,
@@ -14,8 +13,29 @@ define([
   JSON, flyawaysData, CheckBox, ColorPalette,
   PathJoin, xhr, lang
 ) {
+  // Check if Leaflet library is loaded
+  function waitForLeaflet(maxAttempts) {
+    maxAttempts = maxAttempts || 30;
+    return new Promise(function(resolve, reject) {
+      var attempts = 0;
+      var checkInterval = setInterval(function() {
+        attempts++;
+        if (window.L) {
+          clearInterval(checkInterval);
+          console.log('Leaflet library found at attempt', attempts);
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          console.error('Leaflet library not found after', maxAttempts, 'attempts');
+          reject(new Error('Leaflet library not found'));
+        }
+      }, 100);
+    });
+  }
 
-  return declare([WidgetBase, Templated, _WidgetsInTemplateMixin], {
+  console.log('MapsCanvas module: loading...');
+
+  var MapsCanvasWidget = declare([WidgetBase, Templated, _WidgetsInTemplateMixin], {
     baseClass: 'MapsCanvas',
     disabled: false,
     templateString: Template,
@@ -23,7 +43,6 @@ define([
     index: 0,
     state: null,
     map: null,
-    infoWindows: [],
     markers: [],
     prevalenceData: [],
     overlays: {},
@@ -33,11 +52,16 @@ define([
     initialZoomLevel: -1, // Default to -1 to make sure it has been set later
     defaultMarkerColor: '#FE7569',
     defaultMapOptions: {
-      backgroundColor: '#E7F1FA',
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
-      scaleControl: true
+      zoom: 4,
+      center: [39.828175, -98.5795],
+      scrollWheelZoom: true
     },
     flywayJSON: [],
+
+    postCreate: function() {
+      console.log('MapsCanvas: postCreate() called');
+      this.inherited(arguments);
+    },
 
     _setStateAttr: function (state) {
       this._set('state', state);
@@ -76,13 +100,15 @@ define([
     },
 
     resetMapToDefault: function () {
-      this.map.setCenter(this.initialCenter);
-      this.map.setZoom(this.initialZoomLevel);
-      this.map.setMapTypeId(this.defaultMapOptions.mapTypeId);
+      if (this.map && this.initialCenter && this.initialZoomLevel > 0) {
+        this.map.setView(this.initialCenter, this.initialZoomLevel);
+      }
 
-      // Close all the info  windows
-      for (let infoWindow of this.infoWindows) {
-        infoWindow.close();
+      // Close all the popups
+      for (let { marker } of this.markers) {
+        if (marker.isPopupOpen()) {
+          marker.closePopup();
+        }
       }
     },
 
@@ -328,23 +354,22 @@ define([
           return f.name === region;
         }).points;
 
-        // Convert locations into LatLng object
-        const mapPoints = points.map(p => new google.maps.LatLng(p.latitude, p.longitude));
+        // Convert locations into LatLng array for Leaflet
+        const mapPoints = points.map(p => [p.latitude, p.longitude]);
 
-        const overlay = new google.maps.Polygon({
-          paths: mapPoints,
-          strokeColor: color,
-          strokeOpacity: 0.5,
-          strokeWeight: 2,
+        const overlay = L.polygon(mapPoints, {
+          color: color,
+          opacity: 0.5,
+          weight: 2,
           fillColor: color,
           fillOpacity: 0.5
         });
 
         // Add to the map
-        overlay.setMap(parent.map);
+        overlay.addTo(parent.map);
         parent.overlays[region] = overlay;
       } else {
-        parent.overlays[region].setMap(null);
+        parent.map.removeLayer(parent.overlays[region]);
         delete parent.overlays[region];
       }
     },
@@ -357,18 +382,16 @@ define([
         // domStyle.set("fluPercents", 'display', "block");
 
         for (let { marker, prevalence } of this.markers) {
-          let icon = marker.getIcon();
           const percentage = prevalence === null ? 0 : parseFloat(prevalence);
-          icon.fillColor = percentage > 50 ? '#FF0000' :
+          const color = percentage > 50 ? '#FF0000' :
             percentage > 25 ? '#E86500' :
               percentage > 15 ? '#DC950D' :
                 percentage > 7 ? '#FFFF00' :
                   percentage > 0 ? '#869832' :
                     '#00FF00';
+          
+          const icon = this.createMarkerIcon(marker.count || 1, color);
           marker.setIcon(icon);
-          google.maps.event.addListener(marker, 'mouseout', function () {
-            marker.setIcon(icon);
-          });
         }
       } else {
         // Hide percentage/color gradient
@@ -376,12 +399,8 @@ define([
 
         // Reset marker colors back to default
         for (let { marker } of this.markers) {
-          let icon = marker.getIcon();
-          icon.fillColor = this.defaultMarkerColor;
+          const icon = this.createMarkerIcon(marker.count || 1, this.defaultMarkerColor);
           marker.setIcon(icon);
-          google.maps.event.addListener(marker, 'mouseout', function () {
-            marker.setIcon(icon);
-          });
         }
       }
     },
@@ -389,16 +408,21 @@ define([
     // Create a marker icon with a size fit to the count and selected color
     createMarkerIcon: function (count, color = this.defaultMarkerColor) {
       const scale = count < 10 ? 1 : count < 100 ? 1.5 : count < 1000 ? 2 : 2.5;
-
-      return {
-        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
-        fillColor: color,
-        fillOpacity: 1,
-        strokeColor: '#000',
-        strokeWeight: 1,
-        scale: scale,
-        labelOrigin: new google.maps.Point(0, -28)
-      };
+      const size = 30 * scale;
+      const svgIcon = `
+        <svg width="${size}" height="${size}" viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 15,0 C 7.7,0 2,5.7 2,13 C 2,22 15,40 15,40 C 15,40 28,22 28,13 C 28,5.7 22.3,0 15,0 Z" 
+                fill="${color}" stroke="#000" stroke-width="1"/>
+          <circle cx="15" cy="13" r="3" fill="#fff"/>
+        </svg>
+      `;
+      
+      return L.icon({
+        iconUrl: 'data:image/svg+xml;base64,' + btoa(svgIcon),
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size],
+        popupAnchor: [0, -size]
+      });
     },
 
     createInfoWindowContent: function (items) {
@@ -445,65 +469,88 @@ define([
     },
 
     addMarkerToMap: function (location, showCount) {
-      const latitude = location.latitude.toFixed(5);
-      const longitude = location.longitude.toFixed(5);
+      const latitude = parseFloat(location.latitude).toFixed(5);
+      const longitude = parseFloat(location.longitude).toFixed(5);
       const count = location.items.length;
 
-      const latLng = new google.maps.LatLng(latitude, longitude);
+      const latLng = [latitude, longitude];
       const icon = this.createMarkerIcon(count);
       const markerLabel = showCount ? count.toString() : '';
-      const anchorPoint = count < 10 ? -7 : count < 100 ? -3 : count < 10000 ? -6 : -7;
       const { infoContent, prevalence } = this.createInfoWindowContent(location.items);
 
-      const marker = new google.maps.Marker({
-        position: latLng,
-        labelAnchor: new google.maps.Point(anchorPoint, 33),
-        label: markerLabel,
+      const marker = L.marker(latLng, {
         icon: icon,
-        map: this.map
-      });
+        title: markerLabel
+      }).addTo(this.map);
+
+      // Store count on marker for later access
+      marker.count = count;
+
+      const popupContent = document.createElement('div');
+      popupContent.innerHTML = infoContent;
+      marker.bindPopup(popupContent);
+
       this.markers.push({ marker, prevalence });
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: infoContent
-      });
-      this.infoWindows.push(infoWindow);
-
-      marker.addListener('click', () => {
-        infoWindow.open({
-          anchor: marker,
-          map: this.map,
-          shouldFocus: false
-        });
-      });
     },
 
     startup: function () {
+      console.log('MapsCanvas: startup() called, mapData:', this.mapData);
       if (this._started) {
         return;
       }
       this.inherited(arguments);
 
+      // Wait for Leaflet then initialize map
+      waitForLeaflet().then(lang.hitch(this, function() {
+        console.log('MapsCanvas: Leaflet is ready, initializing map');
+        this._initializeMap();
+      })).catch(lang.hitch(this, function(err) {
+        console.error('Failed to initialize map:', err);
+      }));
+    },
+
+    _initializeMap: function () {
+      console.log('MapsCanvas: _initializeMap() called');
+      console.log('Leaflet available:', typeof window.L !== 'undefined');
+      
       const mapData = this.mapData;
 
       if (mapData && mapData.locations) {
-        let minLatLong = new google.maps.LatLng(mapData.minimumLatitude, mapData.minimumLongitude);
-        let maxLatLong = new google.maps.LatLng(mapData.maximumLatitude, mapData.maximumLongitude);
+        console.log('MapsCanvas: Map data locations found:', mapData.locations.length);
+        // Calculate bounds from locations
+        let minLat = mapData.minimumLatitude;
+        let minLng = mapData.minimumLongitude;
+        let maxLat = mapData.maximumLatitude;
+        let maxLng = mapData.maximumLongitude;
 
-        const bounds = new google.maps.LatLngBounds(minLatLong, maxLatLong);
+        const southWest = L.latLng(minLat, minLng);
+        const northEast = L.latLng(maxLat, maxLng);
+        const bounds = L.latLngBounds(southWest, northEast);
         this.initialCenter = bounds.getCenter();
 
-        let options = this.defaultMapOptions;
-        options.center = this.initialCenter;
+        console.log('MapsCanvas: Creating map at', this.canvasId);
+        // Create map with Leaflet
+        this.map = L.map(this.canvasId, this.defaultMapOptions);
+        console.log('MapsCanvas: Map created:', this.map);
 
-        this.map = new google.maps.Map(document.getElementById(this.canvasId), options);
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(this.map);
+        console.log('MapsCanvas: Tile layer added');
+
+        // Fit map to bounds
         this.map.fitBounds(bounds);
+        console.log('MapsCanvas: Map fitted to bounds');
 
-        google.maps.event.addListenerOnce(this.map, 'bounds_changed', lang.hitch(this, function () {
-          const initialZoomLevel = this.map.getZoom();
-          this.initialZoomLevel = initialZoomLevel;
-          this.map.setZoom(initialZoomLevel);
-        }));
+        // Store initial zoom level after fitBounds
+        const self = this;
+        this.map.on('zoomend', function() {
+          if (self.initialZoomLevel < 0) {
+            self.initialZoomLevel = self.map.getZoom();
+          }
+        });
 
         this.flywayJSON = JSON.parse(flyawaysData);
         const palettes = ['white', 'lime', 'green', 'blue', 'silver', 'yellow', 'fuchsia', 'navy', 'gray', 'red', 'purple', 'black'];
@@ -571,10 +618,17 @@ define([
         }
 
         // Add marker and info windows for each location
+        console.log('MapsCanvas: Adding markers for', mapData.locations.length, 'locations');
         for (let location of mapData.locations) {
           this.addMarkerToMap(location, mapData.showCount);
         }
+        console.log('MapsCanvas: _initializeMap() complete');
+      } else {
+        console.log('MapsCanvas: No map data or locations available');
       }
     }
   });
+
+  console.log('MapsCanvas module: returning MapsCanvasWidget');
+  return MapsCanvasWidget;
 });

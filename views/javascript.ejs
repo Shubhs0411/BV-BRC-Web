@@ -19,6 +19,9 @@ const load_scripts = [
 ]
 %>
 
+<!-- Leaflet JS for mapping -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <% if (request && request.production){ %>
   <% load_scripts.forEach(function(url){ %>
     <script type="text/javascript" src="/js/<%- request.package.version %>/<%- url %>"></script>
