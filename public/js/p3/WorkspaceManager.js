@@ -21,7 +21,7 @@ define([
     viewableTypes: ['txt', 'html', 'json', 'csv', 'tsv', 'diffexp_experiment',
       'diffexp_expression', 'diffexp_mapping', 'diffexp_sample', 'pdf',
       'diffexp_input_data', 'diffexp_input_metadata', 'svg', 'gif', 'png', 'jpg',
-      'aligned_dna_fasta', 'aligned_protein_fasta', 'feature_dna_fasta', 'feature_protein_fasta', 'pdb','gexf'],
+      'aligned_dna_fasta', 'aligned_protein_fasta', 'feature_dna_fasta', 'feature_protein_fasta', 'pdb', 'gexf'],
 
     knownUploadTypes: {
       unspecified: {
@@ -47,9 +47,9 @@ define([
         formats: ['.bam']
       },
       bigwig: {
-         label: 'BigWig',
-         formats: ['.bigwig', '.bw'],
-         description: 'A binary, compressed, and indexed format for continuous genomic data (e.g. coverage tracks).'
+        label: 'BigWig',
+        formats: ['.bigwig', '.bw'],
+        description: 'A binary, compressed, and indexed format for continuous genomic data (e.g. coverage tracks).'
       },
       contigs: {
         label: 'Contigs',
@@ -266,30 +266,30 @@ define([
 
       // Add type to the query if a specific type is selected
       if (searchType && searchType !== 'all') {
-         // queryParams.query = { type: [searchType] }; // This was for backend query
+        // queryParams.query = { type: [searchType] }; // This was for backend query
       }
 
       return Deferred.when(this.api('Workspace.ls', [queryParams]), function (results) {
         var foundItems = [];
         if (results[0]) {
-            // Workspace.ls can return results for multiple paths if multiple were queried.
-            // Here, we are querying only one basePath.
-            var itemsInPath = results[0][basePath];
-            if (itemsInPath) {
-                foundItems = itemsInPath.map(function (r) {
-                    return _self.metaListToObj(r);
-                }).filter(function (obj) {
-                    // Client-side filtering for name
-                    var nameMatch = obj.name.toLowerCase().includes(searchTerm.toLowerCase());
-                    // Client-side filtering for type (if searchType is specified and not 'all')
-                    var typeMatch = (!searchType || searchType === 'all') ? true : (obj.type === searchType);
-                    
-                    // Do not include parent folder indicators in search results
-                    if (obj.name === "Parent folder" || obj.name === "Back to my workspaces") return false;
+          // Workspace.ls can return results for multiple paths if multiple were queried.
+          // Here, we are querying only one basePath.
+          var itemsInPath = results[0][basePath];
+          if (itemsInPath) {
+            foundItems = itemsInPath.map(function (r) {
+              return _self.metaListToObj(r);
+            }).filter(function (obj) {
+              // Client-side filtering for name
+              var nameMatch = obj.name.toLowerCase().includes(searchTerm.toLowerCase());
+              // Client-side filtering for type (if searchType is specified and not 'all')
+              var typeMatch = (!searchType || searchType === 'all') ? true : (obj.type === searchType);
 
-                    return nameMatch && typeMatch;
-                });
-            }
+              // Do not include parent folder indicators in search results
+              if (obj.name === 'Parent folder' || obj.name === 'Back to my workspaces') return false;
+
+              return nameMatch && typeMatch;
+            });
+          }
         }
         return foundItems;
       });
@@ -300,7 +300,7 @@ define([
       if (basePath.charAt(basePath.length - 1) !== '/') {
         basePath += '/';
       }
-    
+
       var lsParams = { // This is the 'input' for Workspace.ls
         paths: [basePath],
         recursive: !!recursive,
@@ -308,7 +308,7 @@ define([
         excludeObjects: false,
         query: {} // This is where we'll put our search criteria
       };
-    
+
       // Add search term for name filtering
       //if (searchTerm && searchTerm.length > 0) { // searchTerm.length >= 3 is handled by UI
       //  lsParams.query.name_search = searchTerm; // Backend will interpret this
@@ -316,17 +316,17 @@ define([
       // This should really be done API side, but changes are hard to deploy and test. client is now tightly coupled to the backend's database technology...
       if (searchTerm && searchTerm.length > 0) { // searchTerm.length >= 3 is handled by UI
         lsParams.query.name = {
-            '$regex': searchTerm,
-              '$options': 'i' 
-            };
+          '$regex': searchTerm,
+          '$options': 'i'
+        };
       }
-    
+
       // Add type for type filtering
       if (searchType && searchType !== 'all') {
         lsParams.query.type = searchType; // Backend will interpret this (can be single string or array)
-                                          // If your backend expects an array: lsParams.query.type = [searchType];
+        // If your backend expects an array: lsParams.query.type = [searchType];
       }
-    
+
       // The 'Workspace.ls' method is called by this.api() which is RPC(apiUrl, token)
       // The this.api('Workspace.ls', [queryParams]) maps to the perl sub ls { my ($self, $input) = @_; }
       // So, the [queryParams] in JS becomes the $input hash in Perl.
@@ -335,11 +335,11 @@ define([
         // The client-side filtering previously done here can be removed or simplified.
         var foundItems = [];
         if (results && results[0][basePath]) { // results is a hash keyed by path
-            foundItems = results[0][basePath].map(function (r) {
-                return _self.metaListToObj(r);
-            });
-            // Optional: If backend doesn't perfectly match client-side `includes` for name,
-            // you *could* do a secondary client-side refinement, but ideally backend does it all.
+          foundItems = results[0][basePath].map(function (r) {
+            return _self.metaListToObj(r);
+          });
+          // Optional: If backend doesn't perfectly match client-side `includes` for name,
+          // you *could* do a secondary client-side refinement, but ideally backend does it all.
         }
         return foundItems;
       });
@@ -1263,7 +1263,7 @@ define([
           });
 
 
-          return sharedWithUser || []; // Ensure an array is always returned        
+          return sharedWithUser || []; // Ensure an array is always returned
         },
 
         function (err) {

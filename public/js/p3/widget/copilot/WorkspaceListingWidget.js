@@ -2,7 +2,7 @@ define([
   'dojo/_base/declare',
   'dojo/dom-construct',
   'dojo/_base/lang'
-], function(
+], function (
   declare, domConstruct, lang
 ) {
   /**
@@ -21,7 +21,7 @@ define([
      * @param {Object} args - Constructor arguments
      * @param {Object} args.workspaceData - Workspace listing data to display
      */
-    constructor: function(args) {
+    constructor: function (args) {
       this.workspaceData = args.workspaceData || null;
       this.domNode = domConstruct.create('div', {
         class: 'workspace-listing-container'
@@ -32,7 +32,7 @@ define([
     /**
      * Renders the workspace listing
      */
-    render: function() {
+    render: function () {
       if (!this.workspaceData) {
         this.renderEmpty();
         return;
@@ -73,7 +73,7 @@ define([
      * @param {string} path - The workspace path
      * @param {Array} items - Array of items in the path
      */
-    renderPath: function(path, items) {
+    renderPath: function (path, items) {
       // Create header for the path
       var header = domConstruct.create('div', {
         class: 'workspace-path-header',
@@ -124,7 +124,7 @@ define([
      * @param {Array} items - Items to render
      * @param {string} type - Type of items ('folder' or 'file')
      */
-    renderItemsGroup: function(container, title, items, type) {
+    renderItemsGroup: function (container, title, items, type) {
       var groupContainer = domConstruct.create('div', {
         class: 'workspace-items-group'
       }, container);
@@ -149,7 +149,7 @@ define([
      * @param {Array} item - Item data array
      * @param {string} type - Type of item ('folder' or 'file')
      */
-    renderItem: function(container, item, type) {
+    renderItem: function (container, item, type) {
       var name = item[0] || 'Unnamed';
       var itemType = item[1] || 'unknown';
       var path = item[2] || '';
@@ -209,7 +209,7 @@ define([
      * @param {string} dateStr - ISO date string
      * @returns {string} Formatted date
      */
-    formatDate: function(dateStr) {
+    formatDate: function (dateStr) {
       try {
         var date = new Date(dateStr);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -223,12 +223,12 @@ define([
      * @param {number} bytes - Size in bytes
      * @returns {string} Formatted size
      */
-    formatSize: function(bytes) {
+    formatSize: function (bytes) {
       if (bytes === 0) return '0 B';
       var k = 1024;
       var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
       var i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+      return Math.round(bytes / k ** i * 100) / 100 + ' ' + sizes[i];
     },
 
     /**
@@ -236,7 +236,7 @@ define([
      * @param {string} text - Text to escape
      * @returns {string} Escaped text
      */
-    escapeHtml: function(text) {
+    escapeHtml: function (text) {
       var div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
@@ -245,7 +245,7 @@ define([
     /**
      * Renders an empty state
      */
-    renderEmpty: function() {
+    renderEmpty: function () {
       domConstruct.create('div', {
         class: 'workspace-empty',
         innerHTML: 'No workspace data available'
@@ -256,7 +256,7 @@ define([
      * Renders an error state
      * @param {string} message - Error message
      */
-    renderError: function(message) {
+    renderError: function (message) {
       domConstruct.create('div', {
         class: 'workspace-error',
         innerHTML: 'Error displaying workspace data: ' + this.escapeHtml(message)
@@ -266,7 +266,7 @@ define([
     /**
      * Destroys the widget and cleans up resources
      */
-    destroy: function() {
+    destroy: function () {
       if (this.domNode) {
         domConstruct.destroy(this.domNode);
         this.domNode = null;

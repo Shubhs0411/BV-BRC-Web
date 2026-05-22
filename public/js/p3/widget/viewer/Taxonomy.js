@@ -526,7 +526,7 @@ define([
 
       if (shouldShow) {
         if (!isShown) {
-          if (typeof position === "number") {
+          if (typeof position === 'number') {
             this.viewer.addChild(widget, position);
           } else {
             this.viewer.addChild(widget);

@@ -2,7 +2,7 @@ define([
   'dojo/_base/declare', 'dojo/on', 'dojo/_base/Deferred', 'dijit/_Templated',
   'dojo/dom-class', 'dojo/dom-construct', 'dijit/_WidgetBase', 'dijit/form/TextBox',
   'dojo/_base/xhr', 'dojo/_base/lang', 'dojo/dom-attr', 'dojo/query',
-  'dojo/dom-geometry', 'dojo/dom-style', 'dojo/when', 
+  'dojo/dom-geometry', 'dojo/dom-style', 'dojo/when',
   '../util/constructMetadataName',
 ], function (
   declare, on, Deferred, Templated,

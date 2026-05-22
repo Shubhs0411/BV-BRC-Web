@@ -109,8 +109,8 @@ define([
         dom.place(
           '<h5 class="DataItemSectionHead" style="margin: 10px 0 0 0;">'
             + tableName +
-          '</h5>'
-          , form.domNode
+          '</h5>',
+          form.domNode
         );
 
         var table = dom.toDom('<table>'),

@@ -138,7 +138,7 @@ define([
       // Set initial required state and constraints (contigs mode by default)
       this.input_file.set('required', true);
       this.numlibs.set('required', false);
-      this.numlibs.set('constraints', {min:0,max:1000});
+      this.numlibs.set('constraints', {min: 0, max: 1000});
 
       this._started = true;
       this.form_flag = false;
@@ -153,10 +153,10 @@ define([
 
       // Add click handler to submit button for debugging
       if (this.submitButton) {
-        on(this.submitButton, 'click', lang.hitch(this, function() {
+        on(this.submitButton, 'click', lang.hitch(this, function () {
           // Check each form field for validation errors
           var formFields = this.getChildren();
-          formFields.forEach(function(field) {
+          formFields.forEach(function (field) {
             if (field.validate && typeof field.validate === 'function') {
               var isValid = field.validate();
               if (!isValid) {
@@ -184,7 +184,7 @@ define([
         // In contigs mode: input_file required, numlibs not required
         this.input_file.set('required', true);
         this.numlibs.set('required', false);
-        this.numlibs.set('constraints', {min:0,max:1000});
+        this.numlibs.set('constraints', {min: 0, max: 1000});
 
         // Force validation of input_file field when switching to contigs mode
         if (this.input_file && this.input_file.validate) {
@@ -198,12 +198,12 @@ define([
         // In reads mode: input_file not required, numlibs required
         this.input_file.set('required', false);
         this.numlibs.set('required', true);
-        this.numlibs.set('constraints', {min:1,max:1000});
+        this.numlibs.set('constraints', {min: 1, max: 1000});
       }
 
       // Use setTimeout to ensure validation completes before checking parameters
       var _self = this;
-      setTimeout(function() {
+      setTimeout(function () {
         // Force validation of output fields as well
         if (_self.output_file && _self.output_file.validate) {
           _self.output_file.validate();
@@ -286,7 +286,7 @@ define([
       var assembly_params = ['racon_iter', 'pilon_iter', 'target_depth', 'min_contig_len', 'min_contig_cov', 'max_bases', 'filtering-preset', 'composition', 'debug'];
 
       // Process simple parameter mappings
-      assembly_params.forEach(function(param) {
+      assembly_params.forEach(function (param) {
         if (Object.prototype.hasOwnProperty.call(values, param) && values[param]) {
           mobile_element_values[param] = values[param];
         }
@@ -294,7 +294,7 @@ define([
 
       // Process checkbox parameters (convert to boolean)
       var checkboxParams = ['trim', 'normalize', 'filtlong', 'cleanup', 'restart', 'verbose', 'lenient-taxonomy', 'full-ictv-lineage', 'force-auto'];
-      checkboxParams.forEach(function(param) {
+      checkboxParams.forEach(function (param) {
         if (Object.prototype.hasOwnProperty.call(values, param) && values[param]) {
           var targetKey = param;
           mobile_element_values[targetKey] = (values[param][0] === 'on');
@@ -649,7 +649,9 @@ define([
 
     onGenomeSizeUnitsChange: function () {
       if (this.genome_size_units.value == 'M') {
-        this.genome_size.set('constraints', { min: 1, max: 10, places: 0, smallDelta: 1 });
+        this.genome_size.set('constraints', {
+          min: 1, max: 10, places: 0, smallDelta: 1
+        });
         this.genome_size.set('value', 5);
         this.genome_size.set('smallDelta', 1);
       }
@@ -741,12 +743,22 @@ define([
             var widget_map = { 'single_end_libs': 'single_end_libsWidget' };
             param_dict['widget_map'] = widget_map;
             var service_spec = {
-              'trim': 'trim', 'min_contig_len': 'min_contig_len', 'racon_iter': 'racon_iter',
-              'pilon_iter': 'pilon_iter', 'min_contig_cov': 'min_contig_cov', 'target_depth': 'target_depth',
-              'max_bases': 'max_bases', 'filtering_preset': 'filtering_preset', 'cleanup': 'cleanup',
-              'restart': 'restart', 'verbose': 'verbose', 'lenient-taxonomy': 'lenient-taxonomy',
-              'full-ictv-lineage': 'full-ictv-lineage', 'composition': 'composition',
-              'force-auto': 'force-auto', 'debug': 'debug'
+              'trim': 'trim',
+              'min_contig_len': 'min_contig_len',
+              'racon_iter': 'racon_iter',
+              'pilon_iter': 'pilon_iter',
+              'min_contig_cov': 'min_contig_cov',
+              'target_depth': 'target_depth',
+              'max_bases': 'max_bases',
+              'filtering_preset': 'filtering_preset',
+              'cleanup': 'cleanup',
+              'restart': 'restart',
+              'verbose': 'verbose',
+              'lenient-taxonomy': 'lenient-taxonomy',
+              'full-ictv-lineage': 'full-ictv-lineage',
+              'composition': 'composition',
+              'force-auto': 'force-auto',
+              'debug': 'debug'
             };
             param_dict['service_specific'] = service_spec;
             AppBase.prototype.intakeRerunFormBase.call(this, param_dict);

@@ -98,7 +98,7 @@ define([
 
       // Intercept any future value sets on the searchBox to prevent invalid values
       var originalSet = this.searchBox.set;
-      this.searchBox.set = function(name, value) {
+      this.searchBox.set = function (name, value) {
         if (name === 'value' || name === 'displayedValue') {
           if (value && value.indexOf && value.indexOf('undefined') !== -1) {
             // Block invalid values
@@ -268,7 +268,7 @@ define([
 
       // Skip if type hasn't changed
       if (this.type && this.type.length === newType.length &&
-          this.type.every(function(t, i) { return t === newType[i]; })) {
+          this.type.every(function (t, i) { return t === newType[i]; })) {
         return;
       }
 
@@ -622,11 +622,11 @@ define([
         this.dialog.backpaneTitleBar.style.display = 'none';
 
         // Use requestAnimationFrame to ensure flip completes before showing dialog
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
             _self.dialog.show();
             // Re-enable back pane after dialog is visible (for flip animation to work)
-            setTimeout(function() {
+            setTimeout(function () {
               _self.dialog.backPane.style.display = '';
               _self.dialog.backpaneTitleBar.style.display = '';
             }, 50);
@@ -639,10 +639,10 @@ define([
         title: this.title,
         draggable: true,
         style: 'visibility: hidden;', // Hide initially to prevent flash of wrong state
-        onHide: lang.hitch(this, function() {
+        onHide: lang.hitch(this, function () {
           // Re-validate after dialog closes to restore error state if still invalid
           var self = this;
-          setTimeout(function() {
+          setTimeout(function () {
             self.validate();
           }, 100);
         })
@@ -807,7 +807,7 @@ define([
       cancelButton.on('click', function () {
         _self.dialog.hide();
         // Re-validate after closing to restore error state if still invalid
-        setTimeout(function() {
+        setTimeout(function () {
           _self.validate();
         }, 0);
       });
@@ -929,12 +929,12 @@ define([
       _self.dialog.backpaneTitleBar.style.display = 'none';
 
       // Use requestAnimationFrame to ensure flip completes before showing dialog
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
           _self.dialog.domNode.style.visibility = 'visible';
           _self.dialog.show();
           // Re-enable back pane after dialog is visible (for flip animation to work)
-          setTimeout(function() {
+          setTimeout(function () {
             _self.dialog.backPane.style.display = '';
             _self.dialog.backpaneTitleBar.style.display = '';
           }, 50);
@@ -1175,7 +1175,7 @@ define([
                   // Fallback: close and reopen
                   this.searchBox.closeDropDown();
                   var _searchBox = this.searchBox;
-                  setTimeout(function() {
+                  setTimeout(function () {
                     _searchBox.openDropDown();
                   }, 50);
                 }
@@ -1282,16 +1282,16 @@ define([
       // This ensures error state is restored after user interaction with the dropdown
       var self = this;
       if (this.searchBox.dropDown) {
-        on(this.searchBox.dropDown, 'hide', function() {
-          setTimeout(function() { self.validate(); }, 0);
+        on(this.searchBox.dropDown, 'hide', function () {
+          setTimeout(function () { self.validate(); }, 0);
         });
       }
       // Handle when dropdown closes (closeDropDown is called)
       var originalCloseDropDown = this.searchBox.closeDropDown;
       if (originalCloseDropDown) {
-        this.searchBox.closeDropDown = function() {
+        this.searchBox.closeDropDown = function () {
           var result = originalCloseDropDown.apply(this, arguments);
-          setTimeout(function() { self.validate(); }, 0);
+          setTimeout(function () { self.validate(); }, 0);
           return result;
         };
       }

@@ -61,7 +61,7 @@ define([
      * @param {Object} message - Message object containing content, role and message_id
      * @param {HTMLElement} container - DOM element to render the message into
      */
-    constructor: function(message, container) {
+    constructor: function (message, container) {
       this.message = message;
       this.container = container;
       this.fontSize = message.fontSize || 14; // Get fontSize from message or use default
@@ -77,7 +77,7 @@ define([
      * @param {string} text - Text to escape
      * @returns {string} Escaped text safe for innerHTML
      */
-    escapeHtml: function(text) {
+    escapeHtml: function (text) {
       if (typeof text !== 'string') {
         return text;
       }
@@ -86,7 +86,7 @@ define([
       return div.innerHTML;
     },
 
-    _flattenWorkspaceBrowseItems: function(items) {
+    _flattenWorkspaceBrowseItems: function (items) {
       if (!Array.isArray(items)) {
         return [];
       }
@@ -111,7 +111,7 @@ define([
       return flattened;
     },
 
-    _getWorkspaceBrowseCount: function(payload) {
+    _getWorkspaceBrowseCount: function (payload) {
       if (!payload) {
         return 0;
       }
@@ -127,7 +127,7 @@ define([
       return this._flattenWorkspaceBrowseItems(payload.items).length;
     },
 
-    _buildWorkspaceBrowserUrl: function(path) {
+    _buildWorkspaceBrowserUrl: function (path) {
       if (!path || typeof path !== 'string') {
         return null;
       }
@@ -135,7 +135,7 @@ define([
       return '/workspace' + normalizedPath;
     },
 
-    _extractRagSummaryText: function() {
+    _extractRagSummaryText: function () {
       if (typeof this.message.content === 'object' && this.message.content && this.message.content.type === 'rag_result') {
         return this.message.content.summary || '';
       }
@@ -145,7 +145,7 @@ define([
       return '';
     },
 
-    _buildRagChunkSearchFilters: function() {
+    _buildRagChunkSearchFilters: function () {
       var seededFilters = this.message && this.message.ragChunkSearchFilters && typeof this.message.ragChunkSearchFilters === 'object'
         ? this.message.ragChunkSearchFilters
         : {};
@@ -170,7 +170,7 @@ define([
       };
     },
 
-    _resolveMessageToolCall: function() {
+    _resolveMessageToolCall: function () {
       if (!this.message || typeof this.message !== 'object') {
         return null;
       }
@@ -220,7 +220,7 @@ define([
      *   toolCallId: unique identifier for this tool call (for scoping)
      *   getSelectedItems: function returning array of {label, id} for current selections
      */
-    _renderSelectionIndicator: function(containerNode, opts) {
+    _renderSelectionIndicator: function (containerNode, opts) {
       if (!containerNode || !opts) return;
       var category = opts.category || '';
       var getSelectedItems = opts.getSelectedItems;
@@ -253,7 +253,7 @@ define([
       var hideTimer = null;
       var maxDisplay = 20;
 
-      var positionPopover = function() {
+      var positionPopover = function () {
         var rect = indicatorRow.getBoundingClientRect();
         hoverPopover.style.left = rect.left + 'px';
         // Position above the indicator row with a 6px gap
@@ -261,15 +261,15 @@ define([
         hoverPopover.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
       };
 
-      var hidePopover = function() {
+      var hidePopover = function () {
         if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
         hoverPopover.style.display = 'none';
       };
-      var scheduleHide = function() {
+      var scheduleHide = function () {
         if (hideTimer) { clearTimeout(hideTimer); }
         hideTimer = setTimeout(hidePopover, 160);
       };
-      var showPopover = function() {
+      var showPopover = function () {
         if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
         positionPopover();
         hoverPopover.style.display = 'block';
@@ -277,12 +277,12 @@ define([
 
       on(indicatorRow, 'mouseenter', showPopover);
       on(indicatorRow, 'mouseleave', scheduleHide);
-      on(hoverPopover, 'mouseenter', function() {
+      on(hoverPopover, 'mouseenter', function () {
         if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
       });
       on(hoverPopover, 'mouseleave', scheduleHide);
 
-      var updateIndicator = function() {
+      var updateIndicator = function () {
         var items = getSelectedItems();
         var count = Array.isArray(items) ? items.length : 0;
         if (count === 0) {
@@ -294,7 +294,7 @@ define([
 
         // Rebuild popover content
         hoverPopover.innerHTML = '';
-        items.slice(0, maxDisplay).forEach(function(item) {
+        items.slice(0, maxDisplay).forEach(function (item) {
           var itemNode = document.createElement('div');
           itemNode.className = 'tool-card-selection-hover-item';
           itemNode.textContent = (item && item.label) ? item.label : String(item);
@@ -328,20 +328,20 @@ define([
      * Subscribes to CopilotSelectionChanged topic for reactive tool card updates.
      * Only subscribes once per ChatMessage instance.
      */
-    _ensureSelectionSubscription: function() {
+    _ensureSelectionSubscription: function () {
       if (this._selectionSubscriptions) return;
       this._selectionSubscriptions = [];
       if (!this._selectionDataByCategory) {
         this._selectionDataByCategory = {};
       }
       this._selectionSubscriptions.push(
-        topic.subscribe('CopilotSelectionChanged', lang.hitch(this, function(payload) {
+        topic.subscribe('CopilotSelectionChanged', lang.hitch(this, function (payload) {
           if (!payload || !payload.category) return;
           // Cache the latest selection data per category
           this._selectionDataByCategory[payload.category] = Array.isArray(payload.items) ? payload.items : [];
           if (!this._selectionIndicators) return;
           var changedCategory = payload.category;
-          this._selectionIndicators.forEach(function(indicator) {
+          this._selectionIndicators.forEach(function (indicator) {
             if (!changedCategory || indicator.category === changedCategory) {
               indicator.update();
             }
@@ -355,7 +355,7 @@ define([
      * @param {string} category - The selection category
      * @returns {Array} Current selected items
      */
-    _getSelectionItemsForCategory: function(category) {
+    _getSelectionItemsForCategory: function (category) {
       if (!this._selectionDataByCategory) {
         this._selectionDataByCategory = {};
       }
@@ -371,7 +371,7 @@ define([
      *   2. System messages (collapsible)
      *   3. User/Assistant messages (standard display)
      */
-    renderMessage: function() {
+    renderMessage: function () {
       // Check if content is a JSON string containing source_tool (for real-time results)
       var sourceTool = this.message.ui_source_tool || this.message.source_tool;
       var contentToProcess = this.message.content;
@@ -489,7 +489,7 @@ define([
           this.message.queryCollectionData = {
             queryParameters: toolCallArgs,
             collection: toolCallArgs.collection || null,
-            rqlQueryUrl: toolCallArgs.data_api_base_url ? toolCallArgs.data_api_base_url : "https://www.bv-brc.org/api-bulk",
+            rqlQueryUrl: toolCallArgs.data_api_base_url ? toolCallArgs.data_api_base_url : 'https://www.bv-brc.org/api-bulk',
             resultRows: [],
             // Snapshot metadata restored from tool_call.replay
             download_url: restoredDownloadUrl,
@@ -640,7 +640,7 @@ define([
      * - Animates height transition
      * @param {HTMLElement} messageDiv - Container to render system message into
      */
-    renderSystemMessage: function(messageDiv) {
+    renderSystemMessage: function (messageDiv) {
       // Create a simple button
       var showDocsButton = domConstruct.create('button', {
         innerHTML: 'Show Prompt Details',
@@ -648,14 +648,14 @@ define([
       }, messageDiv);
 
       // Handle button click
-      on(showDocsButton, 'click', function() {
+      on(showDocsButton, 'click', function () {
         // Create dialog to show markdown content
         var dialogContent = this.createSystemDialogContent(this.message);
         dialogContent.className = 'systemDialogContent';
 
         var docsDialog = new Dialog({
-          title: "Retrieved Documents",
-          style: "width: 600px; max-height: 80vh;",
+          title: 'Retrieved Documents',
+          style: 'width: 600px; max-height: 80vh;',
           content: dialogContent
         });
 
@@ -664,10 +664,10 @@ define([
         buttonContainer.className = 'systemDialogButtonContainer';
 
         var closeButton = document.createElement('button');
-        closeButton.innerHTML = "Close";
+        closeButton.innerHTML = 'Close';
         closeButton.className = 'systemDialogCloseButton';
 
-        closeButton.onclick = function() {
+        closeButton.onclick = function () {
           docsDialog.hide();
           docsDialog.destroy();
         };
@@ -688,7 +688,7 @@ define([
      * - No action buttons
      * @param {HTMLElement} messageDiv - Container to render status message into
      */
-    renderStatusMessage: function(messageDiv) {
+    renderStatusMessage: function (messageDiv) {
       domConstruct.create('div', {
         innerHTML: this.message.content ? this.md.render(this.message.content) : '',
         class: 'markdown-content status-content'
@@ -702,7 +702,7 @@ define([
      * - For workflow messages, shows a "Review Workflow" button instead
      * @param {HTMLElement} messageDiv - Container to render message into
      */
-    renderUserOrAssistantMessage: function(messageDiv) {
+    renderUserOrAssistantMessage: function (messageDiv) {
       // Always render assistant/user text first, then append any tool UI widgets below.
       var contentToRender = '';
       if (this.message.content) {
@@ -803,7 +803,7 @@ define([
       this.renderAttachments(messageDiv);
     },
 
-    renderAttachments: function(messageDiv) {
+    renderAttachments: function (messageDiv) {
       if (!Array.isArray(this.message.attachments) || this.message.attachments.length === 0) {
         return;
       }
@@ -812,7 +812,7 @@ define([
         class: 'message-attachments'
       }, messageDiv);
 
-      this.message.attachments.forEach(lang.hitch(this, function(attachment) {
+      this.message.attachments.forEach(lang.hitch(this, function (attachment) {
         if (!attachment || attachment.type !== 'image') {
           return;
         }
@@ -828,11 +828,11 @@ define([
      * Makes large code blocks collapsible, showing only the first 8 lines by default
      * @param {HTMLElement} markdownContainer - Container with rendered markdown content
      */
-    makeLargeCodeBlocksCollapsible: function(markdownContainer) {
+    makeLargeCodeBlocksCollapsible: function (markdownContainer) {
       var preElements = markdownContainer.querySelectorAll('pre');
       var self = this;
 
-      preElements.forEach(function(preElement) {
+      preElements.forEach(function (preElement) {
         var codeElement = preElement.querySelector('code');
         if (!codeElement) {
           return;
@@ -890,7 +890,7 @@ define([
         var isExpanded = false;
 
         // Toggle functionality
-        on(toggleButton, 'click', function() {
+        on(toggleButton, 'click', function () {
           isExpanded = !isExpanded;
           if (isExpanded) {
             collapsedPre.style.display = 'none';
@@ -914,7 +914,7 @@ define([
      * Renders a compact workspace browse summary with an action button.
      * @param {HTMLElement} messageDiv - Container to render widget into
      */
-    renderWorkspaceBrowseSummaryWidget: function(messageDiv) {
+    renderWorkspaceBrowseSummaryWidget: function (messageDiv) {
       if (!this.message.tool_call || !this.message.tool_call.replay) {
         return;
       }
@@ -922,14 +922,14 @@ define([
       var toolArgs = toolCall.replay ? toolCall.replay : null;
 
       var payload = {
-        arguments_executed: toolArgs ? toolArgs : null,
+        arguments_executed: toolArgs || null,
         tool: toolCall.tool || null
       };
 
       var toolName = toolCall.tool || '';
       var isGroupListTool = toolName.indexOf('list_genome_groups') !== -1 ||
         toolName.indexOf('list_feature_groups') !== -1;
-      var isSearch = toolArgs && toolArgs.name_contains && toolArgs.name_contains.length > 0 ? true : false;
+      var isSearch = !!(toolArgs && toolArgs.name_contains && toolArgs.name_contains.length > 0);
       var isSearchResult = isGroupListTool ||
         (this.message.uiPayload && this.message.uiPayload.result_type === 'search_result') ||
         (toolArgs && toolArgs.result_type === 'search_result');
@@ -969,7 +969,7 @@ define([
         class: 'workspace-summary-open-button',
         innerHTML: 'Open Workspace Tab'
       }, container);
-      on(openButton, 'click', lang.hitch(this, function() {
+      on(openButton, 'click', lang.hitch(this, function () {
         topic.publish('CopilotWorkspaceBrowseOpen', {
           uiPayload: payload,
           tool_call: this.message.tool_call || payload.call || null,
@@ -991,16 +991,16 @@ define([
       // Selection indicator for workspace items
       this._renderSelectionIndicator(container, {
         category: 'workspace',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('workspace');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.path || item.name || item.id || 'Workspace item', id: item.id || item.path };
           });
         })
       });
     },
 
-    renderJobsBrowseSummaryWidget: function(messageDiv) {
+    renderJobsBrowseSummaryWidget: function (messageDiv) {
       var payload = this.message.uiPayload || {};
       var jobs = Array.isArray(payload.jobs) ? payload.jobs : [];
       var countValue = jobs.length;
@@ -1039,7 +1039,7 @@ define([
         class: 'workspace-summary-open-button',
         innerHTML: 'Open Jobs Tab'
       }, container);
-      on(openButton, 'click', lang.hitch(this, function() {
+      on(openButton, 'click', lang.hitch(this, function () {
         topic.publish('CopilotJobsBrowseOpen', {
           uiPayload: payload,
           tool_call: this.message.tool_call || payload.call || null,
@@ -1051,16 +1051,16 @@ define([
       // Selection indicator for jobs
       this._renderSelectionIndicator(container, {
         category: 'jobs',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('jobs');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.id || item.application_name || 'Job', id: item.id || item.job_id };
           });
         })
       });
     },
 
-    renderRagResultWidget: function(messageDiv) {
+    renderRagResultWidget: function (messageDiv) {
       var summaryText = this._extractRagSummaryText();
       var cardText = summaryText || 'RAG results are available.';
       var container = domConstruct.create('div', {
@@ -1082,23 +1082,23 @@ define([
         class: 'workspace-summary-open-button',
         innerHTML: 'View Retrieved Chunks'
       }, container);
-      on(openButton, 'click', lang.hitch(this, function() {
+      on(openButton, 'click', lang.hitch(this, function () {
         this.showRagChunksDialog(openButton);
       }));
 
       // Selection indicator for files (RAG results may create files)
       this._renderSelectionIndicator(container, {
         category: 'files',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('files');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.file_name || item.id || 'File', id: item.id || item.file_id };
           });
         })
       });
     },
 
-    showRagChunksDialog: function(triggerButton) {
+    showRagChunksDialog: function (triggerButton) {
       if (!this.copilotApi || typeof this.copilotApi.searchRagChunkReferences !== 'function') {
         console.warn('[ChatMessage] Copilot API does not support rag chunk search');
         return;
@@ -1130,7 +1130,7 @@ define([
         triggerButton.innerHTML = 'Loading...';
       }
 
-      this.copilotApi.searchRagChunkReferences(filters).then(lang.hitch(this, function(response) {
+      this.copilotApi.searchRagChunkReferences(filters).then(lang.hitch(this, function (response) {
         domConstruct.empty(chunksContainer);
         var items = response && Array.isArray(response.items) ? response.items : [];
         var total = response && typeof response.total === 'number' ? response.total : items.length;
@@ -1144,7 +1144,7 @@ define([
           return;
         }
 
-        items.forEach(lang.hitch(this, function(item, index) {
+        items.forEach(lang.hitch(this, function (item, index) {
           var chunkCard = domConstruct.create('div', {
             style: 'border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 10px; background: #f9fafb;'
           }, chunksContainer);
@@ -1179,9 +1179,9 @@ define([
             }, chunkCard);
           }
         }));
-      })).catch(lang.hitch(this, function(error) {
+      })).catch(lang.hitch(this, function (error) {
         statusNode.innerHTML = 'Failed to load chunks: ' + this.escapeHtml(error && error.message ? error.message : String(error));
-      })).then(function() {
+      })).then(function () {
         if (triggerButton) {
           triggerButton.disabled = false;
           triggerButton.innerHTML = 'View Retrieved Chunks';
@@ -1193,7 +1193,7 @@ define([
      * Renders a file metadata widget with preview
      * @param {HTMLElement} messageDiv - Container to render widget into
      */
-    renderFileMetadataWidget: function(messageDiv) {
+    renderFileMetadataWidget: function (messageDiv) {
       var payload = this.message.uiPayload;
       var metadata = payload.metadata || {};
       var filePath = payload.path || 'unknown';
@@ -1247,13 +1247,13 @@ define([
       }, previewContainer);
       previewContentArea.style.display = 'none';
 
-      var showPreview = function() {
+      var showPreview = function () {
         previewContainer.classList.add('file-preview-expanded');
         previewToggleButton.style.display = 'none';
         previewContentArea.style.display = '';
       };
 
-      on(previewToggleButton, 'click', lang.hitch(this, function() {
+      on(previewToggleButton, 'click', lang.hitch(this, function () {
         if (previewContentArea.getAttribute('data-loaded') === '1') {
           showPreview();
           return;
@@ -1269,19 +1269,19 @@ define([
         }, previewContentArea);
         showPreview();
 
-        WorkspaceManager.getDownloadUrls([filePath]).then(lang.hitch(this, function(urls) {
+        WorkspaceManager.getDownloadUrls([filePath]).then(lang.hitch(this, function (urls) {
           if (urls && urls.length > 0) {
             var downloadUrl = urls[0];
             fetch(downloadUrl, {
               headers: {
                 'Range': 'bytes=0-2047'
               }
-            }).then(function(response) {
+            }).then(function (response) {
               if (!response.ok) {
                 throw new Error('HTTP ' + response.status);
               }
               return response.text();
-            }).then(lang.hitch(this, function(previewText) {
+            }).then(lang.hitch(this, function (previewText) {
               domConstruct.empty(previewContentArea);
               domConstruct.create('div', {
                 class: 'file-preview-label',
@@ -1293,7 +1293,7 @@ define([
               }, previewContentArea);
               previewContentArea.setAttribute('data-loaded', '1');
               previewContentArea.removeAttribute('data-loading');
-            })).catch(lang.hitch(this, function() {
+            })).catch(lang.hitch(this, function () {
               domConstruct.empty(previewContentArea);
               domConstruct.create('div', {
                 class: 'file-preview-error',
@@ -1309,7 +1309,7 @@ define([
             }, previewContentArea);
             previewContentArea.removeAttribute('data-loading');
           }
-        })).catch(lang.hitch(this, function() {
+        })).catch(lang.hitch(this, function () {
           domConstruct.empty(previewContentArea);
           domConstruct.create('div', {
             class: 'file-preview-error',
@@ -1320,8 +1320,8 @@ define([
       }));
 
       // Download link - fetch URL async (non-blocking)
-      setTimeout(lang.hitch(this, function() {
-        WorkspaceManager.getDownloadUrls([filePath]).then(lang.hitch(this, function(urls) {
+      setTimeout(lang.hitch(this, function () {
+        WorkspaceManager.getDownloadUrls([filePath]).then(lang.hitch(this, function (urls) {
           if (urls && urls.length > 0) {
             var downloadUrl = urls[0];
             domConstruct.empty(downloadContainer);
@@ -1339,9 +1339,9 @@ define([
       // Selection indicator for files
       this._renderSelectionIndicator(container, {
         category: 'files',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('files');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.file_name || item.id || 'File', id: item.id || item.file_id };
           });
         })
@@ -1354,7 +1354,7 @@ define([
      *
      *
      */
-    createMessageActionButtons: function(buttonContainer) {
+    createMessageActionButtons: function (buttonContainer) {
       var copyButton = this.createButton('', 'copy-button', 'Copy message');
       var thumbUpButton = this.createButton('', 'thumb-up-button', 'Like response');
       var thumbDownButton = this.createButton('', 'thumb-down-button', 'Dislike response');
@@ -1367,12 +1367,12 @@ define([
       }
 
       // Add click handler for copy button
-      on(copyButton, 'click', lang.hitch(this, function(event) {
+      on(copyButton, 'click', lang.hitch(this, function (event) {
         topic.publish('copy-message', this.message.content);
         event.stopPropagation();
       }));
 
-      on(thumbUpButton, 'click', lang.hitch(this, function(event) {
+      on(thumbUpButton, 'click', lang.hitch(this, function (event) {
         // topic.publish('thumb-up-message', this.message.content);
         topic.publish('rate-message', {
           message_id: this.message.message_id,
@@ -1381,7 +1381,7 @@ define([
         event.stopPropagation();
       }));
 
-      on(thumbDownButton, 'click', lang.hitch(this, function(event) {
+      on(thumbDownButton, 'click', lang.hitch(this, function (event) {
         // topic.publish('thumb-down-message', this.message.content);
         topic.publish('rate-message', {
           message_id: this.message.message_id,
@@ -1398,11 +1398,11 @@ define([
     /**
      * Creates copy button for user messages
      */
-    createUserMessageCopyButton: function(buttonContainer) {
+    createUserMessageCopyButton: function (buttonContainer) {
       var copyButton = this.createButton('', 'copy-button', 'Copy message');
 
       // Add click handler for copy button
-      on(copyButton, 'click', lang.hitch(this, function(event) {
+      on(copyButton, 'click', lang.hitch(this, function (event) {
         topic.publish('copy-message', this.message.content);
         event.stopPropagation();
       }));
@@ -1416,7 +1416,7 @@ define([
      * @param {string} [additionalClass] - Optional additional CSS class
      * @returns {HTMLElement} Button element that can be added to a container
      */
-    createButton: function(text, additionalClass, tooltip) {
+    createButton: function (text, additionalClass, tooltip) {
       var className = 'message-action-button' + (additionalClass ? ' ' + additionalClass : '');
       var buttonAttrs = {
         innerHTML: text,
@@ -1433,7 +1433,7 @@ define([
      * @param {Object} message - The message object containing content
      * @returns {HTMLElement} DOM container with the system dialog content
      */
-    createSystemDialogContent: function(message) {
+    createSystemDialogContent: function (message) {
       var container = domConstruct.create('div');
 
       // Create collapsible section for message content
@@ -1449,7 +1449,7 @@ define([
         }, container);
 
         // Add click handler for toggle functionality
-        on(headerButton1, 'click', lang.hitch(this, function() {
+        on(headerButton1, 'click', lang.hitch(this, function () {
           if (contentDiv1.classList.contains('expanded')) {
             contentDiv1.classList.remove('expanded');
             headerButton1.innerHTML = headerButton1.innerHTML.replace('▼', '►');
@@ -1480,7 +1480,7 @@ define([
         }, container);
 
         // Add click handler for toggle functionality
-        on(headerButton2, 'click', lang.hitch(this, function() {
+        on(headerButton2, 'click', lang.hitch(this, function () {
           if (contentDiv2.classList.contains('expanded')) {
             contentDiv2.classList.remove('expanded');
             headerButton2.innerHTML = headerButton2.innerHTML.replace('▼', '►');
@@ -1520,8 +1520,8 @@ define([
           }, container);
 
           // Add click handler for toggle functionality
-          (function(button, div) {
-            on(button, 'click', lang.hitch(this, function() {
+          (function (button, div) {
+            on(button, 'click', lang.hitch(this, function () {
               if (div.classList.contains('expanded')) {
                 div.classList.remove('expanded');
                 button.innerHTML = button.innerHTML.replace('▼', '►');
@@ -1537,7 +1537,7 @@ define([
       return container;
     },
 
-    _buildQueryLinkOpenPlan: function(opts) {
+    _buildQueryLinkOpenPlan: function (opts) {
       var options = (opts && typeof opts === 'object') ? opts : {};
       var queryText = options.rqlReplay || null;
       var collection = options.collection || null;
@@ -1658,7 +1658,7 @@ define([
       }
     },
 
-    _openQueryLink: function(opts) {
+    _openQueryLink: function (opts) {
       var openPlan = this._buildQueryLinkOpenPlan(opts);
       if (!openPlan || !openPlan.url) {
         return;
@@ -1703,9 +1703,9 @@ define([
      * @returns {Object} Handle with update(fetched), close(), and isCancelled() methods
      * @private
      */
-    _showGroupProgressDialog: function(opts) {
+    _showGroupProgressDialog: function (opts) {
       var total = (opts && typeof opts.total === 'number') ? opts.total : null;
-      var onCancel = (opts && typeof opts.onCancel === 'function') ? opts.onCancel : function() {};
+      var onCancel = (opts && typeof opts.onCancel === 'function') ? opts.onCancel : function () {};
       var cancelled = false;
 
       // Build progress dialog content
@@ -1740,17 +1740,17 @@ define([
         style: 'z-index: 10000;'
       });
 
-      on(cancelBtn, 'click', function() {
+      on(cancelBtn, 'click', function () {
         cancelled = true;
         onCancel();
         dlg.hide();
-        setTimeout(function() { dlg.destroyRecursive(); }, 300);
+        setTimeout(function () { dlg.destroyRecursive(); }, 300);
       });
 
       dlg.show();
 
       return {
-        update: function(fetched) {
+        update: function (fetched) {
           if (total !== null) {
             var pct = Math.min(100, Math.round((fetched / total) * 100));
             progressBarInner.style.width = pct + '%';
@@ -1760,11 +1760,11 @@ define([
           }
           statusText.innerHTML = 'Downloading data for group creation...';
         },
-        close: function() {
+        close: function () {
           dlg.hide();
-          setTimeout(function() { dlg.destroyRecursive(); }, 300);
+          setTimeout(function () { dlg.destroyRecursive(); }, 300);
         },
-        isCancelled: function() {
+        isCancelled: function () {
           return cancelled;
         }
       };
@@ -1785,7 +1785,7 @@ define([
      * @returns {Promise<Array>} Promise resolving to array of row objects containing at least the idField
      * @private
      */
-    _fetchAllRowsForGroup: function(payload, idField) {
+    _fetchAllRowsForGroup: function (payload, idField) {
       var self = this;
       var collection = payload.collection || '';
       var numFound = typeof payload.numFound === 'number' ? payload.numFound : null;
@@ -1813,7 +1813,7 @@ define([
       }
       // Deduplicate
       var uniqueFields = [];
-      selectFields.forEach(function(f) {
+      selectFields.forEach(function (f) {
         if (uniqueFields.indexOf(f) === -1) uniqueFields.push(f);
       });
 
@@ -1822,7 +1822,7 @@ define([
       // Show progress dialog
       var progressHandle = self._showGroupProgressDialog({
         total: numFound,
-        onCancel: function() { /* cancellation is checked via isCancelled() */ }
+        onCancel: function () { /* cancellation is checked via isCancelled() */ }
       });
 
       var allRows = [];
@@ -1832,7 +1832,7 @@ define([
       // issues mixing native Promises with Dojo Deferreds.
       var masterDfd = new Deferred();
 
-      var fetchPage = function(cursorMark) {
+      var fetchPage = function (cursorMark) {
         if (progressHandle.isCancelled() || cancelled) {
           progressHandle.close();
           masterDfd.reject(new Error('cancelled'));
@@ -1851,7 +1851,7 @@ define([
 
         // Encode as form data string
         var formParts = [];
-        Object.keys(formParams).forEach(function(key) {
+        Object.keys(formParams).forEach(function (key) {
           formParts.push(encodeURIComponent(key) + '=' + encodeURIComponent(formParams[key]));
         });
         var formBody = formParts.join('&');
@@ -1870,7 +1870,7 @@ define([
           headers: headers,
           handleAs: 'json'
         }).then(
-          function(result) {
+          function (result) {
             if (progressHandle.isCancelled() || cancelled) {
               progressHandle.close();
               masterDfd.reject(new Error('cancelled'));
@@ -1905,7 +1905,7 @@ define([
             // Fetch next page
             fetchPage(nextCursor);
           },
-          function(err) {
+          function (err) {
             progressHandle.close();
             masterDfd.reject(err);
           }
@@ -1927,9 +1927,9 @@ define([
      * @param {string} idField - 'genome_id' or 'feature_id'
      * @private
      */
-    _openCreateGroupDialog: function(rows, groupType, idField) {
+    _openCreateGroupDialog: function (rows, groupType, idField) {
       // Filter to only rows that have the required ID field
-      var validRows = rows.filter(function(row) {
+      var validRows = rows.filter(function (row) {
         return row && idField in row && row[idField] !== null && row[idField] !== undefined && row[idField] !== '';
       });
 
@@ -1948,7 +1948,7 @@ define([
       // Lazy-load SelectionToGroup to avoid loading WorkspaceObjectSelector
       // (and its window.App dependency) at module definition time.
       // Must use full AMD path since dynamic require() doesn't resolve relative paths.
-      require(['p3/widget/SelectionToGroup'], function(SelectionToGroup) {
+      require(['p3/widget/SelectionToGroup'], function (SelectionToGroup) {
         var stg = new SelectionToGroup({
           selection: validRows,
           type: groupType,
@@ -1961,9 +1961,9 @@ define([
           content: stg
         });
 
-        on(dlg.domNode, 'dialogAction', function() {
+        on(dlg.domNode, 'dialogAction', function () {
           dlg.hide();
-          setTimeout(function() { dlg.destroyRecursive(); }, 300);
+          setTimeout(function () { dlg.destroyRecursive(); }, 300);
         });
 
         stg.startup();
@@ -1980,7 +1980,7 @@ define([
      * @param {string} idField - 'genome_id' or 'feature_id'
      * @private
      */
-    _handleCreateGroupClick: function(payload, groupType, idField) {
+    _handleCreateGroupClick: function (payload, groupType, idField) {
       var self = this;
 
       // Check if rows are already fully available in the payload
@@ -1996,11 +1996,11 @@ define([
 
       // Fetch all rows via cursor pagination
       self._fetchAllRowsForGroup(payload, idField).then(
-        function(allRows) {
+        function (allRows) {
           console.log('[ChatMessage] Group data fetch complete, rows:', allRows.length, 'opening dialog for', groupType);
           self._openCreateGroupDialog(allRows, groupType, idField);
         },
-        function(err) {
+        function (err) {
           if (err && err.message && err.message.indexOf('cancelled') !== -1) {
             // User cancelled, do nothing
             return;
@@ -2016,7 +2016,7 @@ define([
       );
     },
 
-    renderQueryCollectionWidget: function(messageDiv) {
+    renderQueryCollectionWidget: function (messageDiv) {
       var data = this.message.queryCollectionData || {};
       var summary = data.summary || {};
       var params = data.queryParameters || {};
@@ -2033,17 +2033,17 @@ define([
       if (rqlReplay == null) {
         return;
       }
-      var rqlQueryUrl = toolArgs.data_api_base_url ? toolArgs.data_api_base_url : "https://www.bv-brc.org/api-bulk";
+      var rqlQueryUrl = toolArgs.data_api_base_url ? toolArgs.data_api_base_url : 'https://www.bv-brc.org/api-bulk';
       rqlQueryUrl = rqlQueryUrl + '/' + toolArgs.collection + '/';
       if (rqlReplay[0] === '?') {
         rqlQueryUrl = rqlQueryUrl + rqlReplay;
       } else {
-        rqlQueryUrl = rqlQueryUrl + "?" + rqlReplay;
+        rqlQueryUrl = rqlQueryUrl + '?' + rqlReplay;
       }
-      var inferCollectionFromUrl = function(rqlUrl) {
+      var inferCollectionFromUrl = function (rqlUrl) {
         if (!rqlUrl || typeof rqlUrl !== 'string') return null;
         var withoutQuery = rqlUrl.split('?')[0];
-        var parts = withoutQuery.split('/').filter(function(part) { return !!part; });
+        var parts = withoutQuery.split('/').filter(function (part) { return !!part; });
         return parts.length ? parts[parts.length - 1] : null;
       };
       var collection = params.collection ||
@@ -2111,7 +2111,7 @@ define([
           class: 'workspace-summary-open-button',
           innerHTML: 'Open in Chat'
         }, container);
-        on(dataTabButton, 'click', lang.hitch(this, function() {
+        on(dataTabButton, 'click', lang.hitch(this, function () {
           topic.publish('CopilotDataBrowseOpen', {
             uiPayload: payload,
             tool_call: toolCall,
@@ -2127,7 +2127,7 @@ define([
           href: '#',
           innerHTML: 'Open in Website'
         }, container);
-        on(queryLink, 'click', lang.hitch(this, function(evt) {
+        on(queryLink, 'click', lang.hitch(this, function (evt) {
           evt.preventDefault();
           this._openQueryLink({
             rqlQueryUrl: rqlQueryUrl,
@@ -2170,13 +2170,13 @@ define([
         }
         var fastaBaseUrl = fastaDataServiceUrl + 'genome_feature/';
 
-        var createFastaLink = lang.hitch(this, function(linkLabel, acceptType) {
+        var createFastaLink = lang.hitch(this, function (linkLabel, acceptType) {
           var fastaLink = domConstruct.create('a', {
             class: 'workspace-summary-link',
             href: '#',
             innerHTML: linkLabel
           }, container);
-          on(fastaLink, 'click', lang.hitch(this, function(evt) {
+          on(fastaLink, 'click', lang.hitch(this, function (evt) {
             evt.preventDefault();
             // Use hidden form POST, same pattern as DownloadTooltipDialog.js
             var actionUrl = fastaBaseUrl + '?http_download=true&http_accept=' + encodeURIComponent(acceptType);
@@ -2201,7 +2201,7 @@ define([
             }
             form.submit();
             // Clean up the form after a short delay
-            setTimeout(function() {
+            setTimeout(function () {
               if (form.parentNode) { form.parentNode.removeChild(form); }
             }, 5000);
           }));
@@ -2221,7 +2221,7 @@ define([
           href: '#',
           innerHTML: tsvLabel
         }, container);
-        on(tsvLink, 'click', function(evt) {
+        on(tsvLink, 'click', function (evt) {
           evt.preventDefault();
           var tsvDownloadUrl = downloadUrl;
           if (window.App && window.App.authorizationToken) {
@@ -2250,7 +2250,7 @@ define([
               innerHTML: '<i class="fa icon-object-group" style="margin-right: 4px;"></i>Create Feature Group',
               style: 'margin-right: 8px;'
             }, groupActionsDiv);
-            on(featureGroupBtn, 'click', lang.hitch(this, function() {
+            on(featureGroupBtn, 'click', lang.hitch(this, function () {
               this._handleCreateGroupClick(payload, 'feature_group', 'feature_id');
             }));
           }
@@ -2261,7 +2261,7 @@ define([
               class: 'workspace-summary-open-button',
               innerHTML: '<i class="fa icon-object-group" style="margin-right: 4px;"></i>Create Genome Group'
             }, groupActionsDiv);
-            on(genomeGroupBtn, 'click', lang.hitch(this, function() {
+            on(genomeGroupBtn, 'click', lang.hitch(this, function () {
               this._handleCreateGroupClick(payload, 'genome_group', 'genome_id');
             }));
           }
@@ -2271,9 +2271,9 @@ define([
       // Selection indicator for files (query results become session files)
       this._renderSelectionIndicator(container, {
         category: 'files',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('files');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.file_name || item.id || 'File', id: item.id || item.file_id };
           });
         })
@@ -2285,7 +2285,7 @@ define([
      * @param {string} appName - Application identifier (e.g., GenomeAssembly2)
      * @returns {string} Display name
      */
-    _getServiceDisplayName: function(appName) {
+    _getServiceDisplayName: function (appName) {
       var map = {
         'GenomeAssembly2': 'Genome Assembly',
         'GenomeAnnotation': 'Genome Annotation',
@@ -2299,7 +2299,7 @@ define([
      * @param {HTMLElement} messageDiv - Container to render into
      * @param {Object} workflow - Workflow data with steps[0]
      */
-    renderSimplifiedServiceCard: function(messageDiv, workflow) {
+    renderSimplifiedServiceCard: function (messageDiv, workflow) {
       var step = workflow.steps && workflow.steps[0];
       var serviceName = step ? this._getServiceDisplayName(step.app) : (workflow.workflow_name || 'Workflow');
       if (!serviceName && step && step.step_name) {
@@ -2308,10 +2308,10 @@ define([
       var isSubmitted = workflow.execution_metadata && workflow.execution_metadata.is_submitted;
       var statusValue = (workflow.execution_metadata && workflow.execution_metadata.status) ||
         workflow.status || (isSubmitted ? 'submitted' : '') || 'planned';
-      var normalizeStatus = function(s) {
+      var normalizeStatus = function (s) {
         return (!s && s !== 0) ? '' : String(s).toLowerCase();
       };
-      var getStatusStyle = function(s) {
+      var getStatusStyle = function (s) {
         var st = normalizeStatus(s);
         if (st === 'succeeded' || st === 'completed') return 'background: #10b981; color: #fff;';
         if (st === 'failed' || st === 'error') return 'background: #ef4444; color: #fff;';
@@ -2355,7 +2355,7 @@ define([
         title: 'Review and edit service parameters'
       }, actionsRow);
 
-      on(reviewButton, 'click', lang.hitch(this, function() {
+      on(reviewButton, 'click', lang.hitch(this, function () {
         this.showWorkflowDialog();
       }));
 
@@ -2367,7 +2367,7 @@ define([
           style: 'padding: 8px 16px; background: #2563eb; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;'
         }, actionsRow);
 
-        on(submitButton, 'click', lang.hitch(this, function() {
+        on(submitButton, 'click', lang.hitch(this, function () {
           if (!self.copilotApi || submitButton.disabled) return;
           var workflowToSubmit = {};
           try {
@@ -2380,7 +2380,7 @@ define([
           submitButton.disabled = true;
           submitButton.innerHTML = 'Submitting...';
 
-          self.copilotApi.submitWorkflowForExecution(workflowToSubmit).then(function(response) {
+          self.copilotApi.submitWorkflowForExecution(workflowToSubmit).then(function (response) {
             if (response && response.error) {
               submitButton.disabled = false;
               submitButton.innerHTML = 'Submit';
@@ -2409,9 +2409,9 @@ define([
             topic.publish('/Notification', { message: 'Workflow submitted successfully.', type: 'message' });
 
             if (self.sessionId && self.copilotApi && typeof self.copilotApi.addWorkflowToSession === 'function') {
-              self.copilotApi.addWorkflowToSession(self.sessionId, wfId).catch(function() {});
+              self.copilotApi.addWorkflowToSession(self.sessionId, wfId).catch(function () {});
             }
-          }, function(err) {
+          }, function (err) {
             submitButton.disabled = false;
             submitButton.innerHTML = 'Submit';
             topic.publish('/Notification', { message: 'Submission failed: ' + (err && err.message ? err.message : err), type: 'error' });
@@ -2422,9 +2422,9 @@ define([
       // Selection indicator for workflows
       this._renderSelectionIndicator(card, {
         category: 'workflows',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('workflows');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.workflow_name || item.workflow_id || item.id || 'Workflow', id: item.workflow_id || item.id };
           });
         })
@@ -2437,7 +2437,7 @@ define([
      * For single-step workflows, renders a simplified service card instead.
      * @param {HTMLElement} messageDiv - Container to render widget into
      */
-    renderWorkflowManifestCard: function(messageDiv) {
+    renderWorkflowManifestCard: function (messageDiv) {
       var workflow = this.message.workflowData || {};
       var messageToolCall = this.message && this.message.tool_call && typeof this.message.tool_call === 'object'
         ? this.message.tool_call
@@ -2475,7 +2475,7 @@ define([
       var isPlanned = workflow.execution_metadata && workflow.execution_metadata.is_planned;
       var statusUrl = (workflow.execution_metadata && workflow.execution_metadata.status_url) || workflow.status_url || null;
 
-      var extractWorkflowIdFromStatusUrl = function(urlValue) {
+      var extractWorkflowIdFromStatusUrl = function (urlValue) {
         if (!urlValue || typeof urlValue !== 'string') {
           return null;
         }
@@ -2492,12 +2492,12 @@ define([
         extractWorkflowIdFromStatusUrl(statusUrl) ||
         null;
 
-      var normalizeStatus = function(rawStatus) {
+      var normalizeStatus = function (rawStatus) {
         if (!rawStatus && rawStatus !== 0) return '';
         return String(rawStatus).toLowerCase();
       };
 
-      var getStatusStyle = function(statusValue) {
+      var getStatusStyle = function (statusValue) {
         var status = normalizeStatus(statusValue);
         if (status === 'succeeded' || status === 'completed') {
           return 'background: #10b981; color: #fff;';
@@ -2523,7 +2523,7 @@ define([
         return 'background: #9ca3af; color: #fff;';
       };
 
-      var deriveStatus = function() {
+      var deriveStatus = function () {
         return (workflow.execution_metadata && workflow.execution_metadata.status) ||
           workflow.status ||
           (isSubmitted ? 'submitted' : '') ||
@@ -2586,7 +2586,7 @@ define([
       // Auto corrections (from service plan tools)
       var autoCorrections = workflow.auto_corrections;
       if (Array.isArray(autoCorrections) && autoCorrections.length > 0) {
-        var correctionsText = autoCorrections.map(function(c) {
+        var correctionsText = autoCorrections.map(function (c) {
           return typeof c === 'string' ? c : (c && typeof c === 'object' && c.message ? c.message : String(c));
         }).join(', ');
         domConstruct.create('div', {
@@ -2630,18 +2630,18 @@ define([
           style: 'padding: 4px 10px; background: #ffffff; color: #374151; border: 1px solid #d1d5db; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 500; transition: background 0.2s, border-color 0.2s;'
         }, leftActions);
 
-        on(checkStatusButton, 'mouseenter', function() {
+        on(checkStatusButton, 'mouseenter', function () {
           if (!checkStatusButton.disabled) {
             checkStatusButton.style.background = '#f3f4f6';
             checkStatusButton.style.borderColor = '#9ca3af';
           }
         });
-        on(checkStatusButton, 'mouseleave', function() {
+        on(checkStatusButton, 'mouseleave', function () {
           checkStatusButton.style.background = '#ffffff';
           checkStatusButton.style.borderColor = '#d1d5db';
         });
 
-        on(checkStatusButton, 'click', lang.hitch(this, function() {
+        on(checkStatusButton, 'click', lang.hitch(this, function () {
           // Non-blocking status refresh: update button state while request runs.
           checkStatusButton.disabled = true;
           checkStatusButton.style.cursor = 'default';
@@ -2656,7 +2656,7 @@ define([
             return;
           }
 
-          this.copilotApi.getWorkflowStatus(resolvedWorkflowId).then(lang.hitch(this, function(statusResponse) {
+          this.copilotApi.getWorkflowStatus(resolvedWorkflowId).then(lang.hitch(this, function (statusResponse) {
             var nextStatus = statusResponse && statusResponse.status ? statusResponse.status : null;
             var nextUpdatedAt = statusResponse && statusResponse.updated_at ? statusResponse.updated_at : null;
             var nextWorkflowName = statusResponse && statusResponse.workflow_name ? statusResponse.workflow_name : null;
@@ -2703,9 +2703,9 @@ define([
               message_id: this.message && this.message.message_id ? this.message.message_id : null,
               workflow: workflow
             });
-          })).catch(function(error) {
+          })).catch(function (error) {
             console.error('[ChatMessage] Failed to fetch workflow status:', error);
-          }).then(function() {
+          }).then(function () {
             checkStatusButton.disabled = false;
             checkStatusButton.style.cursor = 'pointer';
             checkStatusButton.innerHTML = 'Check Status';
@@ -2720,16 +2720,16 @@ define([
         title: 'Review and edit service parameters'
       }, rightActions);
 
-      on(reviewButton, 'click', lang.hitch(this, function() {
+      on(reviewButton, 'click', lang.hitch(this, function () {
         this.showWorkflowDialog();
       }));
 
       // Selection indicator for workflows
       this._renderSelectionIndicator(card, {
         category: 'workflows',
-        getSelectedItems: lang.hitch(this, function() {
+        getSelectedItems: lang.hitch(this, function () {
           var items = this._getSelectionItemsForCategory('workflows');
-          return items.map(function(item) {
+          return items.map(function (item) {
             return { label: item.workflow_name || item.workflow_id || item.id || 'Workflow', id: item.workflow_id || item.id };
           });
         })
@@ -2743,13 +2743,13 @@ define([
      * @param {Object} step - workflow.steps[0]
      * @param {string} appName - Step app identifier
      */
-    _showDirectFormModal: function(workflow, step, appName) {
+    _showDirectFormModal: function (workflow, step, appName) {
       var self = this;
       var serviceName = this._getServiceDisplayName(appName);
       var isSubmitted = workflow.execution_metadata && workflow.execution_metadata.is_submitted;
       var statusValue = (workflow.execution_metadata && workflow.execution_metadata.status) ||
         workflow.status || (isSubmitted ? 'submitted' : '') || 'planned';
-      var getStatusStyle = function(s) {
+      var getStatusStyle = function (s) {
         var st = (!s && s !== 0) ? '' : String(s).toLowerCase();
         if (st === 'succeeded' || st === 'completed') return 'background: #10b981; color: #fff;';
         if (st === 'failed' || st === 'error') return 'background: #ef4444; color: #fff;';
@@ -2823,7 +2823,7 @@ define([
       }, contentNode);
 
       // Helper: apply form edits to step params
-      var applyFormEdits = function() {
+      var applyFormEdits = function () {
         if (!formWidget) return;
         var updatedParams = formWidget.toManifest();
         if (updatedParams) {
@@ -2832,7 +2832,7 @@ define([
       };
 
       var keyHandler = null;
-      var closeModal = function() {
+      var closeModal = function () {
         // Auto-apply form edits when closing
         applyFormEdits();
         if (keyHandler) {
@@ -2854,21 +2854,21 @@ define([
 
       backBtn.onclick = closeModal;
       closeBtn.onclick = closeModal;
-      on(overlayNode, 'click', function(evt) {
+      on(overlayNode, 'click', function (evt) {
         if (evt.target === overlayNode) closeModal();
       });
-      keyHandler = on(document, 'keydown', function(evt) {
+      keyHandler = on(document, 'keydown', function (evt) {
         if (evt.key === 'Escape') closeModal();
       });
 
-      CopilotServiceFormAdapter.createForm(appName).then(function(widget) {
+      CopilotServiceFormAdapter.createForm(appName).then(function (widget) {
         formWidget = widget;
         domConstruct.destroy(loadingNode);
         domConstruct.place(formWidget.domNode, formContainer);
         formWidget.startup();
         // setFromManifest handles its own startup-readiness polling
         formWidget.setFromManifest(step.params || {});
-      }, function(err) {
+      }, function (err) {
         domConstruct.destroy(loadingNode);
         domConstruct.create('div', {
           innerHTML: 'Failed to load service form: ' + (err.message || err),
@@ -2883,7 +2883,7 @@ define([
     /**
      * Shows a dialog displaying the workflow using WorkflowEngine widget
      */
-    showWorkflowDialog: function() {
+    showWorkflowDialog: function () {
       var localWorkflowData = this.message.workflowData || {};
       var messageToolCall = this.message && this.message.tool_call && typeof this.message.tool_call === 'object'
         ? this.message.tool_call
@@ -2914,12 +2914,12 @@ define([
       );
 
       if (canHydrateById) {
-        this.copilotApi.getWorkflowById(workflowId).then(lang.hitch(this, function(fullWorkflow) {
+        this.copilotApi.getWorkflowById(workflowId).then(lang.hitch(this, function (fullWorkflow) {
           if (fullWorkflow && typeof fullWorkflow === 'object') {
             this.message.workflowData = fullWorkflow;
           }
           this.showWorkflowDialog();
-        })).catch(function(error) {
+        })).catch(function (error) {
           console.error('[ChatMessage] Failed to hydrate workflow by id:', error);
         });
         return;
@@ -2979,7 +2979,7 @@ define([
 
         domConstruct.place(workflowEngine.domNode, contentNode);
 
-        var closeModal = function() {
+        var closeModal = function () {
           if (keyHandler) {
             keyHandler.remove();
             keyHandler = null;
@@ -2995,12 +2995,12 @@ define([
         };
 
         on(closeButton, 'click', closeModal);
-        on(overlayNode, 'click', function(evt) {
+        on(overlayNode, 'click', function (evt) {
           if (evt.target === overlayNode) {
             closeModal();
           }
         });
-        keyHandler = on(document, 'keydown', function(evt) {
+        keyHandler = on(document, 'keydown', function (evt) {
           if (evt.key === 'Escape') {
             closeModal();
           }

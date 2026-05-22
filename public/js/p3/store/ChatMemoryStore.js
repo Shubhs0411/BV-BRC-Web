@@ -32,7 +32,7 @@ define([
      * - Initializes empty data array
      * - Mixes in any provided options
      */
-    constructor: function(options) {
+    constructor: function (options) {
       this.inherited(arguments);
 
       this.idProperty = 'message_id'; // Unique identifier for messages
@@ -48,7 +48,7 @@ define([
      * - Completely replaces existing data array with new messages
      * - Used for bulk loading/resetting of message history
      */
-    setData: function(messages) {
+    setData: function (messages) {
       this.data = Array.isArray(messages) ? messages : [];
     },
 
@@ -60,7 +60,7 @@ define([
      * - Appends single message to end of data array
      * - Used for adding individual new messages
      */
-    addMessage: function(message) {
+    addMessage: function (message) {
       if (!Array.isArray(this.data)) {
         this.data = [];
       }
@@ -76,7 +76,7 @@ define([
      * - More efficient than adding messages one at a time
      * - Maintains message order from input array
      */
-    addMessages: function(messages) {
+    addMessages: function (messages) {
       if (!Array.isArray(this.data)) {
         this.data = [];
       }
@@ -93,7 +93,7 @@ define([
      * - Used when starting new chat session
      * - Removes all existing messages
      */
-    clearData: function() {
+    clearData: function () {
       this.data = [];
     },
 
@@ -107,7 +107,7 @@ define([
      * - Query param included for API compatibility
      * - Could be extended to support filtering in future
      */
-    query: function(query) {
+    query: function (query) {
       return Array.isArray(this.data) ? this.data : [];
     },
 
@@ -123,8 +123,8 @@ define([
      * - Updates title field for messages matching sessionId
      * - Used when user renames a chat session
      */
-    updateSessionTitle: function(sessionId, newTitle) {
-      this.data.forEach(function(item) {
+    updateSessionTitle: function (sessionId, newTitle) {
+      this.data.forEach(function (item) {
         if (item.session_id === sessionId) {
           item.title = newTitle;
         }
@@ -140,7 +140,7 @@ define([
      * - Searches data array for message with matching message_id
      * - Returns first match or null if not found
      */
-    getMessageById: function(messageId) {
+    getMessageById: function (messageId) {
       for (var i = 0; i < this.data.length; i++) {
         if (this.data[i].message_id === messageId) {
           return this.data[i];
@@ -158,7 +158,7 @@ define([
      * - Replaces entire message object with updated version
      * - Used for updating status messages
      */
-    updateMessage: function(message) {
+    updateMessage: function (message) {
       for (var i = 0; i < this.data.length; i++) {
         if (this.data[i].message_id === message.message_id) {
           this.data[i] = message;
@@ -176,7 +176,7 @@ define([
      * - Removes message with matching message_id from data array
      * - Used for removing temporary status messages
      */
-    removeMessage: function(messageId) {
+    removeMessage: function (messageId) {
       for (var i = 0; i < this.data.length; i++) {
         if (this.data[i].message_id === messageId) {
           this.data.splice(i, 1);

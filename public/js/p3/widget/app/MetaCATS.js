@@ -293,7 +293,7 @@ define([
       var my_group = this.auto_feature_group.value;
       var metadata_value = this.metadata_group.value;
       this.metadata_group.set('disabled', true);
-      DataAPI.queryGenomeFeatures('in(feature_id,FeatureGroup(' + encodeURIComponent(my_group) + '))', { 'limit' : 1000 })
+      DataAPI.queryGenomeFeatures('in(feature_id,FeatureGroup(' + encodeURIComponent(my_group) + '))', { 'limit': 1000 })
         .then((result) => {
           const genome_map = new Map();
           result.items.forEach(function (sel) {
@@ -306,7 +306,7 @@ define([
           return genome_map;
         }).catch(error => { console.log('Genome feature query failed.'); })
         .then((genome_map) => {
-          DataAPI.queryGenomes(`in(genome_id,(${Array.from(genome_map.keys()).join(',')}))`, { 'limit' : 1000 })
+          DataAPI.queryGenomes(`in(genome_id,(${Array.from(genome_map.keys()).join(',')}))`, { 'limit': 1000 })
             .then((genome_results) => {
               var group_names = new Set();
               var ranges = [];

@@ -18,7 +18,7 @@ define([
   './workflowForms/CopilotServiceFormAdapter',
   './ServiceValidationRules',
   '../../WorkspaceManager'
-], function(
+], function (
   declare,
   lang,
   domConstruct,
@@ -98,7 +98,7 @@ define([
     /**
      * Called after widget creation
      */
-    postCreate: function() {
+    postCreate: function () {
       console.log('[WorkflowEngine] postCreate() called');
       console.log('[WorkflowEngine] Initial workflowData:', this.workflowData);
       this.stepFormStateByIndex = {};
@@ -123,7 +123,7 @@ define([
     /**
      * Renders the workflow data
      */
-    render: function() {
+    render: function () {
       console.log('[WorkflowEngine] render() called');
       console.log('[WorkflowEngine] workflowData type:', typeof this.workflowData);
       console.log('[WorkflowEngine] workflowData:', this.workflowData);
@@ -181,7 +181,7 @@ define([
      * Renders the workflow in a visual pipeline format
      * @param {Object} workflow - Parsed workflow data
      */
-    renderWorkflowView: function(workflow) {
+    renderWorkflowView: function (workflow) {
       // Create main wrapper with content area
       var wrapper = domConstruct.create('div', {
         class: 'workflow-wrapper'
@@ -212,7 +212,7 @@ define([
      * @param {Object} workflow - Workflow data
      * @param {DOMNode} container - Parent container
      */
-    renderSingleStepDirectForm: function(workflow, container) {
+    renderSingleStepDirectForm: function (workflow, container) {
       var self = this;
       var step = workflow.steps[0];
       var appName = step.app;
@@ -247,7 +247,7 @@ define([
         class: 'workflow-form-loading'
       }, section);
 
-      CopilotServiceFormAdapter.createForm(appName).then(function(formWidget) {
+      CopilotServiceFormAdapter.createForm(appName).then(function (formWidget) {
         domConstruct.destroy(loadingNode);
         domConstruct.place(formWidget.domNode, formHost);
         formWidget.startup();
@@ -256,14 +256,14 @@ define([
         self._singleStepFormWidget = formWidget;
 
         // Auto-apply form values to step params when form data changes
-        self._singleStepApplyFromForm = function() {
+        self._singleStepApplyFromForm = function () {
           var newParams = formWidget.toManifest();
           if (newParams) {
             step.params = lang.mixin({}, step.params, newParams);
             self.validateStep(0, { updateUI: true });
           }
         };
-      }, function(err) {
+      }, function (err) {
         domConstruct.destroy(loadingNode);
         domConstruct.empty(section);
         self.renderWorkflowSteps(workflow, section);
@@ -275,7 +275,7 @@ define([
      * @param {Object} workflow - Workflow data
      * @param {DOMNode} container - Parent container
      */
-    renderWorkflowHeader: function(workflow, container) {
+    renderWorkflowHeader: function (workflow, container) {
       console.log('[WorkflowEngine] renderWorkflowHeader() called');
       console.log('[WorkflowEngine] workflow.workflow_name:', workflow.workflow_name);
       console.log('[WorkflowEngine] workflow object keys:', Object.keys(workflow));
@@ -343,8 +343,8 @@ define([
             class: 'workflow-status-link',
             style: 'color: #0066cc; text-decoration: none; margin-left: 10px;'
           });
-          statusLink.onmouseover = function() { this.style.textDecoration = 'underline'; };
-          statusLink.onmouseout = function() { this.style.textDecoration = 'none'; };
+          statusLink.onmouseover = function () { this.style.textDecoration = 'underline'; };
+          statusLink.onmouseout = function () { this.style.textDecoration = 'none'; };
           domConstruct.create('div', {
             class: 'workflow-status-url',
             style: 'margin-top: 5px;'
@@ -391,7 +391,7 @@ define([
           innerHTML: 'Review',
           title: 'Review and edit service parameters'
         }, buttonContainer);
-        this.reviewWorkflowButton.onclick = lang.hitch(this, function() {
+        this.reviewWorkflowButton.onclick = lang.hitch(this, function () {
           this._toggleReviewForm(workflow);
         });
 
@@ -399,7 +399,7 @@ define([
         this.submitWorkflowButton = new Button({
           label: 'Submit',
           type: 'submit',
-          onClick: lang.hitch(this, function() {
+          onClick: lang.hitch(this, function () {
             // Auto-apply form edits before submitting if form is visible
             if (this._reviewFormVisible && this._singleStepApplyFromForm) {
               this._singleStepApplyFromForm();
@@ -417,7 +417,7 @@ define([
      * For multi-step workflows, toggles the detail panel for step 0.
      * @param {Object} workflow - Workflow data
      */
-    _toggleReviewForm: function(workflow) {
+    _toggleReviewForm: function (workflow) {
       // Single-step direct form path
       if (this._singleStepFormHost) {
         if (this._reviewFormVisible) {
@@ -455,7 +455,7 @@ define([
      * @param {Object} workflow - Workflow data
      * @param {DOMNode} container - Parent container
      */
-    renderWorkflowSteps: function(workflow, container) {
+    renderWorkflowSteps: function (workflow, container) {
       if (!workflow.steps || workflow.steps.length === 0) {
         return;
       }
@@ -474,7 +474,7 @@ define([
       }, stepsContainer);
 
       // Render each step as a card
-      workflow.steps.forEach(lang.hitch(this, function(step, index) {
+      workflow.steps.forEach(lang.hitch(this, function (step, index) {
         this.renderStep(step, index, pipelineContainer);
       }));
     },
@@ -485,7 +485,7 @@ define([
      * @param {number} index - Step index
      * @param {DOMNode} container - Parent container
      */
-    renderStep: function(step, index, container) {
+    renderStep: function (step, index, container) {
       var stepCard = domConstruct.create('div', {
         class: 'workflow-step-card',
         tabindex: 0,
@@ -493,7 +493,7 @@ define([
       }, container);
 
       // Add click handler to toggle inline detail panel.
-      stepCard.onclick = lang.hitch(this, function(evt) {
+      stepCard.onclick = lang.hitch(this, function (evt) {
         var node = evt && evt.target;
         while (node) {
           if (node.classList && node.classList.contains('workflow-step-inline-detail')) {
@@ -509,7 +509,7 @@ define([
       });
 
       // Add keyboard support
-      stepCard.onkeypress = lang.hitch(this, function(e) {
+      stepCard.onkeypress = lang.hitch(this, function (e) {
         if (e.target !== stepCard) {
           return;
         }
@@ -569,7 +569,7 @@ define([
           class: 'workflow-dependencies-list'
         }, depsContainer);
 
-        step.depends_on.forEach(lang.hitch(this, function(dep) {
+        step.depends_on.forEach(lang.hitch(this, function (dep) {
           domConstruct.create('span', {
             class: 'workflow-dependency-badge',
             innerHTML: this.escapeHtml(dep)
@@ -594,7 +594,7 @@ define([
      * @param {*} value - Parameter value
      * @param {DOMNode} container - Parent container
      */
-    renderParameter: function(key, value, container) {
+    renderParameter: function (key, value, container) {
       var paramItem = domConstruct.create('div', {
         class: 'workflow-param-item'
       }, container);
@@ -619,7 +619,7 @@ define([
      * @param {*} value - Output value
      * @param {DOMNode} container - Parent container
      */
-    renderOutput: function(key, value, container) {
+    renderOutput: function (key, value, container) {
       var outputItem = domConstruct.create('div', {
         class: 'workflow-output-item'
       }, container);
@@ -640,7 +640,7 @@ define([
      * Renders a connector arrow between steps
      * @param {DOMNode} container - Parent container
      */
-    renderStepConnector: function(container) {
+    renderStepConnector: function (container) {
       domConstruct.create('div', {
         class: 'workflow-step-connector',
         innerHTML: '→'
@@ -652,7 +652,7 @@ define([
      * @param {Object} workflow - Workflow data
      * @param {DOMNode} container - Parent container
      */
-    renderWorkflowOutputs: function(workflow, container) {
+    renderWorkflowOutputs: function (workflow, container) {
       if (!workflow.workflow_outputs || workflow.workflow_outputs.length === 0) {
         return;
       }
@@ -670,7 +670,7 @@ define([
         class: 'workflow-final-outputs-list'
       }, outputsContainer);
 
-      workflow.workflow_outputs.forEach(lang.hitch(this, function(output) {
+      workflow.workflow_outputs.forEach(lang.hitch(this, function (output) {
         domConstruct.create('div', {
           class: 'workflow-final-output-item',
           innerHTML: this.escapeHtml(this.formatValue(output))
@@ -678,7 +678,7 @@ define([
       }));
     },
 
-    createDetailPanel: function() {
+    createDetailPanel: function () {
       if (this.detailPanel) {
         return this.detailPanel;
       }
@@ -698,7 +698,7 @@ define([
         title: 'Close'
       }, header);
 
-      closeBtn.onclick = lang.hitch(this, function() {
+      closeBtn.onclick = lang.hitch(this, function () {
         this.hideStepDetails();
       });
 
@@ -718,7 +718,7 @@ define([
         title: 'Previous step'
       }, navContainer);
 
-      this.detailPrevBtn.onclick = lang.hitch(this, function() {
+      this.detailPrevBtn.onclick = lang.hitch(this, function () {
         this.navigateStep(-1);
       });
 
@@ -728,7 +728,7 @@ define([
         title: 'Next step'
       }, navContainer);
 
-      this.detailNextBtn.onclick = lang.hitch(this, function() {
+      this.detailNextBtn.onclick = lang.hitch(this, function () {
         this.navigateStep(1);
       });
 
@@ -744,7 +744,7 @@ define([
      * @param {Object} step - Step data
      * @param {number} index - Step index
      */
-    showStepDetails: function(step, index) {
+    showStepDetails: function (step, index) {
       var cardData = this.stepCardNodesByIndex[index];
       if (!cardData || !cardData.card || !cardData.inlineDetailHost) {
         return;
@@ -787,7 +787,7 @@ define([
     /**
      * Hides the detail panel
      */
-    hideStepDetails: function() {
+    hideStepDetails: function () {
       var currentIndex = this.selectedStepIndex;
       if (currentIndex >= 0) {
         this._destroyActiveDojoForm(currentIndex);
@@ -810,7 +810,7 @@ define([
      * Navigates to the previous or next step
      * @param {number} direction - -1 for previous, 1 for next
      */
-    navigateStep: function(direction) {
+    navigateStep: function (direction) {
       var workflow = this.getParsedWorkflowData();
       var newIndex = this.selectedStepIndex + direction;
 
@@ -824,7 +824,7 @@ define([
      * @param {Object} step - Step data
      * @param {number} index - Step index
      */
-    populateDetailContent: function(step, index) {
+    populateDetailContent: function (step, index) {
       var content = this.detailContentNode;
       if (!content) return;
 
@@ -878,7 +878,7 @@ define([
           class: 'workflow-detail-deps-list'
         }, depsSection);
 
-        step.depends_on.forEach(lang.hitch(this, function(dep) {
+        step.depends_on.forEach(lang.hitch(this, function (dep) {
           domConstruct.create('div', {
             class: 'workflow-detail-dep-item',
             innerHTML: this.escapeHtml(dep)
@@ -940,7 +940,7 @@ define([
      * Gets the parsed workflow data
      * @returns {Object} Parsed workflow data
      */
-    getParsedWorkflowData: function() {
+    getParsedWorkflowData: function () {
       var data = this.workflowData;
       if (typeof data === 'string') {
         try {
@@ -952,7 +952,7 @@ define([
       return data || { steps: [] };
     },
 
-    cloneValue: function(value) {
+    cloneValue: function (value) {
       try {
         return JSON.parse(JSON.stringify(value));
       } catch (err) {
@@ -960,7 +960,7 @@ define([
       }
     },
 
-    getStepFormState: function(step, index) {
+    getStepFormState: function (step, index) {
       if (!this.stepFormStateByIndex.hasOwnProperty(index)) {
         var initialParams = this.cloneValue(step.params || {});
         this.stepFormStateByIndex[index] = {
@@ -971,7 +971,7 @@ define([
       return this.stepFormStateByIndex[index];
     },
 
-    renderEditableParams: function(step, index, paramsSection) {
+    renderEditableParams: function (step, index, paramsSection) {
       var appName = step.app || '';
       if (CopilotServiceFormAdapter.hasDojoForm(appName)) {
         this._destroyActiveDojoForm(index);
@@ -981,7 +981,7 @@ define([
       this._renderGenericParams(step, index, paramsSection);
     },
 
-    _renderDojoForm: function(step, index, paramsSection) {
+    _renderDojoForm: function (step, index, paramsSection) {
       var self = this;
       var appName = step.app;
       var params = step.params || {};
@@ -990,7 +990,7 @@ define([
         class: 'workflow-form-loading'
       }, paramsSection);
 
-      CopilotServiceFormAdapter.createForm(appName).then(function(formWidget) {
+      CopilotServiceFormAdapter.createForm(appName).then(function (formWidget) {
         domConstruct.destroy(loadingNode);
         self.getStepFormState(step, index);
         var formContainer = domConstruct.create('div', {
@@ -1016,17 +1016,17 @@ define([
           class: 'workflow-form-action-btn workflow-form-action-btn-secondary',
           innerHTML: 'Reset Step'
         }, actionRow);
-        applyBtn.onclick = function() {
+        applyBtn.onclick = function () {
           var newParams = formWidget.toManifest();
           if (newParams) {
             self.applyDojoFormEdits(step, index, newParams);
           }
         };
-        resetBtn.onclick = function() {
+        resetBtn.onclick = function () {
           var state = self.getStepFormState(step, index);
           formWidget.setFromManifest(state.original || step.params || {});
         };
-      }, function(err) {
+      }, function (err) {
         domConstruct.destroy(loadingNode);
         domConstruct.create('div', {
           innerHTML: 'Failed to load service form: ' + (err.message || err),
@@ -1036,7 +1036,7 @@ define([
       });
     },
 
-    applyDojoFormEdits: function(step, index, newParams) {
+    applyDojoFormEdits: function (step, index, newParams) {
       step.params = lang.mixin({}, step.params, newParams);
       var state = this.getStepFormState(step, index);
       state.current = this.cloneValue(step.params);
@@ -1044,7 +1044,7 @@ define([
       topic.publish('/Notification', { message: 'Step parameters updated', type: 'message' });
     },
 
-    _destroyActiveDojoForm: function(index) {
+    _destroyActiveDojoForm: function (index) {
       if (this._activeDojoForms && this._activeDojoForms[index]) {
         try {
           this._activeDojoForms[index].destroyRecursive();
@@ -1055,7 +1055,7 @@ define([
       }
     },
 
-    _renderGenericParams: function(step, index, paramsSection) {
+    _renderGenericParams: function (step, index, paramsSection) {
       var state = this.getStepFormState(step, index);
       var editableParams = state.current;
       var serviceMeta = ServiceFormRegistry.getDefinition(step.app || '');
@@ -1085,17 +1085,17 @@ define([
         innerHTML: 'Reset Step'
       }, actionRow);
 
-      applyBtn.onclick = lang.hitch(this, function() {
+      applyBtn.onclick = lang.hitch(this, function () {
         this.applyStepEdits(step, index, editableParams);
       });
 
-      resetBtn.onclick = lang.hitch(this, function() {
+      resetBtn.onclick = lang.hitch(this, function () {
         this.resetStepEdits(step, index);
       });
       this.renderGroupedFields(serviceMeta, editableParams, step.params || {}, paramsSection, index, supported);
     },
 
-    renderGroupedFields: function(serviceMeta, editableParams, originalParams, paramsSection, stepIndex, supported) {
+    renderGroupedFields: function (serviceMeta, editableParams, originalParams, paramsSection, stepIndex, supported) {
       var seen = {};
       var groups = supported ? (serviceMeta.groups || []) : [];
 
@@ -1107,7 +1107,7 @@ define([
         }];
       }
 
-      groups.forEach(lang.hitch(this, function(group) {
+      groups.forEach(lang.hitch(this, function (group) {
         var sectionNode = domConstruct.create('div', {
           class: 'workflow-form-group'
         }, paramsSection);
@@ -1126,7 +1126,7 @@ define([
             class: 'workflow-form-group-toggle',
             innerHTML: group.collapsed ? 'Show' : 'Hide'
           }, headerNode);
-          headerNode.onclick = function() {
+          headerNode.onclick = function () {
             var collapsed = bodyNode.classList.toggle('workflow-form-group-collapsed');
             toggle.innerHTML = collapsed ? 'Show' : 'Hide';
           };
@@ -1136,7 +1136,7 @@ define([
           class: 'workflow-detail-params-list workflow-form-compact-grid'
         }, bodyNode);
 
-        (group.fields || []).forEach(lang.hitch(this, function(fieldDef) {
+        (group.fields || []).forEach(lang.hitch(this, function (fieldDef) {
           seen[fieldDef.name] = true;
           this.renderEditableField(fieldDef, editableParams, originalParams, fieldsGrid, stepIndex);
         }));
@@ -1148,7 +1148,7 @@ define([
         if (!editableParams.hasOwnProperty(key) || seen[key]) continue;
         remaining.push({
           name: key,
-          label: key.replace(/_/g, ' ').replace(/\b\w/g, function(ch) { return ch.toUpperCase(); }),
+          label: key.replace(/_/g, ' ').replace(/\b\w/g, function (ch) { return ch.toUpperCase(); }),
           type: this.inferFieldType(originalParams[key], key),
           help: 'Additional workflow parameter',
           options: []
@@ -1165,13 +1165,13 @@ define([
         var additionalGrid = domConstruct.create('div', {
           class: 'workflow-detail-params-list workflow-form-compact-grid'
         }, additionalSection);
-        remaining.forEach(lang.hitch(this, function(fieldDef) {
+        remaining.forEach(lang.hitch(this, function (fieldDef) {
           this.renderEditableField(fieldDef, editableParams, originalParams, additionalGrid, stepIndex);
         }));
       }
     },
 
-    inferFieldType: function(value, key) {
+    inferFieldType: function (value, key) {
       if (typeof value === 'boolean') return 'checkbox';
       if (typeof value === 'number') return 'number';
       if (Array.isArray(value) || (typeof key === 'string' && (key.indexOf('_libs') !== -1 || key.indexOf('_ids') !== -1))) {
@@ -1181,7 +1181,7 @@ define([
       return 'text';
     },
 
-    renderEditableField: function(fieldDef, editableParams, originalParams, paramsList, stepIndex) {
+    renderEditableField: function (fieldDef, editableParams, originalParams, paramsList, stepIndex) {
       var paramItem = domConstruct.create('div', {
         class: 'workflow-detail-param-item workflow-form-field'
       }, paramsList);
@@ -1207,7 +1207,7 @@ define([
           type: 'checkbox'
         }, paramItem);
         inputNode.checked = this.toBoolean(currentValue);
-        inputNode.onchange = lang.hitch(this, function(evt) {
+        inputNode.onchange = lang.hitch(this, function (evt) {
           this.onFieldChanged(stepIndex, fieldDef.name, evt.target.checked);
         });
       } else if (type === 'textarea') {
@@ -1215,7 +1215,7 @@ define([
           class: 'workflow-form-input workflow-form-textarea'
         }, paramItem);
         inputNode.value = this.stringifyEditableValue(currentValue, type);
-        inputNode.oninput = lang.hitch(this, function(evt) {
+        inputNode.oninput = lang.hitch(this, function (evt) {
           var newValue = this.coerceInputValue(evt.target.value, originalValue, type);
           this.onFieldChanged(stepIndex, fieldDef.name, newValue);
         });
@@ -1223,7 +1223,7 @@ define([
         inputNode = domConstruct.create('select', {
           class: 'workflow-form-input workflow-form-select'
         }, paramItem);
-        fieldDef.options.forEach(function(optValue) {
+        fieldDef.options.forEach(function (optValue) {
           domConstruct.create('option', {
             value: optValue,
             innerHTML: optValue
@@ -1239,7 +1239,7 @@ define([
             inputNode.value = String(currentValue);
           }
         }
-        inputNode.onchange = lang.hitch(this, function(evt) {
+        inputNode.onchange = lang.hitch(this, function (evt) {
           var newSelectValue = this.coerceInputValue(evt.target.value, originalValue, type);
           this.onFieldChanged(stepIndex, fieldDef.name, newSelectValue);
         });
@@ -1249,7 +1249,7 @@ define([
           type: type === 'number' ? 'number' : 'text'
         }, paramItem);
         inputNode.value = this.stringifyEditableValue(currentValue, type);
-        inputNode.oninput = lang.hitch(this, function(evt) {
+        inputNode.oninput = lang.hitch(this, function (evt) {
           var inputValue = this.coerceInputValue(evt.target.value, originalValue, type);
           this.onFieldChanged(stepIndex, fieldDef.name, inputValue);
         });
@@ -1267,11 +1267,11 @@ define([
       }
     },
 
-    stringifyEditableValue: function(value, type) {
+    stringifyEditableValue: function (value, type) {
       if (value === null || typeof value === 'undefined') return '';
       if (Array.isArray(value)) {
         if (value.length === 0) return '';
-        var hasComplexItems = value.some(function(item) {
+        var hasComplexItems = value.some(function (item) {
           return typeof item === 'object' && item !== null;
         });
         if (hasComplexItems) {
@@ -1284,7 +1284,7 @@ define([
       return String(value);
     },
 
-    toBoolean: function(value) {
+    toBoolean: function (value) {
       if (typeof value === 'boolean') return value;
       if (typeof value === 'number') return value !== 0;
       if (typeof value === 'string') {
@@ -1294,7 +1294,7 @@ define([
       return Boolean(value);
     },
 
-    coerceInputValue: function(raw, originalValue, type) {
+    coerceInputValue: function (raw, originalValue, type) {
       if (type === 'checkbox') {
         return this.toBoolean(raw);
       }
@@ -1318,8 +1318,8 @@ define([
         }
         return raw
           .split(/\n|,/)
-          .map(function(item) { return item.trim(); })
-          .filter(function(item) { return item.length > 0; });
+          .map(function (item) { return item.trim(); })
+          .filter(function (item) { return item.length > 0; });
       }
       if (typeof originalValue === 'object' && originalValue !== null) {
         try {
@@ -1331,7 +1331,7 @@ define([
       return raw;
     },
 
-    onFieldChanged: function(stepIndex, key, value) {
+    onFieldChanged: function (stepIndex, key, value) {
       var state = this.stepFormStateByIndex[stepIndex];
       if (!state) {
         state = this.getStepFormState(this.selectedStep || { params: {} }, stepIndex);
@@ -1340,7 +1340,7 @@ define([
       this.scheduleStepValidation(stepIndex);
     },
 
-    applyStepEdits: function(step, stepIndex, editableParams) {
+    applyStepEdits: function (step, stepIndex, editableParams) {
       var updated = this.cloneValue(editableParams || {});
       step.params = updated;
       this.stepFormStateByIndex[stepIndex] = {
@@ -1351,7 +1351,7 @@ define([
       this.validateStep(stepIndex, { updateUI: true });
     },
 
-    resetStepEdits: function(step, stepIndex) {
+    resetStepEdits: function (step, stepIndex) {
       var state = this.stepFormStateByIndex[stepIndex];
       var original = state ? this.cloneValue(state.original) : {};
       step.params = this.cloneValue(original);
@@ -1363,12 +1363,12 @@ define([
       this.validateStep(stepIndex, { updateUI: true });
     },
 
-    isWorkflowSubmitted: function(workflow) {
+    isWorkflowSubmitted: function (workflow) {
       var wf = workflow || this.getParsedWorkflowData();
       return !!(wf && wf.execution_metadata && wf.execution_metadata.is_submitted);
     },
 
-    emptyValidationResult: function() {
+    emptyValidationResult: function () {
       return {
         valid: true,
         errors: [],
@@ -1377,7 +1377,7 @@ define([
       };
     },
 
-    addValidationError: function(result, code, message, field) {
+    addValidationError: function (result, code, message, field) {
       result.errors.push({
         code: code || 'validation_error',
         message: message || 'Validation error',
@@ -1386,7 +1386,7 @@ define([
       result.valid = false;
     },
 
-    addValidationWarning: function(result, code, message, field) {
+    addValidationWarning: function (result, code, message, field) {
       result.warnings.push({
         code: code || 'validation_warning',
         message: message || 'Validation warning',
@@ -1394,23 +1394,23 @@ define([
       });
     },
 
-    isEmptyValue: function(value) {
+    isEmptyValue: function (value) {
       if (value === null || typeof value === 'undefined') return true;
       if (typeof value === 'string') return value.trim() === '';
       if (Array.isArray(value)) return value.length === 0;
       return false;
     },
 
-    toArrayValue: function(value) {
+    toArrayValue: function (value) {
       if (Array.isArray(value)) return value;
       if (this.isEmptyValue(value)) return [];
       return [value];
     },
 
-    parseRequiredFields: function(serviceMeta) {
+    parseRequiredFields: function (serviceMeta) {
       var required = {};
       if (!serviceMeta || !Array.isArray(serviceMeta.fields)) return required;
-      serviceMeta.fields.forEach(function(field) {
+      serviceMeta.fields.forEach(function (field) {
         var help = field && field.help ? String(field.help).toLowerCase() : '';
         if (help.indexOf('(required') !== -1) {
           required[field.name] = true;
@@ -1419,7 +1419,7 @@ define([
       return required;
     },
 
-    getStepValidationParams: function(step, index) {
+    getStepValidationParams: function (step, index) {
       var state = this.stepFormStateByIndex[index];
       if (state && state.current) {
         return state.current;
@@ -1427,17 +1427,17 @@ define([
       return step && step.params ? step.params : {};
     },
 
-    scheduleStepValidation: function(stepIndex) {
+    scheduleStepValidation: function (stepIndex) {
       if (this.stepValidationTimers[stepIndex]) {
         clearTimeout(this.stepValidationTimers[stepIndex]);
       }
-      this.stepValidationTimers[stepIndex] = setTimeout(lang.hitch(this, function() {
+      this.stepValidationTimers[stepIndex] = setTimeout(lang.hitch(this, function () {
         delete this.stepValidationTimers[stepIndex];
         this.validateStep(stepIndex, { updateUI: true });
       }), 350);
     },
 
-    buildOutputTargetPath: function(outputPath, outputFile) {
+    buildOutputTargetPath: function (outputPath, outputFile) {
       var pathPart = String(outputPath || '').trim();
       var filePart = String(outputFile || '').trim();
       if (!pathPart || !filePart) return '';
@@ -1447,14 +1447,14 @@ define([
       return pathPart + '/' + filePart;
     },
 
-    collectUnresolvedVariableWarnings: function(result, params, skipWarnings) {
+    collectUnresolvedVariableWarnings: function (result, params, skipWarnings) {
       if (skipWarnings) return;
       var seen = {};
 
       function walk(value, path, self) {
         if (typeof value === 'string') {
           var matches = value.match(/\$\{[^}]+\}/g) || [];
-          matches.forEach(function(match) {
+          matches.forEach(function (match) {
             var expr = match.slice(2, -1).trim();
             var key = expr + '::' + path;
             if (!seen[key]) {
@@ -1470,13 +1470,13 @@ define([
           return;
         }
         if (Array.isArray(value)) {
-          value.forEach(function(item, idx) {
+          value.forEach(function (item, idx) {
             walk(item, path + '[' + idx + ']', self);
           });
           return;
         }
         if (value && typeof value === 'object') {
-          Object.keys(value).forEach(function(key) {
+          Object.keys(value).forEach(function (key) {
             walk(value[key], path ? (path + '.' + key) : key, self);
           });
         }
@@ -1485,7 +1485,7 @@ define([
       walk(params, '', this);
     },
 
-    validateLibraryObjects: function(result, fieldName, entries, requireSampleId) {
+    validateLibraryObjects: function (result, fieldName, entries, requireSampleId) {
       var list = this.toArrayValue(entries);
       for (var i = 0; i < list.length; i++) {
         var entry = list[i];
@@ -1514,16 +1514,16 @@ define([
       }
     },
 
-    runGenericValidation: function(step, index, params, workflow, serviceMeta, result) {
+    runGenericValidation: function (step, index, params, workflow, serviceMeta, result) {
       var requiredFields = this.parseRequiredFields(serviceMeta);
-      Object.keys(requiredFields).forEach(lang.hitch(this, function(fieldName) {
+      Object.keys(requiredFields).forEach(lang.hitch(this, function (fieldName) {
         if (this.isEmptyValue(params[fieldName])) {
           this.addValidationError(result, 'required_field', 'Missing required field: ' + fieldName, fieldName);
         }
       }));
 
       if (serviceMeta && Array.isArray(serviceMeta.fields)) {
-        serviceMeta.fields.forEach(lang.hitch(this, function(fieldDef) {
+        serviceMeta.fields.forEach(lang.hitch(this, function (fieldDef) {
           if (!fieldDef || !fieldDef.name) return;
           var fieldName = fieldDef.name;
           var value = params[fieldName];
@@ -1551,7 +1551,7 @@ define([
      * Creates a helpers object with validation utility functions.
      * These helpers are passed to service-specific validation rules.
      */
-    getValidationHelpers: function() {
+    getValidationHelpers: function () {
       return {
         toArrayValue: lang.hitch(this, this.toArrayValue),
         isEmptyValue: lang.hitch(this, this.isEmptyValue),
@@ -1561,122 +1561,122 @@ define([
       };
     },
 
-    runTaxonomicClassificationStrictValidation: function(step, index, params, workflow, result) {
+    runTaxonomicClassificationStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runTaxonomicClassificationStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runComprehensiveGenomeAnalysisStrictValidation: function(step, index, params, workflow, result) {
+    runComprehensiveGenomeAnalysisStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runComprehensiveGenomeAnalysisStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runGenomeAssemblyStrictValidation: function(step, index, params, workflow, result) {
+    runGenomeAssemblyStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runGenomeAssemblyStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runGenomeAnnotationStrictValidation: function(step, index, params, workflow, result) {
+    runGenomeAnnotationStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runGenomeAnnotationStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runBlastStrictValidation: function(step, index, params, workflow, result) {
+    runBlastStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runBlastStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runPrimerDesignStrictValidation: function(step, index, params, workflow, result) {
+    runPrimerDesignStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runPrimerDesignStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runVariationStrictValidation: function(step, index, params, workflow, result) {
+    runVariationStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runVariationStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runTnSeqStrictValidation: function(step, index, params, workflow, result) {
+    runTnSeqStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runTnSeqStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runBacterialGenomeTreeStrictValidation: function(step, index, params, workflow, result) {
+    runBacterialGenomeTreeStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runBacterialGenomeTreeStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runCoreGenomeMLSTStrictValidation: function(step, index, params, workflow, result) {
+    runCoreGenomeMLSTStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runCoreGenomeMLSTStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runWholeGenomeSNPStrictValidation: function(step, index, params, workflow, result) {
+    runWholeGenomeSNPStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runWholeGenomeSNPStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runMSAandSNPAnalysisStrictValidation: function(step, index, params, workflow, result) {
+    runMSAandSNPAnalysisStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runMSAandSNPAnalysisStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runMetaCATSStrictValidation: function(step, index, params, workflow, result) {
+    runMetaCATSStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runMetaCATSStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runGeneTreeStrictValidation: function(step, index, params, workflow, result) {
+    runGeneTreeStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runGeneTreeStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runProteomeComparisonStrictValidation: function(step, index, params, workflow, result) {
+    runProteomeComparisonStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runProteomeComparisonStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runComparativeSystemsStrictValidation: function(step, index, params, workflow, result) {
+    runComparativeSystemsStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runComparativeSystemsStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runDockingStrictValidation: function(step, index, params, workflow, result) {
+    runDockingStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runDockingStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runMetagenomicBinningStrictValidation: function(step, index, params, workflow, result) {
+    runMetagenomicBinningStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runMetagenomicBinningStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runMetagenomicReadMappingStrictValidation: function(step, index, params, workflow, result) {
+    runMetagenomicReadMappingStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runMetagenomicReadMappingStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runRNASeqStrictValidation: function(step, index, params, workflow, result) {
+    runRNASeqStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runRNASeqStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runSARSGenomeAnalysisStrictValidation: function(step, index, params, workflow, result) {
+    runSARSGenomeAnalysisStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runSARSGenomeAnalysisStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runSARSWastewaterAnalysisStrictValidation: function(step, index, params, workflow, result) {
+    runSARSWastewaterAnalysisStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runSARSWastewaterAnalysisStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    runViralAssemblyStrictValidation: function(step, index, params, workflow, result) {
+    runViralAssemblyStrictValidation: function (step, index, params, workflow, result) {
       var helpers = this.getValidationHelpers();
       ServiceValidationRules.runViralAssemblyStrictValidation(step, index, params, workflow, result, helpers);
     },
 
-    validateOutputTarget: function(params, result, suppressWarnings) {
+    validateOutputTarget: function (params, result, suppressWarnings) {
       var outputPath = params.output_path;
       var outputFile = params.output_file;
       if (this.isEmptyValue(outputPath) || this.isEmptyValue(outputFile)) {
@@ -1694,7 +1694,7 @@ define([
       var unresolvedFile = outputFileString.match(/\$\{[^}]+\}/g) || [];
       if (unresolvedPath.length > 0 || unresolvedFile.length > 0) {
         if (!suppressWarnings) {
-          unresolvedPath.concat(unresolvedFile).forEach(lang.hitch(this, function(token) {
+          unresolvedPath.concat(unresolvedFile).forEach(lang.hitch(this, function (token) {
             this.addValidationWarning(result, 'unresolved_output_target', 'Unable to resolve output target reference: ' + token, 'output');
           }));
         }
@@ -1713,7 +1713,7 @@ define([
       }
 
       return Promise.resolve(WorkspaceManager.objectsExist(fullPath))
-        .then(lang.hitch(this, function(existsMap) {
+        .then(lang.hitch(this, function (existsMap) {
           var state = existsMap && existsMap[fullPath] ? existsMap[fullPath] : null;
           if (state && state.exists) {
             this.addValidationError(result, 'output_exists', 'Output target already exists: ' + fullPath, 'output');
@@ -1721,7 +1721,7 @@ define([
             this.addValidationError(result, 'output_check_error', 'Unable to verify output target: ' + state.error, 'output');
           }
         }))
-        .catch(lang.hitch(this, function(err) {
+        .catch(lang.hitch(this, function (err) {
           this.addValidationError(
             result,
             'output_check_failed',
@@ -1731,7 +1731,7 @@ define([
         }));
     },
 
-    validateStep: function(stepIndex, options) {
+    validateStep: function (stepIndex, options) {
       var opts = options || {};
       var workflow = this.getParsedWorkflowData();
       var step = workflow && workflow.steps ? workflow.steps[stepIndex] : null;
@@ -1797,7 +1797,7 @@ define([
 
       this.collectUnresolvedVariableWarnings(result, params, skipVariableWarnings);
 
-      return this.validateOutputTarget(params, result, skipVariableWarnings).then(lang.hitch(this, function() {
+      return this.validateOutputTarget(params, result, skipVariableWarnings).then(lang.hitch(this, function () {
         if (skipVariableWarnings) {
           result.warnings = [];
         }
@@ -1810,7 +1810,7 @@ define([
       }));
     },
 
-    validateAllSteps: function(options) {
+    validateAllSteps: function (options) {
       var workflow = this.getParsedWorkflowData();
       var steps = workflow && Array.isArray(workflow.steps) ? workflow.steps : [];
       if (steps.length === 0) {
@@ -1823,7 +1823,7 @@ define([
         promises.push(this.validateStep(i, options || { updateUI: true }));
       }
 
-      return all(promises).then(lang.hitch(this, function(results) {
+      return all(promises).then(lang.hitch(this, function (results) {
         var firstInvalidIndex = -1;
         var allValid = true;
         for (var i = 0; i < results.length; i++) {
@@ -1842,8 +1842,8 @@ define([
       }));
     },
 
-    validateWorkflowBeforeSubmit: function(workflow) {
-      this.validateAllSteps({ updateUI: true }).then(lang.hitch(this, function(summary) {
+    validateWorkflowBeforeSubmit: function (workflow) {
+      this.validateAllSteps({ updateUI: true }).then(lang.hitch(this, function (summary) {
         if (!summary.allValid) {
           this._showSubmissionError('Cannot submit workflow: one or more steps failed validation.');
           if (summary.firstInvalidIndex >= 0) {
@@ -1859,7 +1859,7 @@ define([
       }));
     },
 
-    updateStepValidationUI: function(stepIndex) {
+    updateStepValidationUI: function (stepIndex) {
       var cardData = this.stepCardNodesByIndex[stepIndex];
       var validation = this.stepValidationByIndex[stepIndex] || this.emptyValidationResult();
       if (cardData && cardData.card) {
@@ -1881,7 +1881,7 @@ define([
       this.updateSubmitButtonValidationState();
     },
 
-    updateSubmitButtonValidationState: function() {
+    updateSubmitButtonValidationState: function () {
       if (!this.submitWorkflowButton) return;
       var workflow = this.getParsedWorkflowData();
       var steps = workflow && Array.isArray(workflow.steps) ? workflow.steps : [];
@@ -1904,7 +1904,7 @@ define([
       this.submitWorkflowButton.set('disabled', anyMissing || hasErrors);
     },
 
-    renderStepValidationDetails: function(contentNode, step, index) {
+    renderStepValidationDetails: function (contentNode, step, index) {
       var validation = this.stepValidationByIndex[index];
       if (!validation) {
         return;
@@ -1927,7 +1927,7 @@ define([
         var errorList = domConstruct.create('ul', {
           class: 'workflow-validation-list workflow-validation-list-errors'
         }, section);
-        validation.errors.forEach(lang.hitch(this, function(issue) {
+        validation.errors.forEach(lang.hitch(this, function (issue) {
           domConstruct.create('li', {
             innerHTML: this.escapeHtml(issue.message + (issue.field ? (' [' + issue.field + ']') : ''))
           }, errorList);
@@ -1938,7 +1938,7 @@ define([
         var warningList = domConstruct.create('ul', {
           class: 'workflow-validation-list workflow-validation-list-warnings'
         }, section);
-        validation.warnings.forEach(lang.hitch(this, function(issue) {
+        validation.warnings.forEach(lang.hitch(this, function (issue) {
           domConstruct.create('li', {
             innerHTML: this.escapeHtml(issue.message + (issue.field ? (' [' + issue.field + ']') : ''))
           }, warningList);
@@ -1951,7 +1951,7 @@ define([
      * @param {*} value - Value to format
      * @returns {string} Formatted string
      */
-    formatValue: function(value) {
+    formatValue: function (value) {
       if (Array.isArray(value)) {
         return JSON.stringify(value);
       } else if (typeof value === 'object' && value !== null) {
@@ -1965,7 +1965,7 @@ define([
      * @param {string} str - String to check
      * @returns {boolean} True if contains variable reference
      */
-    isVariableReference: function(str) {
+    isVariableReference: function (str) {
       return typeof str === 'string' && str.indexOf('${') !== -1;
     },
 
@@ -1974,7 +1974,7 @@ define([
      * @param {string} text - Text to escape
      * @returns {string} Escaped text
      */
-    escapeHtml: function(text) {
+    escapeHtml: function (text) {
       if (text === null || typeof text === 'undefined') return '';
       text = String(text);
       var map = {
@@ -1984,14 +1984,14 @@ define([
         '"': '&quot;',
         "'": '&#039;'
       };
-      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+      return text.replace(/[&<>"']/g, function (m) { return map[m]; });
     },
 
     /**
      * Updates the workflow data and re-renders
      * @param {Object|string} newData - New workflow data
      */
-    setWorkflowData: function(newData) {
+    setWorkflowData: function (newData) {
       console.log('[WorkflowEngine] setWorkflowData() called');
       console.log('[WorkflowEngine] newData type:', typeof newData);
       console.log('[WorkflowEngine] newData:', newData);
@@ -2041,7 +2041,7 @@ define([
      * Submits the workflow for execution directly to the workflow engine API
      * @param {Object} workflow - The workflow data to submit
      */
-    submitWorkflowForExecution: function(workflow) {
+    submitWorkflowForExecution: function (workflow) {
       console.log('[WorkflowEngine] submitWorkflowForExecution() called');
       console.log('[WorkflowEngine] Workflow to submit:', workflow);
 
@@ -2065,7 +2065,7 @@ define([
       // Submit directly to workflow engine API via copilotApi
       var _self = this;
       this.copilotApi.submitWorkflowForExecution(workflowToSubmit)
-        .then(function(response) {
+        .then(function (response) {
           console.log('[WorkflowEngine] Submit workflow response:', response);
 
           if (response.error) {
@@ -2106,7 +2106,7 @@ define([
             // Associate the workflow with the active chat session so it appears in Context > Workflows.
             if (_self.sessionId && _self.copilotApi && typeof _self.copilotApi.addWorkflowToSession === 'function') {
               _self.copilotApi.addWorkflowToSession(_self.sessionId, workflowId)
-                .then(function() {
+                .then(function () {
                   topic.publish('CopilotSessionWorkflowCreated', {
                     session_id: _self.sessionId,
                     workflow: {
@@ -2123,7 +2123,7 @@ define([
                     }
                   });
                 })
-                .catch(function(associationError) {
+                .catch(function (associationError) {
                   console.error('[WorkflowEngine] Failed to associate workflow with session:', associationError);
                 });
             }
@@ -2132,7 +2132,7 @@ define([
             _self._showSubmissionSuccess(_self.escapeHtml(message));
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error('[WorkflowEngine] Error submitting workflow:', error);
           _self._showSubmissionError('Submission error: ' + _self.escapeHtml(error.message || error));
         });
@@ -2142,7 +2142,7 @@ define([
      * Shows submission status message
      * @param {string} message - Status message to display
      */
-    _showSubmissionStatus: function(message) {
+    _showSubmissionStatus: function (message) {
       // Find or create status container
       var statusContainer = this._getOrCreateStatusContainer();
       statusContainer.innerHTML = '<div class="workflow-submission-status">' +
@@ -2156,7 +2156,7 @@ define([
      * Shows submission success message
      * @param {string} message - Success message to display
      */
-    _showSubmissionSuccess: function(message) {
+    _showSubmissionSuccess: function (message) {
       var statusContainer = this._getOrCreateStatusContainer();
       statusContainer.innerHTML = '';
       var successNode = domConstruct.create('div', {
@@ -2176,13 +2176,13 @@ define([
         title: 'Close',
         style: 'position: absolute; top: 6px; right: 8px; border: 0; background: transparent; color: inherit; font-size: 18px; line-height: 1; cursor: pointer; padding: 0;'
       }, successNode);
-      on(closeButton, 'click', function() {
+      on(closeButton, 'click', function () {
         domStyle.set(statusContainer, 'display', 'none');
       });
       domStyle.set(statusContainer, 'display', 'block');
 
       // Auto-hide after 10 seconds
-      setTimeout(function() {
+      setTimeout(function () {
         domStyle.set(statusContainer, 'display', 'none');
       }, 10000);
     },
@@ -2191,7 +2191,7 @@ define([
      * Shows submission error message
      * @param {string} message - Error message to display
      */
-    _showSubmissionError: function(message) {
+    _showSubmissionError: function (message) {
       var statusContainer = this._getOrCreateStatusContainer();
       statusContainer.innerHTML = '';
       var errorNode = domConstruct.create('div', {
@@ -2211,13 +2211,13 @@ define([
         title: 'Close',
         style: 'position: absolute; top: 6px; right: 8px; border: 0; background: transparent; color: inherit; font-size: 18px; line-height: 1; cursor: pointer; padding: 0;'
       }, errorNode);
-      on(closeButton, 'click', function() {
+      on(closeButton, 'click', function () {
         domStyle.set(statusContainer, 'display', 'none');
       });
       domStyle.set(statusContainer, 'display', 'block');
 
       // Auto-hide after 10 seconds
-      setTimeout(function() {
+      setTimeout(function () {
         domStyle.set(statusContainer, 'display', 'none');
       }, 10000);
     },
@@ -2226,7 +2226,7 @@ define([
      * Gets or creates the status message container
      * @returns {DOMNode} Status container element
      */
-    _getOrCreateStatusContainer: function() {
+    _getOrCreateStatusContainer: function () {
       var existing = this.domNode.querySelector('.workflow-submission-status-container');
       if (existing) {
         return existing;

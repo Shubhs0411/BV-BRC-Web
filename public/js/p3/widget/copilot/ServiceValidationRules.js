@@ -1,6 +1,6 @@
 define([
   'dojo/_base/lang'
-], function(
+], function (
   lang
 ) {
   /**
@@ -24,7 +24,7 @@ define([
      * - All library objects must have valid structure
      * - Sample IDs must not contain invalid characters: - : @ " ' ; [ ] { } | `
      */
-    runTaxonomicClassificationStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runTaxonomicClassificationStrictValidation: function (step, index, params, workflow, result, helpers) {
       var hasPaired = helpers.toArrayValue(params.paired_end_libs).length > 0;
       var hasSingle = helpers.toArrayValue(params.single_end_libs).length > 0;
       var hasSrr = helpers.toArrayValue(params.srr_libs).length > 0;
@@ -36,17 +36,17 @@ define([
       helpers.validateLibraryObjects(result, 'single_end_libs', params.single_end_libs, true);
 
       var invalidSampleChars = /[-:@"';\[\]{}|`]/;
-      helpers.toArrayValue(params.paired_end_libs).forEach(function(entry, idx) {
+      helpers.toArrayValue(params.paired_end_libs).forEach(function (entry, idx) {
         if (entry && typeof entry === 'object' && !helpers.isEmptyValue(entry.sample_id) && invalidSampleChars.test(String(entry.sample_id))) {
           helpers.addValidationError(result, 'invalid_sample_id_chars', 'Invalid characters in paired_end_libs[' + idx + '].sample_id', 'paired_end_libs');
         }
       });
-      helpers.toArrayValue(params.single_end_libs).forEach(function(entry, idx) {
+      helpers.toArrayValue(params.single_end_libs).forEach(function (entry, idx) {
         if (entry && typeof entry === 'object' && !helpers.isEmptyValue(entry.sample_id) && invalidSampleChars.test(String(entry.sample_id))) {
           helpers.addValidationError(result, 'invalid_sample_id_chars', 'Invalid characters in single_end_libs[' + idx + '].sample_id', 'single_end_libs');
         }
       });
-      helpers.toArrayValue(params.srr_libs).forEach(function(entry, idx) {
+      helpers.toArrayValue(params.srr_libs).forEach(function (entry, idx) {
         if (!entry || typeof entry !== 'object') {
           helpers.addValidationError(result, 'invalid_srr_entry', 'srr_libs[' + idx + '] must be an object', 'srr_libs');
           return;
@@ -73,7 +73,7 @@ define([
      * - If input_type=contigs: requires contigs
      * - If recipe=canu: requires genome_size
      */
-    runComprehensiveGenomeAnalysisStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runComprehensiveGenomeAnalysisStrictValidation: function (step, index, params, workflow, result, helpers) {
       var inputType = params.input_type;
       if (helpers.isEmptyValue(inputType)) {
         helpers.addValidationError(result, 'missing_input_type', 'Missing required field: input_type', 'input_type');
@@ -119,7 +119,7 @@ define([
      * - All library objects must have valid structure
      * - If recipe=canu: requires genome_size
      */
-    runGenomeAssemblyStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runGenomeAssemblyStrictValidation: function (step, index, params, workflow, result, helpers) {
       // Genome assembly requires at least one input source
       var hasPaired = helpers.toArrayValue(params.paired_end_libs).length > 0;
       var hasSingle = helpers.toArrayValue(params.single_end_libs).length > 0;
@@ -146,7 +146,7 @@ define([
      * - scientific_name is required
      * - taxonomy_id is optional but recommended
      */
-    runGenomeAnnotationStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runGenomeAnnotationStrictValidation: function (step, index, params, workflow, result, helpers) {
       // Contigs are required for genome annotation
       if (helpers.isEmptyValue(params.contigs)) {
         helpers.addValidationError(result, 'missing_contigs', 'Missing required field: contigs', 'contigs');
@@ -179,7 +179,7 @@ define([
      *   - taxon_list: requires db_taxon_list
      *   - precomputed_database: requires db_precomputed_database
      */
-    runBlastStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runBlastStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_type is required
       if (helpers.isEmptyValue(params.input_type)) {
         helpers.addValidationError(result, 'missing_input_type', 'Missing required field: input_type', 'input_type');
@@ -259,7 +259,7 @@ define([
      * - input_type is required (sequence_text/workplace_fasta/database_id)
      * - sequence_input is required (DNA sequence data)
      */
-    runPrimerDesignStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runPrimerDesignStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_type is required
       if (helpers.isEmptyValue(params.input_type)) {
         helpers.addValidationError(result, 'missing_input_type', 'Missing required field: input_type', 'input_type');
@@ -278,7 +278,7 @@ define([
      * - At least one input library (paired_end_libs, single_end_libs, or srr_ids)
      * - All library objects must have valid structure
      */
-    runVariationStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runVariationStrictValidation: function (step, index, params, workflow, result, helpers) {
       // reference_genome_id is required
       if (helpers.isEmptyValue(params.reference_genome_id)) {
         helpers.addValidationError(result, 'missing_reference_genome_id', 'Missing required field: reference_genome_id', 'reference_genome_id');
@@ -304,7 +304,7 @@ define([
      * - reference_genome_id is required
      * - read_files is required (read file groups)
      */
-    runTnSeqStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runTnSeqStrictValidation: function (step, index, params, workflow, result, helpers) {
       // reference_genome_id is required
       if (helpers.isEmptyValue(params.reference_genome_id)) {
         helpers.addValidationError(result, 'missing_reference_genome_id', 'Missing required field: reference_genome_id', 'reference_genome_id');
@@ -321,7 +321,7 @@ define([
      * Requirements:
      * - At least one genome source (genome_ids or genome_groups)
      */
-    runBacterialGenomeTreeStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runBacterialGenomeTreeStrictValidation: function (step, index, params, workflow, result, helpers) {
       console.log('[BacterialGenomeTree Validation] params:', params);
       console.log('[BacterialGenomeTree Validation] genome_ids:', params.genome_ids);
       console.log('[BacterialGenomeTree Validation] genome_groups:', params.genome_groups);
@@ -334,11 +334,11 @@ define([
       console.log('[BacterialGenomeTree Validation] genomeGroupsArray:', genomeGroupsArray);
 
       // Filter out empty strings from arrays
-      var hasGenomeIds = genomeIdsArray.filter(function(id) {
+      var hasGenomeIds = genomeIdsArray.filter(function (id) {
         return !helpers.isEmptyValue(id);
       }).length > 0;
 
-      var hasGenomeGroups = genomeGroupsArray.filter(function(group) {
+      var hasGenomeGroups = genomeGroupsArray.filter(function (group) {
         return !helpers.isEmptyValue(group);
       }).length > 0;
 
@@ -362,7 +362,7 @@ define([
      *   - genome_group: requires input_genome_group
      *   - genome_fasta: requires input_genome_fasta
      */
-    runCoreGenomeMLSTStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runCoreGenomeMLSTStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_genome_type is required
       if (helpers.isEmptyValue(params.input_genome_type)) {
         helpers.addValidationError(result, 'missing_input_genome_type', 'Missing required field: input_genome_type', 'input_genome_type');
@@ -394,7 +394,7 @@ define([
      *   - genome_group: requires input_genome_group
      *   - genome_fasta: requires input_genome_fasta
      */
-    runWholeGenomeSNPStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runWholeGenomeSNPStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_genome_type is required
       if (helpers.isEmptyValue(params.input_genome_type)) {
         helpers.addValidationError(result, 'missing_input_genome_type', 'Missing required field: input_genome_type', 'input_genome_type');
@@ -420,7 +420,7 @@ define([
      * - At least one input source (fasta_files, select_genomegroup, feature_groups, feature_list, or genome_list)
      * - alphabet is required (dna or protein)
      */
-    runMSAandSNPAnalysisStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runMSAandSNPAnalysisStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_type is required (but has a default)
       if (helpers.isEmptyValue(params.input_type)) {
         helpers.addValidationError(result, 'missing_input_type', 'Missing required field: input_type', 'input_type');
@@ -453,7 +453,7 @@ define([
      *   - auto_groups: requires auto_groups
      *   - groups: requires groups and group_file
      */
-    runMetaCATSStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runMetaCATSStrictValidation: function (step, index, params, workflow, result, helpers) {
       // input_type is required
       if (helpers.isEmptyValue(params.input_type)) {
         helpers.addValidationError(result, 'missing_input_type', 'Missing required field: input_type', 'input_type');
@@ -490,7 +490,7 @@ define([
      * - sequences is required (sequence data inputs)
      * - alphabet is required (DNA or Protein)
      */
-    runGeneTreeStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runGeneTreeStrictValidation: function (step, index, params, workflow, result, helpers) {
       // sequences is required
       if (helpers.isEmptyValue(params.sequences)) {
         helpers.addValidationError(result, 'missing_sequences', 'Missing required field: sequences', 'sequences');
@@ -508,7 +508,7 @@ define([
      * - At least one genome source (genome_ids, user_genomes, or user_feature_groups)
      * - At least 2 genomes/proteomes are needed for comparison
      */
-    runProteomeComparisonStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runProteomeComparisonStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one genome source is required
       var hasGenomeIds = helpers.toArrayValue(params.genome_ids).length > 0;
       var hasUserGenomes = helpers.toArrayValue(params.user_genomes).length > 0;
@@ -533,7 +533,7 @@ define([
      * - At least one genome source (genome_ids or genome_groups)
      * - At least 2 genomes are needed for comparison
      */
-    runComparativeSystemsStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runComparativeSystemsStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one genome source is required
       var hasGenomeIds = helpers.toArrayValue(params.genome_ids).length > 0;
       var hasGenomeGroups = helpers.toArrayValue(params.genome_groups).length > 0;
@@ -563,7 +563,7 @@ define([
      *   - smiles_list: requires ligand_smiles_list
      *   - workspace_file: requires ligand_ws_file
      */
-    runDockingStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runDockingStrictValidation: function (step, index, params, workflow, result, helpers) {
       // protein_input_type is required
       if (helpers.isEmptyValue(params.protein_input_type)) {
         helpers.addValidationError(result, 'missing_protein_input_type', 'Missing required field: protein_input_type', 'protein_input_type');
@@ -609,7 +609,7 @@ define([
      * - At least one input source (paired_end_libs, single_end_libs, srr_ids, or contigs)
      * - All library objects must have valid structure
      */
-    runMetagenomicBinningStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runMetagenomicBinningStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one input source is required
       var hasPaired = helpers.toArrayValue(params.paired_end_libs).length > 0;
       var hasSingle = helpers.toArrayValue(params.single_end_libs).length > 0;
@@ -636,7 +636,7 @@ define([
      * - At least one read input (paired_end_libs, single_end_libs, or srr_ids)
      * - All library objects must have valid structure
      */
-    runMetagenomicReadMappingStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runMetagenomicReadMappingStrictValidation: function (step, index, params, workflow, result, helpers) {
       // gene_set_type is required
       if (helpers.isEmptyValue(params.gene_set_type)) {
         helpers.addValidationError(result, 'missing_gene_set_type', 'Missing required field: gene_set_type', 'gene_set_type');
@@ -679,7 +679,7 @@ define([
      * - At least one read input (paired_end_libs, single_end_libs, or srr_libs)
      * - All library objects must have valid structure
      */
-    runRNASeqStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runRNASeqStrictValidation: function (step, index, params, workflow, result, helpers) {
       // reference_genome_id is required
       if (helpers.isEmptyValue(params.reference_genome_id)) {
         helpers.addValidationError(result, 'missing_reference_genome_id', 'Missing required field: reference_genome_id', 'reference_genome_id');
@@ -705,7 +705,7 @@ define([
      * - At least one read input (paired_end_libs, single_end_libs, or srr_ids)
      * - All library objects must have valid structure
      */
-    runSARSGenomeAnalysisStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runSARSGenomeAnalysisStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one read input source is required
       var hasPaired = helpers.toArrayValue(params.paired_end_libs).length > 0;
       var hasSingle = helpers.toArrayValue(params.single_end_libs).length > 0;
@@ -726,7 +726,7 @@ define([
      * - At least one read input (paired_end_libs, single_end_libs, or srr_libs)
      * - All library objects must have valid structure
      */
-    runSARSWastewaterAnalysisStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runSARSWastewaterAnalysisStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one read input source is required
       var hasPaired = helpers.toArrayValue(params.paired_end_libs).length > 0;
       var hasSingle = helpers.toArrayValue(params.single_end_libs).length > 0;
@@ -747,7 +747,7 @@ define([
      * - At least one read input (paired_end_lib, single_end_lib, or srr_id)
      * Note: This service uses singular form for library parameters
      */
-    runViralAssemblyStrictValidation: function(step, index, params, workflow, result, helpers) {
+    runViralAssemblyStrictValidation: function (step, index, params, workflow, result, helpers) {
       // At least one read input source is required
       var hasPaired = !helpers.isEmptyValue(params.paired_end_lib);
       var hasSingle = !helpers.isEmptyValue(params.single_end_lib);

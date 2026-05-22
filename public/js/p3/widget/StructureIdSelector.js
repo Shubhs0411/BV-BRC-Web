@@ -100,7 +100,7 @@ define([
       // console.log("Query Filter set to: " + this.queryFilter);
     },
     onChange: function () {
-      console.log("on change");
+      console.log('on change');
 
 
     },

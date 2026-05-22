@@ -25,7 +25,7 @@ define([
     _pendingSelectedJobs: null,
     _isApplyingPendingSelection: false,
 
-    constructor: function(args) {
+    constructor: function (args) {
       this.jobsData = [];
       this._pendingSelectedJobs = [];
       this._isApplyingPendingSelection = false;
@@ -42,7 +42,7 @@ define([
       this.sort = [{ attribute: 'submit_time', descending: true }];
     },
 
-    _buildColumns: function() {
+    _buildColumns: function () {
       return {
         __copilotRowSelect: selector({
           selectorType: 'checkbox',
@@ -84,7 +84,7 @@ define([
       };
     },
 
-    _formatDate: function(value) {
+    _formatDate: function (value) {
       if (!value) {
         return '';
       }
@@ -95,7 +95,7 @@ define([
       return date.toLocaleString();
     },
 
-    _normalizeJob: function(job) {
+    _normalizeJob: function (job) {
       if (!job) {
         return null;
       }
@@ -115,12 +115,12 @@ define([
       };
     },
 
-    _buildSelectedIdMapFromItems: function(items) {
+    _buildSelectedIdMapFromItems: function (items) {
       var selectedIds = {};
       if (!Array.isArray(items)) {
         return selectedIds;
       }
-      items.forEach(function(job) {
+      items.forEach(function (job) {
         if (job && job.id !== undefined && job.id !== null) {
           selectedIds[String(job.id)] = true;
         }
@@ -128,7 +128,7 @@ define([
       return selectedIds;
     },
 
-    _getCurrentSelectedIdMap: function() {
+    _getCurrentSelectedIdMap: function () {
       var selectionMap = this.selection || {};
       var selectedIds = {};
       for (var rowId in selectionMap) {
@@ -139,7 +139,7 @@ define([
       return selectedIds;
     },
 
-    _selectedIdMapsMatch: function(expected, current) {
+    _selectedIdMapsMatch: function (expected, current) {
       var key;
       for (key in expected) {
         if (expected.hasOwnProperty(key) && !current[key]) {
@@ -154,11 +154,11 @@ define([
       return true;
     },
 
-    isApplyingSelectionSync: function() {
+    isApplyingSelectionSync: function () {
       return !!this._isApplyingPendingSelection;
     },
 
-    _applyPendingSelection: function() {
+    _applyPendingSelection: function () {
       if (!Array.isArray(this._pendingSelectedJobs) || this._isApplyingPendingSelection) {
         return;
       }
@@ -174,7 +174,7 @@ define([
         if (typeof this.clearSelection === 'function') {
           this.clearSelection();
         }
-        this.jobsData.forEach(lang.hitch(this, function(job) {
+        this.jobsData.forEach(lang.hitch(this, function (job) {
           if (job && selectedIds[job.id]) {
             this.select(job.id);
           }
@@ -184,12 +184,12 @@ define([
       }
     },
 
-    _getJobIdMapFromItems: function(items) {
+    _getJobIdMapFromItems: function (items) {
       var idMap = {};
       if (!Array.isArray(items)) {
         return idMap;
       }
-      items.forEach(function(item) {
+      items.forEach(function (item) {
         if (item && item.id !== undefined && item.id !== null) {
           idMap[String(item.id)] = true;
         }
@@ -197,10 +197,10 @@ define([
       return idMap;
     },
 
-    setJobsData: function(jobs) {
+    setJobsData: function (jobs) {
       var normalized = [];
       if (Array.isArray(jobs)) {
-        jobs.forEach(lang.hitch(this, function(job) {
+        jobs.forEach(lang.hitch(this, function (job) {
           var mapped = this._normalizeJob(job);
           if (mapped) {
             normalized.push(mapped);
@@ -217,7 +217,7 @@ define([
       this._applyPendingSelection();
     },
 
-    getSelectedJobs: function() {
+    getSelectedJobs: function () {
       var selected = [];
       var selectionMap = this.selection || {};
       for (var rowId in selectionMap) {
@@ -232,7 +232,7 @@ define([
       return selected;
     },
 
-    setSelectedJobs: function(items) {
+    setSelectedJobs: function (items) {
       var currentPendingMap = this._getJobIdMapFromItems(this._pendingSelectedJobs);
       var nextPendingMap = this._getJobIdMapFromItems(items);
       if (this._selectedIdMapsMatch(nextPendingMap, currentPendingMap)) {
@@ -245,7 +245,7 @@ define([
       this._applyPendingSelection();
     },
 
-    startup: function() {
+    startup: function () {
       if (this._started) {
         return;
       }

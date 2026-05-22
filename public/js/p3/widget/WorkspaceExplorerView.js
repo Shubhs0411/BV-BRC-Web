@@ -95,27 +95,27 @@ define([
       return all([prom1, prom2]).then(function (results) {
         var objs = results[0] || [];
 
-    // join 'shared with me' data if needed
-    if (isUserTopLevel && results[1] && Array.isArray(results[1])) { // Check if results[1] is an array
-       // Filter based on what we want to show
-       if (showOnlyShared) {
-         // Only show shared workspaces
-         objs = results[1];
-       } else if (showOnlyOwned) {
-         // Show only owned workspaces (filter out shared ones)
-         objs = objs.filter(function(obj) {
-           // Keep only items that are NOT in the shared list
-           return !results[1].some(function(sharedObj) {
-             return sharedObj.path === obj.path;
-           });
-         });
-       } else {
-         // No hash or unrecognized hash - show all (owned + shared)
-         objs = objs.concat(results[1]);
-       }
-    } else if (isUserTopLevel && results[1]) {
-       console.warn("WorkspaceExplorerView: results[1] from listSharedWithUser was not an array:", results[1]);
-    }
+        // join 'shared with me' data if needed
+        if (isUserTopLevel && results[1] && Array.isArray(results[1])) { // Check if results[1] is an array
+          // Filter based on what we want to show
+          if (showOnlyShared) {
+            // Only show shared workspaces
+            objs = results[1];
+          } else if (showOnlyOwned) {
+            // Show only owned workspaces (filter out shared ones)
+            objs = objs.filter(function (obj) {
+              // Keep only items that are NOT in the shared list
+              return !results[1].some(function (sharedObj) {
+                return sharedObj.path === obj.path;
+              });
+            });
+          } else {
+            // No hash or unrecognized hash - show all (owned + shared)
+            objs = objs.concat(results[1]);
+          }
+        } else if (isUserTopLevel && results[1]) {
+          console.warn('WorkspaceExplorerView: results[1] from listSharedWithUser was not an array:', results[1]);
+        }
 
         var paths = objs.map(function (obj) { return obj.path; });
         var prom2 = WorkspaceManager.listPermissions(paths);
@@ -188,7 +188,7 @@ define([
             }
             return (a[s.attribute] > b[s.attribute]) ? 1 : -1;
           });
-          objs = objs.filter(function(item) { return typeof item !== 'undefined'; }); // ADD THIS LINE
+          objs = objs.filter(function (item) { return typeof item !== 'undefined'; }); // ADD THIS LINE
           _self.renderCount(objs.length, false); //false for not a search result
 
           return objs;
@@ -277,12 +277,12 @@ define([
 
       // Update empty folder message based on new items
       if (!items || items.length === 0) {
-          var isPublicPath = this.path && this.path.startsWith('/public');
-          // Check if it's a search result by looking at currentSearchTerm or global filter
-          var searchActive = !!this.currentSearchTerm || !!WorkspaceManager.activeSearchFilter;
-          this.addEmptyFolderDiv(isPublicPath, searchActive);
+        var isPublicPath = this.path && this.path.startsWith('/public');
+        // Check if it's a search result by looking at currentSearchTerm or global filter
+        var searchActive = !!this.currentSearchTerm || !!WorkspaceManager.activeSearchFilter;
+        this.addEmptyFolderDiv(isPublicPath, searchActive);
       } else {
-          this.rmEmptyFolderDiv();
+        this.rmEmptyFolderDiv();
       }
 
     },
@@ -351,7 +351,7 @@ define([
       // Initial load: only call refreshWorkspace if not in a search state.
       // The search state would be handled by WorkspaceBrowser pushing results.
       if (!this.currentSearchTerm && !WorkspaceManager.activeSearchFilter) {
-          this.refreshWorkspace();
+        this.refreshWorkspace();
       }
 
       // also listen for later changes
@@ -359,7 +359,7 @@ define([
         // Only refresh if not in a search state that was initiated by this view or globally.
         // This prevents stomping search results with a normal path refresh.
         if (!this.currentSearchTerm && !WorkspaceManager.activeSearchFilter) {
-            _self.refreshWorkspace();
+          _self.refreshWorkspace();
         }
       }));
       this.refreshWorkspace();
@@ -373,9 +373,9 @@ define([
 
       var message;
       if (isSearchResult) {
-          message = '<b>No items match your search criteria.</b>';
+        message = '<b>No items match your search criteria.</b>';
       } else {
-          message = '<b>This folder is empty.</b>' +
+        message = '<b>This folder is empty.</b>' +
               (this.allowDragAndDrop && !isPublic ? '<br>Drag and drop files onto this window to upload.' : '');
       }
 

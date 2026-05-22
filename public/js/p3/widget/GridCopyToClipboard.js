@@ -30,12 +30,12 @@ define(['dojo/_base/declare', 'dojo/has', 'dojo/on', 'dgrid/util/misc', 'put-sel
     return declare(null, {
       copyToClipboard: function (includeHeader) {
         var out = [];
-        var _self=this
-        console.log("Selection: ", this)
+        var _self = this
+        console.log('Selection: ', this)
         selection = []
 
-        Object.keys(this._all?this._unloadedData:this.selection).forEach(function(id){
-          if (_self.selectedData[id]){
+        Object.keys(this._all ? this._unloadedData : this.selection).forEach(function (id) {
+          if (_self.selectedData[id]) {
             selection.push(_self.selectedData[id])
           }
         })
@@ -91,8 +91,8 @@ define(['dojo/_base/declare', 'dojo/has', 'dojo/on', 'dgrid/util/misc', 'put-sel
           out.push(io.join('\t'));
         });
 
-        console.log("Copy to clipboard: ", out.join("\n"))
-        navigator.clipboard.writeText(out.join("\n"));
+        console.log('Copy to clipboard: ', out.join('\n'))
+        navigator.clipboard.writeText(out.join('\n'));
       },
 
     });

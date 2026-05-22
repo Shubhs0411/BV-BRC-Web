@@ -401,8 +401,8 @@ define([
     // Make a thin rounded rectangle for the blast hit
     make_blast_rect: function (parent, x1, x2, height) {
       var dat = {
-        y: -(height * .5),
-        height:  height
+        y: -(height * 0.5),
+        height: height
       };
       if (x1 < x2) {
         dat.x = x1;
@@ -420,8 +420,8 @@ define([
     // Make a thin rectangle for the pg feature
     make_pg_rect: function (parent, x1, x2, height) {
       var dat = {
-        y: -(height * .5),
-        height:  height
+        y: -(height * 0.5),
+        height: height
       };
       if (x1 < x2) {
         dat.x = x1;
@@ -466,13 +466,13 @@ define([
           color = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
           // console.log("have blast feature " + feature.blast_identity + " " + rgb + " " + color)
         }
-	else if (feature.type === 'pseudogene') {
+        else if (feature.type === 'pseudogene') {
 	  glyph = this.make_pg_rect(row, x1, x2, height);
-	}
-	else {
+        }
+        else {
 	  glyph = this.make_rect(row, x1, x2, height);
-	}
-	  
+        }
+
       }
 
       /**
@@ -485,7 +485,7 @@ define([
         var rgb = this.hsvToRgb(0, sat, 100);
 
         color = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
-	pinned = 1;
+        pinned = 1;
       }
 
       if (feature.type !== 'intergenic') {

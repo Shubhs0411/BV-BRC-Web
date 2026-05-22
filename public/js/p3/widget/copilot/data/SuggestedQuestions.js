@@ -93,7 +93,7 @@ define([
      * Returns all available suggested questions
      * @returns {Array<string>} Array of all suggested questions
      */
-    getAllSuggestedQuestions: function() {
+    getAllSuggestedQuestions: function () {
       return allSuggestedQuestions;
     }
   };

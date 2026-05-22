@@ -43,7 +43,7 @@ define([
     },
 
     onSetState: function (attr, oldVal, state) {
-      console.log("onSetState", attr, oldVal, state);
+      console.log('onSetState', attr, oldVal, state);
       if (!state)
       {
         return;
@@ -51,43 +51,43 @@ define([
 
       if (state.feature && state.feature.patric_id)
       {
-//	if (this.patric_id == state.feature.patric_id) {
-//	  return;
-//	}
-	this.patric_id = state.feature.patric_id;
+        //	if (this.patric_id == state.feature.patric_id) {
+        //	  return;
+        //	}
+        this.patric_id = state.feature.patric_id;
       }
 
       /*
        * Determine our view mode. If we have a state.feature we are viewing
        * a single feature. (We should also see widgetClass == p3/widget/viewerFeature)
        *
-       * Otherwise we need to look at 
+       * Otherwise we need to look at
        */
 
       if (this.viewer) {
 
-	switch (state.widgetClass) {
-	  
+        switch (state.widgetClass) {
+
 	  case 'p3/widget/viewer/FeatureGroup':
 	  {
-            var window = this.region_size.get('value');
-            var n_genomes = this.n_genomes.get('value');
-            var method = this.method.get('value');
-            var filter = 'feature_query';
-	    
-            this.render('', window, n_genomes, method, filter, state.search);
+              var window = this.region_size.get('value');
+              var n_genomes = this.n_genomes.get('value');
+              var method = this.method.get('value');
+              var filter = 'feature_query';
+
+              this.render('', window, n_genomes, method, filter, state.search);
 	  }
 
 	  break;
-	  
+
 	  case 'p3/widget/viewer/FeatureList':
 	  {
-            var window = this.region_size.get('value');
-            var n_genomes = this.n_genomes.get('value');
-            var method = this.method.get('value');
-            var filter = 'feature_query';
-	    
-            this.render('', window, n_genomes, method, filter, state.search);
+              var window = this.region_size.get('value');
+              var n_genomes = this.n_genomes.get('value');
+              var method = this.method.get('value');
+              var filter = 'feature_query';
+
+              this.render('', window, n_genomes, method, filter, state.search);
 	  }
 
 	  break;
@@ -96,51 +96,51 @@ define([
 	  {
 	    if (!state.feature)
 	    {
-	      console.log("Skipping due to missing feature");
+	      console.log('Skipping due to missing feature');
 	      return;
 	    }
 	    if (state.feature.feature_type === 'CDS')
 	    {
-              var window = this.region_size.get('value');
-              var n_genomes = this.n_genomes.get('value');
-              var method = this.method.get('value');
-              var filter = this.g_filter.get('value');
-	      
-	      console.log("initial render", state.feature.patric_id, window, n_genomes, method, filter);
-              this.render(state.feature.patric_id, window, n_genomes, method, filter);
+                var window = this.region_size.get('value');
+                var n_genomes = this.n_genomes.get('value');
+                var method = this.method.get('value');
+                var filter = this.g_filter.get('value');
+
+	      console.log('initial render', state.feature.patric_id, window, n_genomes, method, filter);
+                this.render(state.feature.patric_id, window, n_genomes, method, filter);
               // this.render(state.feature.patric_id, 10000, 10, 'pgfam', 'representative+reference');
-            }
+              }
 	    else
 	    {
-              new Dialog({
-		title: '',
-		content: 'Compare Region Viewer is only available for CDS features.',
-		style: 'width: 400px'
-              }).show();
-            }
+                new Dialog({
+                  title: '',
+                  content: 'Compare Region Viewer is only available for CDS features.',
+                  style: 'width: 400px'
+                }).show();
+              }
 	  }
 	  break;
 	  }
-	}
+      }
 
-	this._set('state', state);
-      },
+      this._set('state', state);
+    },
 
     render: function (peg, window, n_genomes, method, filter, val) {
       this.loadingMask.show();
-      console.log("RENDER:", peg, method, filter, val);
+      console.log('RENDER:', peg, method, filter, val);
       var options = {};
       if (filter == 'genome_group') {
-	options.genome_group = this.genome_group_selector.get('value');
+        options.genome_group = this.genome_group_selector.get('value');
       } else if (filter == 'feature_group') {
-	options.feature_group = this.feature_group_selector.get('value');
+        options.feature_group = this.feature_group_selector.get('value');
       }
       else if (filter == 'feature_query') {
-	options.feature_query = val;
+        options.feature_query = val;
       }
-      
+
       console.log(options);
-      
+
       this.service.compare_regions_for_peg2(
         peg, window, n_genomes, method, filter, options,
         function (data) {
@@ -314,38 +314,38 @@ define([
 	  value: 'genome_group', label: 'Selected genome group'
         }, {
 	  value: 'feature_group', label: 'Selected feature group'
-	}]
+        }]
       });
-	this.g_filter.onChange = lang.hitch(this, function(val) { 
-	    if (val == "genome_group") {
-console.log("enable group ", this.genome_group_selector);
-		this.genome_group_selector.set('disabled', false);
-		this.feature_group_selector.set('disabled', true);
-	    } else if (val == "feature_group") {
-console.log("enable feature ", this.feature_group_selector);
-		this.genome_group_selector.set('disabled', true);
-		this.feature_group_selector.set('disabled', false);
+      this.g_filter.onChange = lang.hitch(this, function (val) {
+	    if (val == 'genome_group') {
+          console.log('enable group ', this.genome_group_selector);
+          this.genome_group_selector.set('disabled', false);
+          this.feature_group_selector.set('disabled', true);
+	    } else if (val == 'feature_group') {
+          console.log('enable feature ', this.feature_group_selector);
+          this.genome_group_selector.set('disabled', true);
+          this.feature_group_selector.set('disabled', false);
 	    } else {
-		this.genome_group_selector.set('disabled', true);
-		this.feature_group_selector.set('disabled', true);
+          this.genome_group_selector.set('disabled', true);
+          this.feature_group_selector.set('disabled', true);
 	    }
-	});
-	domConstruct.place(label_g_filter, filterPanel.containerNode, 'last');
-	domConstruct.place(this.g_filter.domNode, filterPanel.containerNode, 'last');
+      });
+      domConstruct.place(label_g_filter, filterPanel.containerNode, 'last');
+      domConstruct.place(this.g_filter.domNode, filterPanel.containerNode, 'last');
 
-	var label_genome_group_selector = domConstruct.create('label', { innerHTML: 'Genome group : ' });
-	domConstruct.place(label_genome_group_selector, filterPanel.containerNode, 'last');
-	this.genome_group_selector = new WorkspaceObjectSelector({ style: "width: 200px" });
-	this.genome_group_selector.set('type', ['genome_group']);
-	domConstruct.place(this.genome_group_selector.domNode, filterPanel.containerNode, 'last');
-	this.genome_group_selector.set('disabled', true);
+      var label_genome_group_selector = domConstruct.create('label', { innerHTML: 'Genome group : ' });
+      domConstruct.place(label_genome_group_selector, filterPanel.containerNode, 'last');
+      this.genome_group_selector = new WorkspaceObjectSelector({ style: 'width: 200px' });
+      this.genome_group_selector.set('type', ['genome_group']);
+      domConstruct.place(this.genome_group_selector.domNode, filterPanel.containerNode, 'last');
+      this.genome_group_selector.set('disabled', true);
 
-	var label_feature_group_selector = domConstruct.create('label', { innerHTML: 'Feature group : ' });
-	domConstruct.place(label_feature_group_selector, filterPanel.containerNode, 'last');
-	this.feature_group_selector = new WorkspaceObjectSelector({ style: "width: 200px" });
-	this.feature_group_selector.set('type', ['feature_group']);
-	domConstruct.place(this.feature_group_selector.domNode, filterPanel.containerNode, 'last');
-	this.feature_group_selector.set('disabled', true);
+      var label_feature_group_selector = domConstruct.create('label', { innerHTML: 'Feature group : ' });
+      domConstruct.place(label_feature_group_selector, filterPanel.containerNode, 'last');
+      this.feature_group_selector = new WorkspaceObjectSelector({ style: 'width: 200px' });
+      this.feature_group_selector.set('type', ['feature_group']);
+      domConstruct.place(this.feature_group_selector.domNode, filterPanel.containerNode, 'last');
+      this.feature_group_selector.set('disabled', true);
 
       // domConstruct.place("<br/>", filterPanel.containerNode, "last");
 
@@ -364,7 +364,7 @@ console.log("enable feature ", this.feature_group_selector);
 	  // based on in which page the compare region is embedded.
 	  //
 	  this._set('state', structuredClone(this.state));
-	  
+
           // this.render(this.patric_id, window, n_genomes, method, filter);
         })
       });

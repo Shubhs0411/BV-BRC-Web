@@ -77,7 +77,7 @@ define([
      * - Mixes in any provided configuration options
      * - Initializes empty sessions list
      */
-    constructor: function(args) {
+    constructor: function (args) {
       declare.safeMixin(this, args);
 
       // Pagination related defaults
@@ -109,7 +109,7 @@ define([
      * - Fetches initial session data
      * - Subscribes to reload events to refresh sessions
      */
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
 
       // Create scrollable container that fills parent width
@@ -120,7 +120,7 @@ define([
       // Initial load
       this._refreshSessions();
 
-      topic.subscribe('reloadUserSessions', lang.hitch(this, function(data) {
+      topic.subscribe('reloadUserSessions', lang.hitch(this, function (data) {
         if (data && data.highlightSessionId) {
           // Store the session ID to highlight after reload
           this._highlightAfterReload = data.highlightSessionId;
@@ -129,12 +129,12 @@ define([
       }));
 
       // Subscribe to session selection events to highlight the selected session
-      topic.subscribe('ChatSession:Selected', lang.hitch(this, function(data) {
+      topic.subscribe('ChatSession:Selected', lang.hitch(this, function (data) {
         this.highlightSession(data.sessionId);
       }));
 
       // Subscribe to title change events so the scroll card updates immediately
-      topic.subscribe('ChatSessionTitleChanged', lang.hitch(this, function(data) {
+      topic.subscribe('ChatSessionTitleChanged', lang.hitch(this, function (data) {
         if (!data || !data.sessionId) {
           return;
         }
@@ -161,7 +161,7 @@ define([
       }));
 
       // When a brand-new chat is started, nothing should be highlighted yet
-      topic.subscribe('createNewChatSession', lang.hitch(this, function() {
+      topic.subscribe('createNewChatSession', lang.hitch(this, function () {
         this._highlightAfterReload = null;
         this.currentHighlighted = null;
         this.clearHighlight();
@@ -182,7 +182,7 @@ define([
      * Renders the full list of chat session cards using ChatSessionScrollCard
      * Overrides parent method to use small window version of cards
      */
-    renderSessions: function() {
+    renderSessions: function () {
       // Clear existing content
       domConstruct.empty(this.scrollContainer);
 
@@ -190,15 +190,15 @@ define([
       this.sessionCards = {};
 
       // Create session cards using small window version
-      this.sessions_list.forEach(function(session) {
-          var sessionCard = new ChatSessionScrollCard({
-              session: session,
-              copilotApi: this.copilotApi
-          });
-          sessionCard.placeAt(this.scrollContainer);
+      this.sessions_list.forEach(function (session) {
+        var sessionCard = new ChatSessionScrollCard({
+          session: session,
+          copilotApi: this.copilotApi
+        });
+        sessionCard.placeAt(this.scrollContainer);
 
-          // Store reference to the card widget keyed by session ID
-          this.sessionCards[session.session_id] = sessionCard;
+        // Store reference to the card widget keyed by session ID
+        this.sessionCards[session.session_id] = sessionCard;
       }, this);
 
       // Ensure the load-more button visibility/state is updated after rendering
@@ -215,7 +215,7 @@ define([
      * - If session card is found, changes its background color
      * - Scrolls the highlighted session into view
      */
-    highlightSession: function(sessionId) {
+    highlightSession: function (sessionId) {
       this.currentHighlighted = sessionId || null;
       if (!this.sessionCards) {
         return;
@@ -249,7 +249,7 @@ define([
      * @method clearHighlight
      * Clears highlighting from all session cards, resetting them to default state
      */
-    clearHighlight: function() {
+    clearHighlight: function () {
       if (!this.sessionCards) {
         return;
       }
@@ -273,7 +273,7 @@ define([
      * - Triggers complete re-render
      * - Used for bulk updates
      */
-    setSessions: function(sessions) {
+    setSessions: function (sessions) {
       this.sessions_list = sessions;
       this.renderSessions();
 
@@ -283,19 +283,19 @@ define([
       // If there's a session to highlight after reload, do it now
       if (this._highlightAfterReload) {
         // Use setTimeout to ensure the DOM is updated before highlighting
-        setTimeout(lang.hitch(this, function() {
+        setTimeout(lang.hitch(this, function () {
           this.highlightSession(this._highlightAfterReload);
           this._highlightAfterReload = null; // Clear the pending highlight
         }), 300);
       } else if (this.currentHighlighted) {
         // Re-apply existing highlight after rerender
-        setTimeout(lang.hitch(this, function() {
+        setTimeout(lang.hitch(this, function () {
           this.highlightSession(this.currentHighlighted);
         }), 0);
       }
     },
 
-    _refreshSessions: function() {
+    _refreshSessions: function () {
       // Reset pagination state on a full refresh
       this.offset = 0;
 
@@ -309,7 +309,7 @@ define([
       }
 
       // Load first page from API
-      this.copilotApi.getUserSessions(this.pageSize, this.offset).then(lang.hitch(this, function(res) {
+      this.copilotApi.getUserSessions(this.pageSize, this.offset).then(lang.hitch(this, function (res) {
         var sessions = res.sessions || [];
         this.hasMore = res.has_more;
         this.offset += sessions.length;
@@ -323,7 +323,7 @@ define([
     /*
      * Loads the next page of sessions when the user presses the "Load More" button.
      */
-    _loadMoreSessions: function() {
+    _loadMoreSessions: function () {
       if (!this.hasMore) { return; }
 
       // Capture the current scroll position so we can restore it after the list re-renders.
@@ -331,7 +331,7 @@ define([
       // behaviour where the view jumped to the bottom after new sessions were appended.
       var prevScrollTop = this.scrollContainer.scrollTop;
 
-      this.copilotApi.getUserSessions(this.pageSize, this.offset).then(lang.hitch(this, function(res) {
+      this.copilotApi.getUserSessions(this.pageSize, this.offset).then(lang.hitch(this, function (res) {
         var newSessions = res.sessions || [];
         this.hasMore = res.has_more;
         this.offset += newSessions.length;
@@ -342,7 +342,7 @@ define([
         this.setSessions(combined);
 
         // Using a timeout ensures the DOM has finished re-rendering before we attempt to restore the scroll position.
-        setTimeout(lang.hitch(this, function() {
+        setTimeout(lang.hitch(this, function () {
           // Restore the previous scroll position so the user’s viewport remains stable.
           this.scrollContainer.scrollTop = prevScrollTop;
         }), 0);
@@ -352,7 +352,7 @@ define([
     /*
      * Creates / updates the Load-More button based on `hasMore` flag.
      */
-    _renderLoadMoreButton: function() {
+    _renderLoadMoreButton: function () {
       if (!this.loadMoreButton) {
         // Create the button once and wire the click handler
         this.loadMoreButton = domConstruct.create('button', {
@@ -373,7 +373,7 @@ define([
       domStyle.set(this.loadMoreButton, 'display', this.hasMore ? 'block' : 'none');
     },
 
-    _highlightSavedSession: function() {
+    _highlightSavedSession: function () {
       if (this._highlightAfterReload) {
         return; // Will be handled in setSessions
       }
@@ -381,7 +381,7 @@ define([
       try {
         var savedId = (window && window.localStorage) ? localStorage.getItem('copilot-current-session-id') : null;
         if (savedId) {
-          setTimeout(lang.hitch(this, function() {
+          setTimeout(lang.hitch(this, function () {
             this.highlightSession(savedId);
           }), 300);
         }

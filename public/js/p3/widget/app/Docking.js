@@ -77,24 +77,24 @@ define([
     onProteinInputChange: function (evt) {
       this.protein_databank_selection
       if (this.protein_databank_selection.checked) {
-        this.protein_databank_selection.value = "input_pdb";
+        this.protein_databank_selection.value = 'input_pdb';
       }
       else if (this.user_pdb_file.checked) {
-        this.protein_databank_selection.value = "user_pdb_file";
+        this.protein_databank_selection.value = 'user_pdb_file';
       }
     },
 
     onInputChange: function (evt) {
-      if (typeof this.protein_databank_selection != "undefined"){
+      if (typeof this.protein_databank_selection != 'undefined') {
         // protein radio buttons
         if (this.protein_databank_selection.checked) {
           // set display logic
-          dojo.style(this.block_pdb_list, "display", "block");
-          dojo.style(this.block_pdb_upload, "display", "none");
+          dojo.style(this.block_pdb_list, 'display', 'block');
+          dojo.style(this.block_pdb_upload, 'display', 'none');
         }
         else if (this.user_pdb_file.checked) {
-          dojo.style(this.block_pdb_list, "display", "none");
-          dojo.style(this.block_pdb_upload, "display", "block");
+          dojo.style(this.block_pdb_list, 'display', 'none');
+          dojo.style(this.block_pdb_upload, 'display', 'block');
         }
         // ligand radio buttons
         if (this.input_sequence.checked)
@@ -110,18 +110,18 @@ define([
           dojo.style(this.block_smiles_dropdown, 'display', 'none');
         }
         else if (this.ligand_named_library.checked)
-          {
+        {
           dojo.style(this.block_smiles_text, 'display', 'none');
           dojo.style(this.block_smiles_ws, 'display', 'none');
           dojo.style(this.block_smiles_dropdown, 'display', 'block');
         }
       }
-      },
+    },
 
     openJobsList: function () {
       Topic.publish('/navigate', { href: '/job/' });
     },
-// exaple
+    // exaple
     // onOutputPathChange: function (val) {
     //   this.inherited(arguments);
     //   this.checkParameterRequiredFields();
@@ -143,20 +143,20 @@ define([
         output_path: values.output_path,
         output_file: values.output_file,
       }
-      if (values.protein_input === "input_pdb")
+      if (values.protein_input === 'input_pdb')
       {
         submit_values.protein_input_type = values.protein_input
         submit_values.input_pdb = [values.pdb_id]
       }
       // repeat for pdb files
-      else if (values.protein_input === "user_pdb_file")
+      else if (values.protein_input === 'user_pdb_file')
       {
         submit_values.protein_input_type = values.protein_input
-        submit_values.user_pdb_file = Array.isArray(values.user_pdb) 
-          ? values.user_pdb 
+        submit_values.user_pdb_file = Array.isArray(values.user_pdb)
+          ? values.user_pdb
           : values.user_pdb ? [values.user_pdb] : [];
       }
-        
+
       if (values.input === 'smiles_list')
       {
         /* Parse out either smiles strings, one per line, or
@@ -216,25 +216,25 @@ define([
 
     addRerunFields: function (job_params) {
       // Protein Input
-      if (job_params.protein_input_type === 'user_pdb_file'){
+      if (job_params.protein_input_type === 'user_pdb_file') {
         this.protein_databank_selection.set('checked', false);
-        this.user_pdb.set('value', job_params["user_pdb_file"])
+        this.user_pdb.set('value', job_params['user_pdb_file'])
         this.user_pdb_file.set('checked', true);
       }
-      else if (job_params.protein_input_type === 'input_pdb'){
-        this.pdb_list.set('value', job_params["input_pdb"]);
+      else if (job_params.protein_input_type === 'input_pdb') {
+        this.pdb_list.set('value', job_params['input_pdb']);
       }
       else {
         console.log( 'Invalid protein input');
       }
       // ligand library is not working just yet
       var ligand_library_type = job_params['ligand_library_type'];
-      if (ligand_library_type === "ws_file"){
+      if (ligand_library_type === 'ws_file') {
         this.ws_file.checked
         this.ws_file.set('value', ligand_library_type);
         this.ligand_ws_file.set('value', job_params['ligand_ws_file']);
-      } 
-      else if (ligand_library_type === "smiles_list"){
+      }
+      else if (ligand_library_type === 'smiles_list') {
         this.input_sequence.checked;
         this.input_sequence.set('value', ligand_library_type);
         let user_input = job_params['ligand_smiles_list'];
@@ -244,17 +244,17 @@ define([
           combined_string += subArray[0] + ' ' + subArray[1] + '\n'
         });
         this.smiles_text.set('value', combined_string);
-      } 
-      else if (ligand_library_type === "named_library"){
+      }
+      else if (ligand_library_type === 'named_library') {
         this.ligand_named_library.checked;
         this.ligand_named_library.set('value', ligand_library_type);
         this.smiles_dropdown_attach_point.set('value', job_params['ligand_named_library']);
-      } 
+      }
       else {
-        console.log("Improper ligand library type passed.")
+        console.log('Improper ligand library type passed.')
       }
       this.output_path.set('value', job_params['output_path']);
-      },
+    },
 
     intakeRerunForm: function () {
       // assuming only one key

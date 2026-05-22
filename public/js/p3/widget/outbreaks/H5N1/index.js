@@ -19,7 +19,9 @@ define([
     perspectiveLabel: '',
     perspectiveIconClass: '',
     title: '<h1 class="appHeader" style="color: #2a6d9e; margin-top: 10px; font-weight: bold;">H5N1 2024 Outbreak</h1>',
-    segments: {1: 'PB2', 2: 'PB1', 3: 'PA', 4: 'HA', 5: 'NP', 6: 'NA', 7: 'M1, M2', 8: 'NS1, NEP'},
+    segments: {
+      1: 'PB2', 2: 'PB1', 3: 'PA', 4: 'HA', 5: 'NP', 6: 'NA', 7: 'M1, M2', 8: 'NS1, NEP'
+    },
     googleNewsCount: 100,
     googleNewsRSS: 'h5n1',
 
@@ -503,7 +505,9 @@ define([
         {handleAs: 'json'})
         .then(lang.hitch(this, function (items) {
           const newsList = domConstruct.create('ul');
-          const options = {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'};
+          const options = {
+            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'
+          };
 
           // Helper to validate URLs are safe HTTP/HTTPS
           const isValidHttpUrl = (str) => {
@@ -532,8 +536,8 @@ define([
           });
           domConstruct.place(newsList, 'newsList');
         })).catch(error => {
-        console.log(error);
-      });
+          console.log(error);
+        });
     },
 
     getNode: function (node, tag) {

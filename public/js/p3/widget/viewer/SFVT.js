@@ -280,7 +280,7 @@ define([
             renderCell: function (object, value, node) {
               const ids = variantTypes.find(v => v.sfvt_id === object.vt).sfvt_genome_ids;
 
-              let anchor = domConstruct.create("a");
+              let anchor = domConstruct.create('a');
               anchor.innerHTML = value;
               let patricIds = [];
               let proteinIds = [];

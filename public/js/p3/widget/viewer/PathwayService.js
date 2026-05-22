@@ -28,7 +28,8 @@ define([
       var decodedParts = parts.map(function (p) {
         return decodeURIComponent(p);
       });
-      state.path = '/' + decodedParts.slice(2).reverse().slice(1).reverse().join('/'); // remove filename from path
+      state.path = '/' + decodedParts.slice(2).reverse().slice(1).reverse()
+        .join('/'); // remove filename from path
       state.file = decodedParts.reverse()[0];
       state.data = {};
       if (!this.loaded) {

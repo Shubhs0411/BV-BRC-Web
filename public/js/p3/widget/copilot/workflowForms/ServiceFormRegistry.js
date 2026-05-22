@@ -1,6 +1,6 @@
 define([
   'dojo/text!./serviceFieldDefs.generated.json'
-], function(
+], function (
   serviceFieldDefsText
 ) {
   var serviceFieldDefs = {};
@@ -135,7 +135,7 @@ define([
     var used = {};
     var preferredOrder = serviceFieldOrderOverrides[serviceKey] || [];
 
-    preferredOrder.forEach(function(fieldName) {
+    preferredOrder.forEach(function (fieldName) {
       for (var i = 0; i < fields.length; i++) {
         if (fields[i].name === fieldName) {
           ordered.push(fields[i]);
@@ -145,7 +145,7 @@ define([
       }
     });
 
-    fields.forEach(function(field) {
+    fields.forEach(function (field) {
       if (!used[field.name]) ordered.push(field);
     });
     return ordered;
@@ -185,24 +185,34 @@ define([
       output: [],
       advanced: []
     };
-    fields.forEach(function(field) {
+    fields.forEach(function (field) {
       var groupKey = classifyGroup(serviceKey, field.name);
       groups[groupKey].push(field);
     });
 
     return [
-      { key: 'input', label: 'Input', fields: groups.input, collapsible: false, collapsed: false },
-      { key: 'parameters', label: 'Parameters', fields: groups.parameters, collapsible: false, collapsed: false },
-      { key: 'design', label: 'Groups/Conditions', fields: groups.design, collapsible: false, collapsed: false },
-      { key: 'output', label: 'Output', fields: groups.output, collapsible: false, collapsed: false },
-      { key: 'advanced', label: 'Advanced', fields: groups.advanced, collapsible: true, collapsed: true }
-    ].filter(function(group) { return group.fields.length > 0; });
+      {
+        key: 'input', label: 'Input', fields: groups.input, collapsible: false, collapsed: false
+      },
+      {
+        key: 'parameters', label: 'Parameters', fields: groups.parameters, collapsible: false, collapsed: false
+      },
+      {
+        key: 'design', label: 'Groups/Conditions', fields: groups.design, collapsible: false, collapsed: false
+      },
+      {
+        key: 'output', label: 'Output', fields: groups.output, collapsible: false, collapsed: false
+      },
+      {
+        key: 'advanced', label: 'Advanced', fields: groups.advanced, collapsible: true, collapsed: true
+      }
+    ].filter(function (group) { return group.fields.length > 0; });
   }
 
   return {
     getDefinition: getDefinition,
     canonicalizeServiceName: canonicalizeServiceName,
-    getSupportedServices: function() {
+    getSupportedServices: function () {
       return Object.keys(serviceFieldDefs);
     }
   };

@@ -109,7 +109,7 @@ define([
       // TODO: move this around so that it loads after the genome data is loaded?
       // - if reference genomes don't load, then don't display?
 
-      
+
       // this.inherited(arguments);
     }
   });

@@ -355,12 +355,12 @@ define([
         validType: ['*'],
         tooltip: 'Toggle the filter display'
       },
-        // callback
-        (() => {
-          on.emit(_self.currentContainerWidget.domNode, 'ToggleFilters', {});
-        }),
-        true,
-        this.rightButtons
+      // callback
+      (() => {
+        on.emit(_self.currentContainerWidget.domNode, 'ToggleFilters', {});
+      }),
+      true,
+      this.rightButtons
       );
 
       this.watch('minimized', lang.hitch(this, function (attr, oldVal, minimized) {
@@ -378,18 +378,18 @@ define([
           validType: ['*'],
           tooltip: 'Apply the active filters to update your current view'
         },
-          // callback
-          (() => {
-            if (_self.state && _self.state.hashParams && _self.state.hashParams.filter) {
-              on.emit(this.domNode, 'SetAnchor', {
-                bubbles: true,
-                cancelable: true,
-                filter: _self.state.hashParams.filter
-              });
-            }
-          }),
-          true,
-          this.rightButtons
+        // callback
+        (() => {
+          if (_self.state && _self.state.hashParams && _self.state.hashParams.filter) {
+            on.emit(this.domNode, 'SetAnchor', {
+              bubbles: true,
+              cancelable: true,
+              filter: _self.state.hashParams.filter
+            });
+          }
+        }),
+        true,
+        this.rightButtons
         );
       }
 
@@ -474,7 +474,7 @@ define([
         if (val && val.length > 0 && val.length < 3) {
           return;
         }
-          if (val) {
+        if (val) {
           domClass.remove(clear, 'dijitHidden');
         } else {
           domClass.add(clear, 'dijitHidden');

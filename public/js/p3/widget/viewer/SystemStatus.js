@@ -64,8 +64,8 @@ define([
 
       dojo.place('<p>Below shows the current system status of PATRIC servers/services.  ' +
         'If you are experiencing an issue related to a service with red status, you may wish to check back later.  ' +
-        'If you are experiencing an issue not listed here, please use "Help" > "Provide Feedback" from the toolbar above.</p>'
-        , node);
+        'If you are experiencing an issue not listed here, please use "Help" > "Provide Feedback" from the toolbar above.</p>',
+      node);
 
       dojo.place('<br><b>Last updated:</b> <span class="lastUpdated"></span>', node);
       dojo.place('<br><b>Version:</b> ' + window.App.appVersion + '<br><br>', node);

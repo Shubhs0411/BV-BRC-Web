@@ -6,7 +6,7 @@
 define([
   'dojo/_base/lang',
   'dojo/Deferred'
-], function(lang, Deferred) {
+], function (lang, Deferred) {
   var formRegistry = {
     'GenomeAssembly2': 'p3/widget/copilot/workflowForms/CopilotAssemblyForm',
     'GenomeAnnotation': 'p3/widget/copilot/workflowForms/CopilotAnnotationForm',
@@ -19,7 +19,7 @@ define([
      * @param {string} appName
      * @returns {boolean}
      */
-    hasDojoForm: function(appName) {
+    hasDojoForm: function (appName) {
       return !!formRegistry[appName];
     },
 
@@ -35,21 +35,21 @@ define([
      * @param {Object} [params] - Optional initial params (not used during create; passed to setFromManifest by caller)
      * @returns {dojo.Deferred}
      */
-    createForm: function(appName) {
+    createForm: function (appName) {
       var def = new Deferred();
       var modulePath = formRegistry[appName];
       if (!modulePath) {
         def.reject(new Error('No Dojo form wrapper for app: ' + appName));
         return def;
       }
-      require([modulePath], function(FormClass) {
+      require([modulePath], function (FormClass) {
         try {
           var instance = new FormClass({});
           def.resolve(instance);
         } catch (err) {
           def.reject(err);
         }
-      }, function(err) {
+      }, function (err) {
         def.reject(err);
       });
       return def;

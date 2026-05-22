@@ -244,7 +244,7 @@ define([
       return pad;
     },
 
-    getPadLineNumber: function(num, pad) {
+    getPadLineNumber: function (num, pad) {
       let compare = 10;
       let padLineNumber = '';
 
@@ -370,7 +370,7 @@ define([
         }
 
         let newLineIndexes = [];
-        for (let i= 0; i < parsedFastaArr[0].formattedData.length; ++i) {
+        for (let i = 0; i < parsedFastaArr[0].formattedData.length; ++i) {
           if (parsedFastaArr[0].formattedData[i] === '\n') {
             newLineIndexes.push(i);
           }
@@ -380,7 +380,7 @@ define([
         let formattedAlignmentBlocks = [];
         let beginIndex = 0;
         for (let endIndex of newLineIndexes) {
-          for (let i= 0; i < parsedFastaArr.length; ++i) {
+          for (let i = 0; i < parsedFastaArr.length; ++i) {
             const parsedFasta = parsedFastaArr[i];
             formattedAlignmentBlocks.push(headerListForDisplay[i]);
             formattedAlignmentBlocks.push(' ');

@@ -671,7 +671,7 @@ define([
       // This prevents "deferred already resolved" errors when filters change rapidly
       var pendingQueryTimer = null;
       var pendingQuery = null;
-      var setGridQuerySafe = lang.hitch(this, function(filters) {
+      var setGridQuerySafe = lang.hitch(this, function (filters) {
         // Store the pending query
         pendingQuery = filters;
 
@@ -682,7 +682,7 @@ define([
 
         // Debounce: wait a short time before executing
         // This coalesces rapid filter changes into a single query
-        pendingQueryTimer = setTimeout(lang.hitch(this, function() {
+        pendingQueryTimer = setTimeout(lang.hitch(this, function () {
           pendingQueryTimer = null;
           if (pendingQuery !== null && this.grid && this.grid.domNode) {
             var queryToExecute = pendingQuery;
@@ -750,7 +750,7 @@ define([
       this._localFilterText = '';
 
       // Helper function to apply local filter to visible rows
-      var applyLocalFilter = lang.hitch(this, function() {
+      var applyLocalFilter = lang.hitch(this, function () {
         var filterText = this._localFilterText;
         if (!this.grid || !this.grid.domNode) {
           return;

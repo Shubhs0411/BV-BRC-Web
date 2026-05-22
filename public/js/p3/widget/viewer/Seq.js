@@ -100,11 +100,11 @@ define([
             o.type = extension;
           }
         }
-        
+
         if (extension === 'bw' || extension === 'bigwig') {
-           o.type = 'bigwig';
+          o.type = 'bigwig';
         }
-        
+
         if (_self.streamableTypes.indexOf(o.type) >= 0 && !o.name.endsWith('.bai')) {
           var jBrowseTrackType;
           var jBrowseStoreType;
@@ -184,11 +184,11 @@ define([
           type: t.trackType,
           store: t.store
         };
-        
+
         if (t.storeType === 'JBrowse/Store/BigWig') {
           track.yScalePosition = 'left';
         }
-        
+
         tracks.push(track);
         labels.push(t.keyAndLabel);
 

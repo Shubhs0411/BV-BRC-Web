@@ -138,7 +138,7 @@ define([
       // Force a resize to ensure proper layout after adding the viewer
       // Use setTimeout to ensure DOM has been updated
       var _self = this;
-      setTimeout(function() {
+      setTimeout(function () {
         _self.resize();
       }, 0);
 
@@ -240,11 +240,11 @@ define([
       //   }, this);
       // }
 
-          output.push('</div>');
+      output.push('</div>');
       this.viewHeader.set('content', output.join(''));
       // Use setTimeout to ensure DOM has been updated before resizing
       var _self = this;
-      setTimeout(function() {
+      setTimeout(function () {
         _self.resize();
       }, 0);
     },

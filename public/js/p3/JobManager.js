@@ -33,7 +33,7 @@ define(['dojo/_base/Deferred', 'dojo/topic', 'dojo/request/xhr',
    * With paginated store, we just need to clear the cache to force refresh
    */
   function updateJobsList(cb) {
-    if (!localStorage.getItem("tokenstring") || !localStorage.getItem("userid")){
+    if (!localStorage.getItem('tokenstring') || !localStorage.getItem('userid')) {
       return Deferred.when(null);
     }
     Topic.publish('/Jobs', { status: 'loading' });
@@ -62,7 +62,7 @@ define(['dojo/_base/Deferred', 'dojo/topic', 'dojo/request/xhr',
    * for all active (non-archived) jobs.
    */
   function getStatus() {
-    if (!localStorage.getItem("tokenstring") || !localStorage.getItem("userid")){
+    if (!localStorage.getItem('tokenstring') || !localStorage.getItem('userid')) {
       return
     }
 
@@ -156,7 +156,7 @@ define(['dojo/_base/Deferred', 'dojo/topic', 'dojo/request/xhr',
 
     // check for status change.  if change, update jobs list
     var prom = getStatus();
-    return When(prom,function (statusChange) {
+    return When(prom, function (statusChange) {
       // Skip refresh on first poll ONLY if there's no status change
       // If there is a status change (e.g., new job submitted), we must refresh
       if (isFirstPoll) {

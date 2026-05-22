@@ -432,7 +432,7 @@ define([
         var infoLabels = {
           title: { label: 'Title', value: 1 }
         };
-        if (maybeSampleID){
+        if (maybeSampleID) {
           lrec.sample_id = maybeSampleID;
           console.log(lrec.sample_id)
         }
@@ -468,7 +468,7 @@ define([
             }).then(
             lang.hitch(this, function (xml_text) {
 
-              var show_failure = lang.hitch(this, function(msg, user_msg) {
+              var show_failure = lang.hitch(this, function (msg, user_msg) {
                 console.log('SRR validation failure: ' + msg);
                 this.srr_accession.set('disabled', false);
                 this.srr_accession_validation_message.innerHTML = ' ' + user_msg;
@@ -503,7 +503,7 @@ define([
               }
               try {
                 var iter = xml_resp.evaluate('//EXPERIMENT_PACKAGE_SET/EXPERIMENT_PACKAGE/RUN_SET/RUN/@accession',
-                                xml_resp, null, XPathResult.ANY_TYPE, null);
+                  xml_resp, null, XPathResult.ANY_TYPE, null);
                 var item = iter.iterateNext();
                 while (item) {
                   if (item.textContent.toLowerCase() == accession.toLowerCase()) {
@@ -521,7 +521,7 @@ define([
                 console.error('Could not get run id from SRA record.  Error: ' + e);
               }
               if (runs.length > 0) {
-                runs.forEach(lang.hitch(this, function(item) {
+                runs.forEach(lang.hitch(this, function (item) {
                   try {
                     this.srr_accession.setValue(item);
                     this.onAddSRRHelper(title);
@@ -551,7 +551,7 @@ define([
                   throw new Error('Unhandled SRA validation error.');
                 }
               })
-            );
+          );
         } catch (e) {
           console.error(e);
           this.srr_accession.set('disabled', false);

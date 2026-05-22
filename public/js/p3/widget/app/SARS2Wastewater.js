@@ -28,17 +28,17 @@ define([
     defaultPath: '',
     startingRows: 14,
     libCreated: 0,
-     // 'https://www.ebi.ac.uk/ena/data/view/{0}&display=xml',
-     srrValidationUrl: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmax=1&db=sra&field=accn&term={0}&retmode=json',
-     srrValidationUrl2: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?retmax=10&db=sra&id={0}', // the data we need is in xml string no matter what. might as well get it properly nested
+    // 'https://www.ebi.ac.uk/ena/data/view/{0}&display=xml',
+    srrValidationUrl: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmax=1&db=sra&field=accn&term={0}&retmode=json',
+    srrValidationUrl2: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?retmax=10&db=sra&id={0}', // the data we need is in xml string no matter what. might as well get it properly nested
     required: true,
 
     constructor: function () {
       this.addedLibs = { counter: 0 };
       this.pairToAttachPt = ['read1', 'read2'];
       this.singleToAttachPt = ['single_end_libsWidget'];
-      this.libraryStore = new Memory({ data: [], idProperty: '_id', sample_id:[] });
-      this.sample_level_date = "";
+      this.libraryStore = new Memory({ data: [], idProperty: '_id', sample_id: [] });
+      this.sample_level_date = '';
 
     },
 
@@ -97,7 +97,7 @@ define([
 
     checkForInvalidChars: function (value) {
       var valid = true;
-      var invalid_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=',':', '@', '"', "'", ';', '[', ']', '{', '}', '|', '`'];
+      var invalid_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '+', '=', ':', '@', '"', "'", ';', '[', ']', '{', '}', '|', '`'];
       invalid_chars.forEach(lang.hitch(this, function (char) {
         if (value.includes(char)) {
           valid = false;
@@ -133,7 +133,7 @@ define([
         var alias = attachname;
         if (attachname == 'read1' || attachname == 'read2' || attachname == 'single_end_libsWidget') {
 
-        // if (attachname == 'read1' || attachname == 'read2' || attachname == 'single_end_libsWidget') {
+          // if (attachname == 'read1' || attachname == 'read2' || attachname == 'single_end_libsWidget') {
           cur_value = this[attachname].searchBox.value;
           browser_select = 1;
         }
@@ -301,7 +301,7 @@ define([
                       var infoLabels = {
                         title: { label: 'Title', value: 1 },
                         platform: { label: 'Platform', value: 1 },
-                        sample_id: {label: 'Sample ID' , value: 1 },
+                        sample_id: {label: 'Sample ID', value: 1 },
                         primers: {label: 'Sample Primers', value: 1},
                         primer_version: {label: 'Primer Version', value: 1},
                         sample_level_date: {label: 'Date', value: 1}
@@ -324,7 +324,7 @@ define([
                       // sample level date is optional
                         lrec.sample_level_date = this.sample_level_date.value
                         this.sample_level_date.reset()
-                    } 
+                      }
                       this.addLibraryRow(lrec, infoLabels, 'srrdata');
                     }
                     this.srr_accession_validation_message.innerHTML = '';
@@ -347,7 +347,7 @@ define([
       }
     },
 
-    customFunction: function() {
+    customFunction: function () {
       console.log('This is a custom function');
     },
 
@@ -360,8 +360,8 @@ define([
       if (!accession && !single_read && !paired_r1) {
         this.submit_selected_libs_validation_message.innerHTML = ' <br> All three fields are empty.<br>Hint: Fill in one input field.';
         // give an error for the user
-      } 
-      // step 2 if more than one field has something in it - tell the user to go hey only one at a time 
+      }
+      // step 2 if more than one field has something in it - tell the user to go hey only one at a time
       else if ((accession && paired_r1) || (accession && single_read) || (paired_r1 && single_read)) {
         this.submit_selected_libs_validation_message.innerHTML = ' <br> You can only submit one sample at a time.<br>';
       }
@@ -399,7 +399,7 @@ define([
         var infoLabels = {
           platform: { label: 'Platform', value: 1 },
           read: { label: 'Read File', value: 1 },
-          sample_id: {label: 'Sample ID' , value: 1 },
+          sample_id: {label: 'Sample ID', value: 1 },
           primers: {label: 'Sample Primers', value: 1},
           primer_version: {label: 'Primer Version', value: 1},
           sample_level_date: {label: 'Date', value: 1}
@@ -422,12 +422,12 @@ define([
           lrec.sample_level_date = this.sample_level_date.value
           // reset date textbox
           this.sample_level_date.reset()
-      } 
+        }
         this.addLibraryRow(lrec, infoLabels, 'singledata');
         // empty single lib search box after adding to thel ibrary row
         this.single_end_libsWidget.searchBox.reset()
-    }
-  },
+      }
+    },
 
     destroyLibRow: function (query_id, id_type) {
       var query_obj = {};
@@ -469,7 +469,7 @@ define([
           platform: { label: 'Platform', value: 1 },
           read1: { label: 'Read1', value: 1 },
           read2: { label: 'Read2', value: 1 },
-          sample_id: {label: 'Sample ID' , value: 1 },
+          sample_id: {label: 'Sample ID', value: 1 },
           primers: {label: 'Sample Primers', value: 1},
           primer_version: {label: 'Primer Version', value: 1},
           sample_level_date: {label: 'Date', value: 1}
@@ -490,11 +490,11 @@ define([
           // If the string is not empty add to library
           // sample level date is optional
           lrec.sample_level_date = this.sample_level_date.value
-          // clear sample level date box 
+          // clear sample level date box
           this.sample_level_date.reset()
-      } 
+        }
         this.addLibraryRow(lrec, infoLabels, 'pairdata');
-        // // reset the singe end libs box 
+        // // reset the singe end libs box
         this.read1.searchBox.reset()
         this.read2.searchBox.reset()
       }
@@ -679,7 +679,7 @@ define([
       if (this.single_end_libs.length) {
         values.single_end_libs = this.single_end_libs;
       }
-      
+
       this.sra_libs = srrAccessionList.map(function (lrec) {
         var rrec = {};
         Object.keys(lrec).forEach(lang.hitch(this, function (attr) {

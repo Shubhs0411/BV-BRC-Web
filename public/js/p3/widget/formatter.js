@@ -23,7 +23,7 @@ define(
     };
 
     var decimalFormatter = function (number, decimal) {
-      return Math.round(number * Math.pow(10, decimal)) / Math.pow(10, decimal);
+      return Math.round(number * 10 ** decimal) / 10 ** decimal;
     };
 
     var findObjectByLabel = function (obj, label) {
@@ -572,7 +572,7 @@ define(
         var k = 1024;
         var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+        return parseFloat((bytes / k ** i).toFixed(decimals)) + ' ' + sizes[i];
       },
 
       // takes an array of form [{label: "", value: ""} ... ]

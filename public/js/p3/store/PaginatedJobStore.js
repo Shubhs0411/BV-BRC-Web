@@ -56,7 +56,7 @@ define([
                 total += (status.failed || 0);
                 // Note: deleted jobs are filtered out, but failed count includes them in the summary
               }
-            //   console.log('Total count for status filter (regex):', total);
+              //   console.log('Total count for status filter (regex):', total);
               return total;
             }
             // Handle string status filters
@@ -93,7 +93,7 @@ define([
             _self._totalCountPromise = null;
           }
 
-        //   console.log('Total job count from summary - queued:', queued, 'inProgress:', inProgress, 'completed:', completed, 'failed:', failed, 'total:', total);
+          //   console.log('Total job count from summary - queued:', queued, 'inProgress:', inProgress, 'completed:', completed, 'failed:', failed, 'total:', total);
           return total;
         }, function (err) {
           console.error('Error fetching total job count:', err);
@@ -209,7 +209,7 @@ define([
      * Query method that implements server-side pagination with client-side filtering and sorting
      */
     query: function (query, opts) {
-      if (!localStorage.getItem("tokenstring") || !localStorage.getItem("userid")) {
+      if (!localStorage.getItem('tokenstring') || !localStorage.getItem('userid')) {
         return QueryResults([]);
       }
 

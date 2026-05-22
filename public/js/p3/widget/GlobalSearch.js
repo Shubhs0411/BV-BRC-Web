@@ -158,7 +158,7 @@ define([
             } else if (figIds.length > 1) {
               // Multiple feature IDs - go to feature list with in() query
               // Escape | as %7C for the query
-              var escapedIds = figIds.map(function(id) { return id.replace(/\|/g, '%7C'); });
+              var escapedIds = figIds.map(function (id) { return id.replace(/\|/g, '%7C'); });
               var featureQuery = 'in(patric_id,(' + escapedIds.join(',') + '))';
               Topic.publish('/navigate', { href: '/view/FeatureList/?' + featureQuery });
             }
@@ -167,7 +167,7 @@ define([
             // Extract all genome IDs (number.number pattern) from the query text
             var genomeIds = query.match(/\b[0-9]+\.[0-9]+\b/g) || [];
             // Filter out duplicates
-            genomeIds = genomeIds.filter(function(id, index, self) {
+            genomeIds = genomeIds.filter(function (id, index, self) {
               return self.indexOf(id) === index;
             });
             if (genomeIds.length === 1) {
@@ -264,7 +264,7 @@ define([
           } else if (figIds.length > 1) {
             // Multiple feature IDs - go to feature list with in() query
             // Escape | as %7C for the query
-            var escapedIds = figIds.map(function(id) { return id.replace(/\|/g, '%7C'); });
+            var escapedIds = figIds.map(function (id) { return id.replace(/\|/g, '%7C'); });
             var featureQuery = 'in(patric_id,(' + escapedIds.join(',') + '))';
             Topic.publish('/navigate', { href: '/view/FeatureList/?' + featureQuery });
           }
@@ -273,7 +273,7 @@ define([
           // Extract all genome IDs (number.number pattern) from the query text
           var genomeIds = query.match(/\b[0-9]+\.[0-9]+\b/g) || [];
           // Filter out duplicates
-          genomeIds = genomeIds.filter(function(id, index, self) {
+          genomeIds = genomeIds.filter(function (id, index, self) {
             return self.indexOf(id) === index;
           });
           if (genomeIds.length === 1) {

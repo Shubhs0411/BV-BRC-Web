@@ -58,7 +58,7 @@ define([
      * Constructor that initializes the widget
      * Mixes in any provided configuration options using safeMixin
      */
-    constructor: function(args) {
+    constructor: function (args) {
       declare.safeMixin(this, args);
     },
 
@@ -68,7 +68,7 @@ define([
      * - Initializes title display and editor components
      * - Sets up event subscriptions for session changes
      */
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
 
       // Create container for title elements
@@ -92,7 +92,7 @@ define([
      * - Sets up click handler to start editing
      * - Uses flex layout to fill available space
      */
-    createTitleDisplay: function() {
+    createTitleDisplay: function () {
       this.titleDisplay = domConstruct.create('div', {
         innerHTML: this.truncateTitle(this.title),
         class: 'chatTitleDisplay'
@@ -108,7 +108,7 @@ define([
      * - Handles Enter to save and Escape to cancel
      * - Auto-saves on blur event
      */
-    createTitleEditor: function() {
+    createTitleEditor: function () {
       this.titleEditor = new TextBox({
         class: 'chatTitleEditor',
         maxLength: this.maxLength
@@ -116,7 +116,7 @@ define([
       this.titleEditor.placeAt(this.titleContainer);
 
       // Handle save on Enter and cancel on Escape
-      on(this.titleEditor, 'keydown', lang.hitch(this, function(evt) {
+      on(this.titleEditor, 'keydown', lang.hitch(this, function (evt) {
         if (evt.keyCode === 13) { // Enter
           this.saveTitleEditor();
         } else if (evt.keyCode === 27) { // Escape
@@ -134,7 +134,7 @@ define([
      * @param {string} title - The title to truncate
      * @returns {string} Truncated title with ellipsis if needed
      */
-    truncateTitle: function(title) {
+    truncateTitle: function (title) {
       if (title.length <= this.maxLength) {
         return title;
       }
@@ -147,7 +147,7 @@ define([
      * - Sets focus to editor
      * - Only works if session exists and editing enabled
      */
-    startEditing: function() {
+    startEditing: function () {
       if (!this.sessionId || !this.editingEnabled) return;
 
       this.isEditing = true;
@@ -164,18 +164,18 @@ define([
      * - Publishes title change event
      * - Handles errors via topic publish
      */
-    saveTitleEditor: function() {
+    saveTitleEditor: function () {
       if (!this.isEditing) return;
 
       var newTitle = this.titleEditor.get('value').trim();
       if (newTitle && newTitle !== this.title) {
-        this.copilotApi.updateSessionTitle(this.sessionId, newTitle).then(lang.hitch(this, function() {
+        this.copilotApi.updateSessionTitle(this.sessionId, newTitle).then(lang.hitch(this, function () {
           this.updateTitle(newTitle);
           topic.publish('ChatSessionTitleChanged', {
             sessionId: this.sessionId,
             title: newTitle
           });
-        }), lang.hitch(this, function(error) {
+        }), lang.hitch(this, function (error) {
           // topic.publish('UpdateSessionTitleError', error);
           console.log('Error updating session title', error);
         }));
@@ -189,14 +189,14 @@ define([
      * - Publishes title change event
      * - Handles errors via topic publish
      */
-    saveTitle: function() {
+    saveTitle: function () {
       if (!this.sessionId) return;
-      this.copilotApi.updateSessionTitle(this.sessionId, this.title).then(lang.hitch(this, function() {
+      this.copilotApi.updateSessionTitle(this.sessionId, this.title).then(lang.hitch(this, function () {
         topic.publish('ChatSessionTitleChanged', {
           sessionId: this.sessionId,
           title: this.title
         });
-      }), lang.hitch(this, function(error) {
+      }), lang.hitch(this, function (error) {
         // topic.publish('UpdateSessionTitleError', error);
         console.log('Error updating session title', error);
       }));
@@ -207,7 +207,7 @@ define([
      * - Hides editor and shows display
      * - Resets editing state
      */
-    cancelEditing: function() {
+    cancelEditing: function () {
       this.isEditing = false;
       this.titleEditor.domNode.style.display = 'none';
       this.titleDisplay.style.display = 'block';
@@ -218,7 +218,7 @@ define([
      * - Sets title property
      * - Updates display element HTML
      */
-    updateTitle: function(newTitle) {
+    updateTitle: function (newTitle) {
       this.title = newTitle;
       this.titleDisplay.innerHTML = this.truncateTitle(newTitle);
     },
@@ -227,7 +227,7 @@ define([
      * Returns the current title
      * @returns {string} The current title
      */
-    getTitle: function() {
+    getTitle: function () {
       return this.title;
     },
 
@@ -236,7 +236,7 @@ define([
      * - Updates session ID and title
      * - Uses default title if none provided
      */
-    onSessionSelected: function(sessionData) {
+    onSessionSelected: function (sessionData) {
       this.sessionId = sessionData.session_id;
       this.updateTitle(sessionData.title || 'New Chat');
     },
@@ -247,7 +247,7 @@ define([
      * - Resets title to default
      * - Cancels any active editing
      */
-    startNewChat: function(sessionId) {
+    startNewChat: function (sessionId) {
       if (sessionId) {
         this.sessionId = sessionId;
         this.updateTitle('New Chat');
@@ -259,7 +259,7 @@ define([
      * Sets the session identifier
      * Simple setter for sessionId property
      */
-    setSessionId: function(sessionId) {
+    setSessionId: function (sessionId) {
       this.sessionId = sessionId;
     },
 
@@ -268,7 +268,7 @@ define([
      * - Sets editing flag
      * - Updates cursor style to indicate clickable
      */
-    enableEditing: function() {
+    enableEditing: function () {
       this.editingEnabled = true;
       this.titleDisplay.style.cursor = 'pointer';
     },
@@ -279,7 +279,7 @@ define([
      * - Updates cursor style
      * - Cancels any active editing
      */
-    disableEditing: function() {
+    disableEditing: function () {
       this.editingEnabled = false;
       this.titleDisplay.style.cursor = 'default';
       if (this.isEditing) {
@@ -294,7 +294,7 @@ define([
      * - Re-truncates current title if needed
      * @param {number|Object} length - New max length or object containing maxLength property
      */
-    setMaxLength: function(length) {
+    setMaxLength: function (length) {
       // Handle both direct value or object parameter
       const newMaxLength = typeof length === 'object' ? length.maxLength : length;
 

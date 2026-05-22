@@ -33,7 +33,7 @@ define([
       this.addedLibs = { counter: 0 };
       this.pairToAttachPt = ['read1', 'read2'];
       this.singleToAttachPt = ['single_end_libsWidget'];
-      this.libraryStore = new Memory({ data: [], idProperty: '_id', sample_id:[] });
+      this.libraryStore = new Memory({ data: [], idProperty: '_id', sample_id: [] });
       this.srrSampleIDAttachPt = ['srr_accession_validation_message'];
 
     },
@@ -121,13 +121,13 @@ define([
         {value: 'microbiome', label: 'Microbiome Analysis'},
         {value: 'pathogen', label: 'Species Identification'}
       ];
-      var all_dbs =[
+      var all_dbs = [
         {value: 'SILVA', label: 'SILVA'},
         {value: 'Greengenes', label: 'Greengenes'},
         {value: 'bvbrc', label: 'BV-BRC Database'},
         {value: 'standard', label: 'Kraken2 Standard Database'}
       ]
-      var blank =[
+      var blank = [
         {value: ' ', label: ' '},
       ]
       this.analysis_type.set('options', blank);
@@ -137,26 +137,26 @@ define([
       this.analysis_type.set('disabled', false);
       this.sequence_type = 'wgs';
       if (this.wgs.checked == true) {
-          this.sequence_type = 'wgs';
-          this.database.removeOption({value: 'SILVA', label: 'SILVA'});
-          this.database.removeOption({value: 'Greengenes', label: 'Greengenes'});
-          this.analysis_type.removeOption({ value: '16S', label: 'Default'});
-          this.host_genome.set('disabled', false);
+        this.sequence_type = 'wgs';
+        this.database.removeOption({value: 'SILVA', label: 'SILVA'});
+        this.database.removeOption({value: 'Greengenes', label: 'Greengenes'});
+        this.analysis_type.removeOption({ value: '16S', label: 'Default'});
+        this.host_genome.set('disabled', false);
       } else if (this.sixteenS.checked == true) {
-          this.sequence_type = 'sixteenS';
-          this.database.removeOption({value: 'bvbrc', label: 'BV-BRC Database'});
-          this.database.removeOption({value: 'standard', label: 'Kraken2 Standard Database'});
-          this.analysis_type.removeOption({value: 'microbiome', label: 'Microbiome Analysis'});
-          this.analysis_type.removeOption({value: 'pathogen', label: 'Species Identification'});
-          this.analysis_type.set('disabled', true);
-          this.host_genome.set('disabled', true);     
+        this.sequence_type = 'sixteenS';
+        this.database.removeOption({value: 'bvbrc', label: 'BV-BRC Database'});
+        this.database.removeOption({value: 'standard', label: 'Kraken2 Standard Database'});
+        this.analysis_type.removeOption({value: 'microbiome', label: 'Microbiome Analysis'});
+        this.analysis_type.removeOption({value: 'pathogen', label: 'Species Identification'});
+        this.analysis_type.set('disabled', true);
+        this.host_genome.set('disabled', true);
       } else {
-          console.log('Invalid Selection');
-          this.analysis_type.set('disabled', true);
-          this.database.set('disabled', true);
-          this.host_genome.set('disabled', true);
+        console.log('Invalid Selection');
+        this.analysis_type.set('disabled', true);
+        this.database.set('disabled', true);
+        this.host_genome.set('disabled', true);
       }
-  },
+    },
 
     ingestAttachPoints: function (input_pts, target, req) {
       req = typeof req !== 'undefined' ? req : true;
@@ -489,7 +489,7 @@ define([
       if (this.single_end_libs.length) {
         values.single_end_libs = this.single_end_libs;
       }
-      
+
       this.sra_libs = srrAccessionList.map(function (lrec) {
         var rrec = {};
         Object.keys(lrec).forEach(lang.hitch(this, function (attr) {

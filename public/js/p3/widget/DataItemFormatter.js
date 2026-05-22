@@ -432,7 +432,7 @@ define([
       }, {
         name: 'Application',
         text: 'application_name'
-      },{
+      }, {
         name: 'Job ID',
         text: 'id'
       }, {
@@ -1449,7 +1449,7 @@ define([
         name: 'Text',
         text: 'text',
       }
-    ];
+      ];
 
       var div = domConstruct.create('div');
       displayHeader(div, item.pdb_id, 'fa icon-contigs fa-2x', '/view/Genome/' + item.genome_id, options);
@@ -1587,10 +1587,10 @@ define([
         'Sequence Feature Definition': [{
           name: 'Gene',
           text: 'gene'
-        },{
+        }, {
           name: 'Protein Name',
           text: 'product'
-        },{
+        }, {
           name: 'SF Name',
           text: 'sf_name'
         }, {

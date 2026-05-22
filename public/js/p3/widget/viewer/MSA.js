@@ -108,7 +108,7 @@ define([
     name: 'Hide columns by % gaps (between)',
     id: 'hide_col_gaps_between'
   },
-    /* to be implemented in the future
+  /* to be implemented in the future
     {
       name: "Hide seqs by identity (>=)",
       id: "hide_seq_identity_greater"

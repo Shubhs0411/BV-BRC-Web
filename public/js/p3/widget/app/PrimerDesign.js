@@ -420,7 +420,7 @@ define([
     },
 
     setAdvancedParamsFormFill: function (job_data) {
-      var params1 = { 'PRIMER_PICK_INTERNAL_OLIGO': 'internal_oligo_checkbox','PRIMER_NUM_RETURN': 'primer_num_return', 'PRIMER_PRODUCT_SIZE_RANGE': 'primer_product_size_range' };
+      var params1 = { 'PRIMER_PICK_INTERNAL_OLIGO': 'internal_oligo_checkbox', 'PRIMER_NUM_RETURN': 'primer_num_return', 'PRIMER_PRODUCT_SIZE_RANGE': 'primer_product_size_range' };
       var min_dict = { 'PRIMER_MIN_SIZE': 'primer_min_size', 'PRIMER_MIN_TM': 'primer_min_tm', 'PRIMER_MIN_GC': 'primer_min_gc' };
       var opt_dict = { 'PRIMER_OPT_SIZE': 'primer_opt_size', 'PRIMER_OPT_GC_PERCENT': 'primer_opt_gc', 'PRIMER_OPT_TM': 'primer_opt_tm' };
       var max_dict = {

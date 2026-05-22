@@ -82,7 +82,7 @@ define([
         domConstruct.place(this.lastUpdated, header, 'last');
 
         // Set initial time after a short delay to ensure it's visible
-        setTimeout(function() {
+        setTimeout(function () {
           if (self.lastUpdated) {
             self.lastUpdated.innerHTML = 'Last updated: ' + getTime();
           }
@@ -504,7 +504,7 @@ define([
             // If the current filter value isn't in the options (e.g., URL had an app with 0 jobs),
             // add it to the options so the selector can display it
             if (currentValue !== 'all') {
-              var hasCurrentValue = apps.some(function(app) { return app.value === currentValue; });
+              var hasCurrentValue = apps.some(function (app) { return app.value === currentValue; });
               if (!hasCurrentValue) {
                 // Add the missing app with 0 count
                 apps.push({
@@ -636,13 +636,13 @@ define([
       this._serverSearchBox = serverSearch;
 
       // Function to execute server search
-      var executeServerSearch = function() {
+      var executeServerSearch = function () {
         var keywords = serverSearch.get('value');
         Topic.publish('/KeywordFilter', keywords ? keywords.trim() : '');
       };
 
       // Handle Enter key in server search box
-      on(serverSearch.domNode, 'keypress', function(evt) {
+      on(serverSearch.domNode, 'keypress', function (evt) {
         if (evt.key === 'Enter' || evt.keyCode === 13) {
           evt.preventDefault();
           executeServerSearch();
@@ -679,7 +679,7 @@ define([
           background: '#f5f5f5'
         }
       }, serverSearchContainer);
-      on(clearServerBtn, 'click', function() {
+      on(clearServerBtn, 'click', function () {
         serverSearch.set('value', '');
         Topic.publish('/KeywordFilter', '');
       });
@@ -710,11 +710,11 @@ define([
       var localFilterTimer = null;
       var LOCAL_FILTER_DELAY = 150; // ms - fast since it's local
 
-      on(localFilter, 'change', function() {
+      on(localFilter, 'change', function () {
         if (localFilterTimer) {
           clearTimeout(localFilterTimer);
         }
-        localFilterTimer = setTimeout(function() {
+        localFilterTimer = setTimeout(function () {
           localFilterTimer = null;
           var filterText = localFilter.get('value');
           Topic.publish('/LocalFilter', filterText ? filterText.trim().toLowerCase() : '');
@@ -734,13 +734,13 @@ define([
           background: '#f5f5f5'
         }
       }, localFilterContainer);
-      on(clearLocalBtn, 'click', function() {
+      on(clearLocalBtn, 'click', function () {
         localFilter.set('value', '');
         Topic.publish('/LocalFilter', '');
       });
 
       // Store cleanup function
-      this._clearSearchTimer = function() {
+      this._clearSearchTimer = function () {
         if (localFilterTimer) {
           clearTimeout(localFilterTimer);
           localFilterTimer = null;

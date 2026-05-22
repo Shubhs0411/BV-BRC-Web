@@ -254,7 +254,7 @@ define([
 
     // When the set of items in the list of libraries change, update the
     // enabled settings on the assembler choice buttons.
-    updateAssemblerChoice: function() {
+    updateAssemblerChoice: function () {
       if (this.libraryStore.data.length == 1 && this.libraryStore.data[0]._type == 'paired') {
         this.metaspades.set('disabled', false);
         this.auto.set('checked', true);
@@ -420,12 +420,12 @@ define([
         valid = this.validate();
       }
       if (this.submitButton) {
-        this.submitButton.set('disabled', ! valid);
+        this.submitButton.set('disabled', !valid);
       }
       this.updateAssemblerChoice();
     },
 
-    validate: function() {
+    validate: function () {
       var valid = this.inherited(arguments);
       if (!valid) {
         return valid;

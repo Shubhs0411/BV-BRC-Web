@@ -20,7 +20,7 @@ define([
     rowsData: null,
     _rowCounter: 0,
 
-    constructor: function(args) {
+    constructor: function (args) {
       this.rowsData = [];
       this._rowCounter = 0;
       if (args) {
@@ -35,7 +35,7 @@ define([
       this.columns = this._buildColumns([]);
     },
 
-    _toDisplayValue: function(value) {
+    _toDisplayValue: function (value) {
       if (value === null || value === undefined) {
         return '';
       }
@@ -49,14 +49,14 @@ define([
       return String(value);
     },
 
-    _collectColumnKeys: function(rows) {
+    _collectColumnKeys: function (rows) {
       var keysMap = {};
       if (Array.isArray(rows)) {
-        rows.forEach(function(row) {
+        rows.forEach(function (row) {
           if (!row || typeof row !== 'object' || Array.isArray(row)) {
             return;
           }
-          Object.keys(row).forEach(function(key) {
+          Object.keys(row).forEach(function (key) {
             if (key !== '_rowId') {
               keysMap[key] = true;
             }
@@ -66,24 +66,24 @@ define([
       return Object.keys(keysMap);
     },
 
-    _buildColumns: function(columnKeys, visibleColumns) {
+    _buildColumns: function (columnKeys, visibleColumns) {
       var columns = {};
       var keys = Array.isArray(columnKeys) ? columnKeys : [];
       var hasVisibleWhitelist = Array.isArray(visibleColumns) && visibleColumns.length > 0;
       var visibleMap = {};
       if (hasVisibleWhitelist) {
-        visibleColumns.forEach(function(key) {
+        visibleColumns.forEach(function (key) {
           if (typeof key === 'string' && key) {
             visibleMap[key] = true;
           }
         });
       }
-      keys.forEach(lang.hitch(this, function(key) {
+      keys.forEach(lang.hitch(this, function (key) {
         columns[key] = {
           label: key,
           field: key,
           hidden: hasVisibleWhitelist && !visibleMap[key],
-          formatter: lang.hitch(this, function(value) {
+          formatter: lang.hitch(this, function (value) {
             return this._toDisplayValue(value);
           })
         };
@@ -91,12 +91,12 @@ define([
       return columns;
     },
 
-    _normalizeRows: function(rows) {
+    _normalizeRows: function (rows) {
       var normalized = [];
       if (!Array.isArray(rows)) {
         return normalized;
       }
-      rows.forEach(lang.hitch(this, function(row) {
+      rows.forEach(lang.hitch(this, function (row) {
         var nextRow = row;
         if (!nextRow || typeof nextRow !== 'object' || Array.isArray(nextRow)) {
           nextRow = { value: nextRow };
@@ -112,7 +112,7 @@ define([
       return normalized;
     },
 
-    setRows: function(rows, opts) {
+    setRows: function (rows, opts) {
       var options = opts || {};
       var normalized = this._normalizeRows(rows);
       if (options.append) {
@@ -130,7 +130,7 @@ define([
       }
     },
 
-    startup: function() {
+    startup: function () {
       if (this._started) {
         return;
       }

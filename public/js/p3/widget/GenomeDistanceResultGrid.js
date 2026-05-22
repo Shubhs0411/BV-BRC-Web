@@ -17,10 +17,14 @@ define([
       'Selection Checkboxes': selector({ label: '', unhidable: true })
     }, ColumnsGenome, {
       // overwrite existing columns
-      genome_id: { label: 'Genome ID', field: 'genome_id', hidden: true, group: 'General Info' },
-      patric_cds: { label: 'PATRIC CDS', field: 'patric_cds', hidden: true, group: 'Annotation Statistics' },
+      genome_id: {
+        label: 'Genome ID', field: 'genome_id', hidden: true, group: 'General Info'
+      },
+      patric_cds: {
+        label: 'PATRIC CDS', field: 'patric_cds', hidden: true, group: 'Annotation Statistics'
+      },
       // add extra columns
-      genome_status: { 
+      genome_status: {
         label: 'Genome Status',
         field: 'genome_status',
         hidden: false,
@@ -33,9 +37,15 @@ define([
         hidden: false,
         group: 'Genome Quality'
       },
-      distance: { label: 'Distance', field: 'distance', sortable: false, group: 'Similarity Info' },
-      pvalue: { label: 'P value', field: 'pvalue', sortable: false, group: 'Similarity Info' },
-      counts: { label: 'K-mer Counts', field: 'counts', sortable: false, group: 'Similarity Info' }
+      distance: {
+        label: 'Distance', field: 'distance', sortable: false, group: 'Similarity Info'
+      },
+      pvalue: {
+        label: 'P value', field: 'pvalue', sortable: false, group: 'Similarity Info'
+      },
+      counts: {
+        label: 'K-mer Counts', field: 'counts', sortable: false, group: 'Similarity Info'
+      }
     }),
 
     constructor: function (options, parent) {

@@ -27,7 +27,7 @@ define([
     _isApplyingPendingSelection: false,
     _loadToken: 0,
 
-    constructor: function(args) {
+    constructor: function (args) {
       this.workflowData = [];
       this._pendingSelectedWorkflows = [];
       this._isApplyingPendingSelection = false;
@@ -45,7 +45,7 @@ define([
       this.sort = [{ attribute: 'submitted_at', descending: true }];
     },
 
-    _buildColumns: function() {
+    _buildColumns: function () {
       return {
         __copilotRowSelect: selector({
           selectorType: 'checkbox',
@@ -92,14 +92,14 @@ define([
       };
     },
 
-    _formatDate: function(value) {
+    _formatDate: function (value) {
       if (!value) return '';
       var date = new Date(value);
       if (isNaN(date.getTime())) return value;
       return date.toLocaleString();
     },
 
-    _normalizeWorkflow: function(workflow) {
+    _normalizeWorkflow: function (workflow) {
       if (!workflow) return null;
       var workflowId = workflow.workflow_id || workflow.id;
       if (!workflowId) return null;
@@ -115,10 +115,10 @@ define([
       };
     },
 
-    _buildSelectedIdMapFromItems: function(items) {
+    _buildSelectedIdMapFromItems: function (items) {
       var selectedIds = {};
       if (!Array.isArray(items)) return selectedIds;
-      items.forEach(function(row) {
+      items.forEach(function (row) {
         if (row && row.id !== undefined && row.id !== null) {
           selectedIds[String(row.id)] = true;
         }
@@ -126,7 +126,7 @@ define([
       return selectedIds;
     },
 
-    _getCurrentSelectedIdMap: function() {
+    _getCurrentSelectedIdMap: function () {
       var selectionMap = this.selection || {};
       var selectedIds = {};
       for (var rowId in selectionMap) {
@@ -137,7 +137,7 @@ define([
       return selectedIds;
     },
 
-    _selectedIdMapsMatch: function(expected, current) {
+    _selectedIdMapsMatch: function (expected, current) {
       var key;
       for (key in expected) {
         if (expected.hasOwnProperty(key) && !current[key]) return false;
@@ -148,11 +148,11 @@ define([
       return true;
     },
 
-    isApplyingSelectionSync: function() {
+    isApplyingSelectionSync: function () {
       return !!this._isApplyingPendingSelection;
     },
 
-    _applyPendingSelection: function() {
+    _applyPendingSelection: function () {
       if (!Array.isArray(this._pendingSelectedWorkflows) || this._isApplyingPendingSelection) {
         return;
       }
@@ -164,7 +164,7 @@ define([
       this._isApplyingPendingSelection = true;
       try {
         if (typeof this.clearSelection === 'function') this.clearSelection();
-        this.workflowData.forEach(lang.hitch(this, function(row) {
+        this.workflowData.forEach(lang.hitch(this, function (row) {
           if (row && selectedIds[row.id]) {
             this.select(row.id);
           }
@@ -174,10 +174,10 @@ define([
       }
     },
 
-    setWorkflowData: function(workflows) {
+    setWorkflowData: function (workflows) {
       var normalized = [];
       if (Array.isArray(workflows)) {
-        workflows.forEach(lang.hitch(this, function(workflow) {
+        workflows.forEach(lang.hitch(this, function (workflow) {
           var row = this._normalizeWorkflow(workflow);
           if (row) normalized.push(row);
         }));
@@ -188,8 +188,8 @@ define([
       this._applyPendingSelection();
     },
 
-    setWorkflowIds: function(workflowIds) {
-      var ids = Array.isArray(workflowIds) ? workflowIds.filter(function(id) { return typeof id === 'string' && id.trim().length > 0; }) : [];
+    setWorkflowIds: function (workflowIds) {
+      var ids = Array.isArray(workflowIds) ? workflowIds.filter(function (id) { return typeof id === 'string' && id.trim().length > 0; }) : [];
       var loadToken = ++this._loadToken;
       var workflowUrl = (window && window.App && window.App.workflow_url) ? window.App.workflow_url : 'https://dev-7.bv-brc.org/api/v1';
       var headers = { 'Accept': 'application/json' };
@@ -197,7 +197,7 @@ define([
         headers.Authorization = window.App.authorizationToken;
       }
 
-      var placeholders = ids.map(function(id) {
+      var placeholders = ids.map(function (id) {
         return {
           id: id,
           workflow_id: id,
@@ -214,14 +214,14 @@ define([
         return Promise.resolve([]);
       }
 
-      return Promise.all(ids.map(function(id) {
+      return Promise.all(ids.map(function (id) {
         var url = workflowUrl + '/workflows/' + encodeURIComponent(id);
         return request.get(url, {
           headers: headers,
           handleAs: 'json'
-        }).then(function(workflowData) {
+        }).then(function (workflowData) {
           return workflowData;
-        }).catch(function() {
+        }).catch(function () {
           return {
             workflow_id: id,
             workflow_name: 'Unavailable',
@@ -231,7 +231,7 @@ define([
             completed_at: ''
           };
         });
-      })).then(lang.hitch(this, function(rows) {
+      })).then(lang.hitch(this, function (rows) {
         if (loadToken !== this._loadToken) {
           return [];
         }
@@ -240,7 +240,7 @@ define([
       }));
     },
 
-    getSelectedWorkflows: function() {
+    getSelectedWorkflows: function () {
       var selected = [];
       var selectionMap = this.selection || {};
       for (var rowId in selectionMap) {
@@ -251,7 +251,7 @@ define([
       return selected;
     },
 
-    setSelectedWorkflows: function(items) {
+    setSelectedWorkflows: function (items) {
       var currentPendingMap = this._buildSelectedIdMapFromItems(this._pendingSelectedWorkflows);
       var nextPendingMap = this._buildSelectedIdMapFromItems(items);
       if (this._selectedIdMapsMatch(nextPendingMap, currentPendingMap)) {
@@ -264,7 +264,7 @@ define([
       this._applyPendingSelection();
     },
 
-    startup: function() {
+    startup: function () {
       if (this._started) return;
       this.inherited(arguments);
       if (this.workflowData && this.workflowData.length > 0) {

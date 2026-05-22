@@ -14,7 +14,7 @@
 define([
   'dojo/_base/declare',
   'dojo/_base/lang'
-], function(
+], function (
   declare, lang
 ) {
 
@@ -36,7 +36,7 @@ define([
      * Constructor - initializes the event handler
      * @param {Object} config - Configuration options
      */
-    constructor: function(config) {
+    constructor: function (config) {
       this.config = lang.mixin({
         showQueuedStatus: true,
         showProgressUpdates: true,
@@ -51,7 +51,7 @@ define([
     /**
      * Resets agent state for a new query
      */
-    resetState: function() {
+    resetState: function () {
       this.agentState = {
         currentIteration: 0,
         maxIterations: 10,
@@ -71,7 +71,7 @@ define([
      * @param {Object} eventData - The event data
      * @returns {Object|null} Status message object if one should be created/updated
      */
-    handleEvent: function(eventName, eventData) {
+    handleEvent: function (eventName, eventData) {
       var formatter = this['format_' + eventName];
       if (formatter) {
         return formatter.call(this, eventData);
@@ -86,7 +86,7 @@ define([
      * @param {string} eventType - Original event type
      * @returns {Object} Message object
      */
-    createStatusMessage: function(content, eventType) {
+    createStatusMessage: function (content, eventType) {
       var messageId = 'status_' + Date.now();
       this.currentStatusMessageId = messageId;
 
@@ -109,7 +109,7 @@ define([
      * @param {string} eventType - Event type that triggered update
      * @returns {Object} Updated message object
      */
-    updateStatusMessage: function(content, eventType) {
+    updateStatusMessage: function (content, eventType) {
       if (!this.currentStatusMessage) {
         return this.createStatusMessage(content, eventType);
       }
@@ -125,7 +125,7 @@ define([
      * Gets the current status message for removal
      * @returns {Object|null} Current status message
      */
-    getStatusMessageForRemoval: function() {
+    getStatusMessageForRemoval: function () {
       return this.currentStatusMessage;
     },
 
@@ -134,7 +134,7 @@ define([
     /**
      * Formats 'queued' event
      */
-    format_queued: function(data) {
+    format_queued: function (data) {
       if (!this.config.showQueuedStatus) return null;
 
       this.agentState.status = 'queued';
@@ -146,7 +146,7 @@ define([
     /**
      * Formats 'started' event
      */
-    format_started: function(data) {
+    format_started: function (data) {
       this.agentState.status = 'processing';
       var content = 'Processing started...';
 
@@ -156,7 +156,7 @@ define([
     /**
      * Formats 'progress' event
      */
-    format_progress: function(data) {
+    format_progress: function (data) {
       if (!this.config.showProgressUpdates) return null;
 
       this.agentState.currentIteration = data.iteration || 0;
@@ -179,7 +179,7 @@ define([
     /**
      * Formats 'tool_selected' event
      */
-    format_tool_selected: function(data) {
+    format_tool_selected: function (data) {
       if (!this.config.showToolSelection) return null;
 
       this.agentState.currentIteration = data.iteration || this.agentState.currentIteration;
@@ -204,7 +204,7 @@ define([
     /**
      * Formats 'tool_executed' event
      */
-    format_tool_executed: function(data) {
+    format_tool_executed: function (data) {
       if (!this.config.showToolResults) return null;
 
       var tool = data.tool || this.agentState.currentTool;
@@ -250,7 +250,7 @@ define([
     /**
      * Formats 'duplicate_detected' event
      */
-    format_duplicate_detected: function(data) {
+    format_duplicate_detected: function (data) {
       if (!this.config.showDuplicateWarnings) return null;
 
       var content = 'Duplicate Action Detected\n';
@@ -264,7 +264,7 @@ define([
     /**
      * Formats 'forced_finalize' event
      */
-    format_forced_finalize: function(data) {
+    format_forced_finalize: function (data) {
       var content = 'Finalization Forced\n';
       content += 'Reason: ' + (data.reason || 'duplicate_with_data') + '\n';
       content += (data.message || 'Agent has sufficient data to respond');
@@ -276,7 +276,7 @@ define([
      * Formats 'final_response' event
      * Note: This is handled separately by the streaming logic
      */
-    format_final_response: function(data) {
+    format_final_response: function (data) {
       // Update status to indicate response generation
       var content = 'Generating response...\n';
       content += 'Analysis complete (' + this.agentState.toolsUsed.length + ' tools used)';
@@ -288,7 +288,7 @@ define([
      * Formats 'done' event
      * Returns null because we want to remove the status message
      */
-    format_done: function(data) {
+    format_done: function (data) {
       // Update agent state
       this.agentState.status = 'complete';
 
@@ -307,7 +307,7 @@ define([
     /**
      * Formats 'error' event
      */
-    format_error: function(data) {
+    format_error: function (data) {
       var content = 'Error\n';
       content += (data.error || 'An error occurred');
 
@@ -326,7 +326,7 @@ define([
      * Formats 'content' event (fallback)
      * This is handled by the normal streaming logic
      */
-    format_content: function(data) {
+    format_content: function (data) {
       // This is handled separately, return null
       return null;
     },
@@ -335,7 +335,7 @@ define([
      * Formats 'query_progress' event
      * Displays real-time pagination progress for query operations
      */
-    format_query_progress: function(data) {
+    format_query_progress: function (data) {
       var current = data.current || 0;
       var total = data.total || 0;
       var percentage = Math.round(data.percentage || 0);
@@ -362,7 +362,7 @@ define([
     /**
      * Formats 'abort_requested' event
      */
-    format_abort_requested: function(data) {
+    format_abort_requested: function (data) {
       var content = 'Abort requested...';
       if (data && Array.isArray(data.scopes) && data.scopes.length > 0) {
         content += '\nScope: ' + data.scopes.join(', ');
@@ -373,7 +373,7 @@ define([
     /**
      * Formats 'query_aborted' event
      */
-    format_query_aborted: function(data) {
+    format_query_aborted: function (data) {
       var total = data && data.expectedTotal ? data.expectedTotal : 0;
       var current = data && data.totalResults ? data.totalResults : 0;
       var content = 'Query aborted. Partial results were saved.';
@@ -391,7 +391,7 @@ define([
      * Formats 'image_context' event
      * Used to notify users when image analysis is integrated or skipped.
      */
-    format_image_context: function(data) {
+    format_image_context: function (data) {
       var message = data && data.message
         ? data.message
         : 'Image context status updated.';
@@ -406,7 +406,7 @@ define([
     /**
      * Formats 'cancelled' event (from API)
      */
-    format_cancelled: function(data) {
+    format_cancelled: function (data) {
       var content = data && data.message ? data.message : 'Job cancelled by user';
 
       if (data && data.job_id) {

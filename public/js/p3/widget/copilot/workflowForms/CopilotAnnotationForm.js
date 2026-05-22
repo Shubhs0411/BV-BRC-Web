@@ -10,13 +10,13 @@ define([
   'dojo/dom-construct',
   'dojo/query',
   'p3/widget/app/Annotation'
-], function(declare, lang, domClass, domConstruct, query, Annotation) {
+], function (declare, lang, domClass, domConstruct, query, Annotation) {
   return declare([Annotation], {
     /**
      * Skip auth guard: do not call inherited (login template swap).
      * Replicate only workspace path setup.
      */
-    postMixInProperties: function() {
+    postMixInProperties: function () {
       this.activeWorkspace = this.activeWorkspace || window.App.activeWorkspace;
       var appPath = window.App.activeWorkspacePath;
       if (!appPath || appPath === '/' || (appPath.indexOf && appPath.indexOf('undefined') !== -1)) {
@@ -28,12 +28,12 @@ define([
     /**
      * Strip page-level chrome after render.
      */
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
-      query('.appTitle', this.domNode).forEach(function(node) {
+      query('.appTitle', this.domNode).forEach(function (node) {
         domConstruct.destroy(node);
       });
-      query('.appSubmissionArea', this.domNode).forEach(function(node) {
+      query('.appSubmissionArea', this.domNode).forEach(function (node) {
         domConstruct.destroy(node);
       });
       domClass.add(this.domNode, 'copilot-embedded-form');
@@ -42,7 +42,7 @@ define([
     /**
      * Prevent real submission — workflow engine handles submission.
      */
-    onSubmit: function(evt) {
+    onSubmit: function (evt) {
       if (evt) {
         evt.preventDefault();
         evt.stopPropagation();
@@ -54,12 +54,12 @@ define([
      * Defers loading until startup has completed so all widgets are initialized.
      * @param {Object} params - Step params from workflow manifest
      */
-    setFromManifest: function(params) {
+    setFromManifest: function (params) {
       if (!params) return;
 
       var self = this;
 
-      var applyParams = function() {
+      var applyParams = function () {
         if (self.contigs && params.contigs) {
           self.contigs.set('value', params.contigs);
         }
@@ -93,7 +93,7 @@ define([
       } else {
         var attempts = 0;
         var maxAttempts = 50;
-        var interval = setInterval(function() {
+        var interval = setInterval(function () {
           attempts++;
           if (self._started) {
             clearInterval(interval);
@@ -111,7 +111,7 @@ define([
      * Extract values back to workflow manifest format.
      * @returns {Object}
      */
-    toManifest: function() {
+    toManifest: function () {
       return this.getValues();
     }
   });

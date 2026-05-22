@@ -3,15 +3,15 @@ define(
     'dojo/_base/declare', 'dgrid/OnDemandGrid', 'dojo/store/JsonRest', 'dgrid/extensions/DijitRegistry',
     'dgrid/Keyboard', 'dgrid/Selection', './formatter', 'dgrid/extensions/ColumnResizer',
     './ColumnHider', 'dgrid/extensions/DnD', 'dojo/dnd/Source',
-    'dojo/_base/Deferred', 'dojo/aspect', 'dojo/_base/lang', '../util/PathJoin','./GridCopyToClipboard'
+    'dojo/_base/Deferred', 'dojo/aspect', 'dojo/_base/lang', '../util/PathJoin', './GridCopyToClipboard'
   ],
   function (
     declare, Grid, Store, DijitRegistry,
     Keyboard, Selection, formatter, ColumnResizer,
     ColumnHider, DnD, DnDSource,
-    Deferred, aspect, lang, PathJoin,GridCopyToClipboard
+    Deferred, aspect, lang, PathJoin, GridCopyToClipboard
   ) {
-    return declare([Grid, ColumnHider, Keyboard, ColumnResizer, DijitRegistry, Selection,GridCopyToClipboard], {
+    return declare([Grid, ColumnHider, Keyboard, ColumnResizer, DijitRegistry, Selection, GridCopyToClipboard], {
       constructor: function () {
         this.dndParams.creator = lang.hitch(this, function (item, hint) {
         // console.log("item: ", item, " hint:", hint, "dataType: ", this.dndDataType);
@@ -88,20 +88,20 @@ define(
           });
         });
 
-        console.log("subscribe to keypress")
-        if (this.copyToClipboard){
+        console.log('subscribe to keypress')
+        if (this.copyToClipboard) {
           this.on('keydown', lang.hitch(this, function (evt) {
             // console.log("onKeyPress", evt)
-            if ((evt.key=="c" || evt.key=="C") && (evt.ctrlKey||evt.metaKey)){
-              this._setCopying=true
+            if ((evt.key == 'c' || evt.key == 'C') && (evt.ctrlKey || evt.metaKey)) {
+              this._setCopying = true
             }
           }))
 
           this.on('keyup', lang.hitch(this, function (evt) {
-            console.log("onKeyPress", evt)
-            if (this._setCopying){
+            console.log('onKeyPress', evt)
+            if (this._setCopying) {
               this.copyToClipboard(true)
-              this._setCopying=false
+              this._setCopying = false
             }
           }))
         }

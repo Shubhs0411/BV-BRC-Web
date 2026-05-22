@@ -130,7 +130,7 @@ define([
       var toIdGroup = this.state.toIdGroup;
       var toId = this.state.toId;
       var fromIdValue = this.state.fromIdValue.split(',');
-      for(var i = 0; i < fromIdValue.length; i++) fromIdValue[i]=fromIdValue[i].replace(/^["'](.+(?=["']$))["']$/, '$1');
+      for (var i = 0; i < fromIdValue.length; i++) fromIdValue[i] = fromIdValue[i].replace(/^["'](.+(?=["']$))["']$/, '$1');
       var via = 'gene_id';
       via = this.state.joinId;
       // the joinID is what creates Advanced Search
@@ -162,8 +162,8 @@ define([
           var solr_core = '/genome_feature/';
           var solr_sort = 'genome_name asc,accession asc,start asc';
           if (fromId == toId && toId == 'genome_id') {
-                solr_core = '/genome/';
-                solr_sort = 'genome_id asc';
+            solr_core = '/genome/';
+            solr_sort = 'genome_id asc';
           }
           this._loadingDeferred = when(request.post(_self.apiServer + solr_core, {
             handleAs: 'json',

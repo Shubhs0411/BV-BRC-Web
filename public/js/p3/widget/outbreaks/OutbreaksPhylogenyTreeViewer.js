@@ -86,7 +86,9 @@ define([
 
       const options = {...this.defaultOptions, ...this.options};
       const settings = {
-        ...this.defaultSettings, ...this.settings, ...{
+        ...this.defaultSettings,
+        ...this.settings,
+        ...{
           controls0: 'controls-' + this.id + '-0',
           controls1: 'controls-' + this.id + '-1'
         }
@@ -106,7 +108,7 @@ define([
               try {
                 tree = window.archaeopteryx.parsePhyloXML(data);
               } catch (e) {
-                this._setLoading("", false);
+                this._setLoading('', false);
                 alert('Error while parsing tree: ' + e);
                 return;
               }
@@ -135,7 +137,7 @@ define([
                   } catch (e) {
                     alert('Error while launching archaeopteryx: ' + e);
                   } finally {
-                    this._setLoading("", false);
+                    this._setLoading('', false);
                   }
                 });
               }
@@ -169,7 +171,7 @@ define([
 
       // Clear old viewer contents
       if (this.phylogramNode) {
-        this.phylogramNode.innerHTML = "";
+        this.phylogramNode.innerHTML = '';
       }
 
       // Clear control panels

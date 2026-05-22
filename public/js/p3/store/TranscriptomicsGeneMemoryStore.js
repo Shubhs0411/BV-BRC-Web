@@ -271,12 +271,12 @@ define([
       var wsExpIds,
         wsComparisonIds;
       if (wsExperiments.length > 0) {
-        wsExpIds = wsExperiments[0].replace('wsExpId=', '').split(',').map(function(id) {
+        wsExpIds = wsExperiments[0].replace('wsExpId=', '').split(',').map(function (id) {
           return decodeURIComponent(id);
         });
       }
       if (wsComparisons.length > 0) {
-        wsComparisonIds = wsComparisons[0].replace('wsComparisonId=', '').split(',').map(function(id) {
+        wsComparisonIds = wsComparisons[0].replace('wsComparisonId=', '').split(',').map(function (id) {
           return decodeURIComponent(id);
         });
       }

@@ -182,7 +182,7 @@ define([
           textContent: feature.genome_name
         }, this.queryNode, 'last');
 
-/*
+        /*
         if (taxon_lineage_names.includes('Viruses') && this.context === 'bacteria') {
           this.set('context', 'virus')
           this.changeToVirusContext();

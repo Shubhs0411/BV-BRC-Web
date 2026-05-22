@@ -586,9 +586,9 @@ define([
         if (lrec.condition) {
           advPairInfo.push('Condition:' + lrec.condition);
         }
-        var platform = this.platform_select.get("value");
+        var platform = this.platform_select.get('value');
         lrec.platform = platform;
-        this.addLibraryInfo(lrec, { 'read': { 'label': this.read.searchBox.get('displayedValue') }, "platform": {'label': platform} }, tr);
+        this.addLibraryInfo(lrec, { 'read': { 'label': this.read.searchBox.get('displayedValue') }, 'platform': {'label': platform} }, tr);
         if (advPairInfo.length) {
           var condition_icon = this.getConditionIcon(lrec.condition);
           lrec.design = true;

@@ -841,8 +841,8 @@ define([
               'X-Requested-With': null,
               Authorization: (window.App.authorizationToken || '')
             },
-            data : 'in(id,(' + idList.join(',') + '))&gt(collection_latitude,-91)&select(id,collection_latitude,collection_longitude)&limit(' + idList.length + ')'
-            }), function (response) {
+            data: 'in(id,(' + idList.join(',') + '))&gt(collection_latitude,-91)&select(id,collection_latitude,collection_longitude)&limit(' + idList.length + ')'
+          }), function (response) {
             let validIds = [];
 
             // Retrieve ids and unique coordinates

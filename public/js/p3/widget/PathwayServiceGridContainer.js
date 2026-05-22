@@ -243,10 +243,10 @@ define([
               });
             }));
           } else if (container.type === 'gene') {
-            return;
+
           }
           else {
-            return;
+
           }
           // Topic.publish('/navigate', { href: '/view/Feature/' + sel.feature_id + '#view_tab=overview' });
         },

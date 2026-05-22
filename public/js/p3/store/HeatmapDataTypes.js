@@ -20,9 +20,9 @@ define([], function () {
   //  this.afterCellLabel = "";
   // }
 
-// Creates a color stop to give to the heatmap
-// `position` The *end* position of the color stop, expressed as a float between 0 and 1. Color stops defined at position 0 are ignored.
-// `color` The color for the stop expressed as an integer (hexidecimal values OK)
+  // Creates a color stop to give to the heatmap
+  // `position` The *end* position of the color stop, expressed as a float between 0 and 1. Color stops defined at position 0 are ignored.
+  // `color` The color for the stop expressed as an integer (hexidecimal values OK)
   this.ColorStop = function (position, color) {
     this.position = position;
     this.color = color;

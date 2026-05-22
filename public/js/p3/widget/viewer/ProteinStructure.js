@@ -79,7 +79,7 @@ function (
         let index = 0;
         let hasHighlighter = false;
         for (let id of accessionIds) {
-          const urls =[
+          const urls = [
             `${this.contentServer}/structures/protein_features/${id}.fea`,
             `${this.contentServer}/structures/epitopes/${id}.epi`
           ];
@@ -89,13 +89,13 @@ function (
             @exception Error object
            */
           const response = await Promise.all(
-              urls.map(url => xhr.get(url, {
-                headers: {
-                  'Accept': 'application/solr+json',
-                  'Authorization': window.App.authorizationToken
-                }
-              }).then(res => res)
-                  .catch(e => e))
+            urls.map(url => xhr.get(url, {
+              headers: {
+                'Accept': 'application/solr+json',
+                'Authorization': window.App.authorizationToken
+              }
+            }).then(res => res)
+              .catch(e => e))
           );
 
           const featureContent = response[0];
@@ -199,7 +199,7 @@ function (
         if (Array.isArray(accessionInfo)) {
           for (let i = 0; i < accessionInfo.length; ++i) {
             domConstruct.place(DataItemFormatter(accessionInfo[i], 'structure_data', {}), this.accessionTitle.containerNode,
-                i === 0 ? 'first' : '');
+              i === 0 ? 'first' : '');
           }
         } else {
           domConstruct.place(DataItemFormatter(accessionInfo, 'structure_data', {}), this.accessionTitle.containerNode, 'first');

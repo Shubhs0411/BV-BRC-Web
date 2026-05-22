@@ -128,7 +128,7 @@ define([
 
     _tocsv: function (selection) {
       var out = [];
-      var keys = Object.keys(selection[0]).filter(function(key) {
+      var keys = Object.keys(selection[0]).filter(function (key) {
         // Skip internal fields and complex objects
         if (key.charAt(0) === '_') return false;
         if (key === 'detail') return false;
@@ -170,7 +170,7 @@ define([
 
     _totsv: function (selection) {
       var out = [];
-      var keys = Object.keys(selection[0]).filter(function(key) {
+      var keys = Object.keys(selection[0]).filter(function (key) {
         // Skip internal fields and complex objects
         if (key.charAt(0) === '_') return false;
         if (key === 'detail') return false;

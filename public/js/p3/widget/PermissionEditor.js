@@ -127,15 +127,15 @@ define([
       domConstruct.place(
         '<h4 style="margin-bottom: 5px;">' +
           'Share with Specific Users' +
-        '</h4>'
-        , form
+        '</h4>',
+        form
       );
 
       self.progressEle = domConstruct.place(
         '<span>' +
           self.loadingHTML +
-        '</span>'
-        , form
+        '</span>',
+        form
       );
       self.currentUsers = domConstruct.toDom('<table class="currentUsers p3basic striped" style="margin-bottom: 10px;">' +
           '<thead>' +
@@ -190,8 +190,8 @@ define([
           domConstruct.place(permSelector.domNode, td);
           domConstruct.place(td, row);
           domConstruct.place(
-            domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>')
-            , row
+            domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>'),
+            row
           );
           var newRow = domConstruct.place(row, query('tbody', self.currentUsers)[0]);
 
@@ -308,8 +308,8 @@ define([
         domConstruct.place(permSelector.domNode, td);
         domConstruct.place(td, row);
         domConstruct.place(
-          domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>')
-          , row
+          domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>'),
+          row
         );
         var newRow = domConstruct.place(row, query('tbody', self.currentUsers)[0]);
 
@@ -438,8 +438,8 @@ define([
         domConstruct.place(permSelector.domNode || permSelector, td);
         domConstruct.place(td, row);
         domConstruct.place(
-          domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>')
-          , row
+          domConstruct.toDom('<td style="width: 1px"><i class="fa icon-trash-o fa-2x"></i></td>'),
+          row
         );
         var fullRow = domConstruct.place(row, query('tbody', self.currentUsers)[0]);
 

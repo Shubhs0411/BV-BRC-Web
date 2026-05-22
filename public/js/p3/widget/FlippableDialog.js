@@ -11,7 +11,7 @@ define([
 ) {
   return declare([Dialog], {
     templateString: template,
-    postCreate: function() {
+    postCreate: function () {
       this.inherited(arguments);
       // Ensure dialog always starts in 'front' state (fixes Safari flip bug)
       domClass.remove(this.domNode, 'flipped');

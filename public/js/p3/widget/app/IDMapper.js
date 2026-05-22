@@ -159,7 +159,7 @@ define([
       var fromIdGroup = null;
       var toIdGroup = null;
       var patricIdGroup = {
-          patric_id: '', feature_id: '', P2_feature_id: '', alt_locus_tag: '', refseq_locus_tag: '', gene_id: '', gi: '', protein_id: '', genome_id: ''
+        patric_id: '', feature_id: '', P2_feature_id: '', alt_locus_tag: '', refseq_locus_tag: '', gene_id: '', gi: '', protein_id: '', genome_id: ''
       };
 
       fromIdGroup = (from in patricIdGroup) ? 'PATRIC' : 'OTHER';
@@ -169,7 +169,7 @@ define([
 
       if (this.leftList.get('value').replace(/^\s+|\s+$/gm, '') !== '') {
 
-      // console.log("ids: ", ids);
+        // console.log("ids: ", ids);
         query('.idmap_result_div .GridContainer').style('visibility', 'visible');
         query('.PerspectiveTotalCount').style('visibility', 'visible');
         _self.result.set('state', {
@@ -178,15 +178,15 @@ define([
       }
 
 
-    // if(ids && (ids.length > 0)){
-    //   switch(from){
-    //     case "UniProtKB-ID":
-    //     q = "in(uniprotkb_accession,(" + ids + "))";
-    //     break;
-    //     default:
-    //     q = 'in(id_value,(' + ids + '))&eq(id_type,' + from + ')&limit(99999)'
-    //   }
-    // }
+      // if(ids && (ids.length > 0)){
+      //   switch(from){
+      //     case "UniProtKB-ID":
+      //     q = "in(uniprotkb_accession,(" + ids + "))";
+      //     break;
+      //     default:
+      //     q = 'in(id_value,(' + ids + '))&eq(id_type,' + from + ')&limit(99999)'
+      //   }
+      // }
 
     // console.log('ID MAP Query: ', q);
     // xhr.post(PathJoin(window.App.dataAPI, "id_ref") + "/", {

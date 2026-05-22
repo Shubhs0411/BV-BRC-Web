@@ -102,14 +102,14 @@ define([
     processData: function (response) {
       // OPTIMIZED: Process SOLR JSON facet response
       var facetOrder = ['hypothetical', 'functional', 'ec_assigned',
-                        'pathway_assigned', 'subsystem_assigned', 'plfam_assigned',
-                        'pgfam_assigned'];
+        'pathway_assigned', 'subsystem_assigned', 'plfam_assigned',
+        'pgfam_assigned'];
 
-      var results = facetOrder.map(function(facetName) {
+      var results = facetOrder.map(function (facetName) {
         var facetData = response.facets[facetName];
         var result = {};
         if (facetData && facetData.by_annotation && facetData.by_annotation.buckets) {
-          facetData.by_annotation.buckets.forEach(function(bucket) {
+          facetData.by_annotation.buckets.forEach(function (bucket) {
             result[bucket.val] = bucket.count;
           });
         }

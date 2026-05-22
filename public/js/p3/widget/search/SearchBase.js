@@ -31,7 +31,7 @@ define([
       const searchableFields = AdvancedSearchFields[this.dataKey].filter(ff => ff.search)
       this.fieldSelectOptions = searchableFields.map(ff => {
         const field = ff.field || ff;
-	const label = ff.label || field;
+        const label = ff.label || field;
         return { id: field, label: label.replace(/_/g, ' '), value: field }
       })
 

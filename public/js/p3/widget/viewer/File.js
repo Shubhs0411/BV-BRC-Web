@@ -1,5 +1,5 @@
 define([
-  'dojo/_base/declare', 'dijit/layout/BorderContainer', 'dojo/on', "dojo/_base/lang",
+  'dojo/_base/declare', 'dijit/layout/BorderContainer', 'dojo/on', 'dojo/_base/lang',
   'dojo/dom-class', 'dijit/layout/ContentPane', 'dojo/dom-construct', 'dojo/dom-style',
   '../formatter', '../../WorkspaceManager', 'dojo/_base/Deferred', 'dojo/dom-attr', 'dojo/_base/array'
 ], function (
@@ -96,17 +96,17 @@ define([
 
       (async () => {
         try {
-          const res = await fetch(window.App.workspaceDownloadAPI + "/set-cookie-auth", {
-            method: "POST",
+          const res = await fetch(window.App.workspaceDownloadAPI + '/set-cookie-auth', {
+            method: 'POST',
             headers: {
-              "Authorization": window.App.authorizationToken,
-              "Content-Type": "application/json"
+              'Authorization': window.App.authorizationToken,
+              'Content-Type': 'application/json'
             },
-            credentials: "include"
+            credentials: 'include'
           });
 
           if (!res.ok) {
-            throw new Error("Authorization failed with status " + res.status);
+            throw new Error('Authorization failed with status ' + res.status);
           }
 
           const data = await res.text();
@@ -133,29 +133,29 @@ define([
           // Set cookie for workspace load
           this.authorize().then(lang.hitch(this, function () {
             // Encode filepath to handle special characters like #, ?, &, etc.
-            var encodedPath = this.filepath.split('/').map(function(component, index) {
+            var encodedPath = this.filepath.split('/').map(function (component, index) {
               // Keep first component (empty string before leading /) and username unencoded
               if (index <= 1) return component;
               return encodeURIComponent(component);
             }).join('/');
-            const docURL = window.App.workspaceDownloadAPI + "/view" + encodedPath;
+            const docURL = window.App.workspaceDownloadAPI + '/view' + encodedPath;
             // Create a spinner div
-            const spinner = domConstruct.create("div", {
-              className: "spinner",
-              innerHTML: "Loading..."
+            const spinner = domConstruct.create('div', {
+              className: 'spinner',
+              innerHTML: 'Loading...'
             });
 
             // Style the spinner (you can customize this or use a CSS class)
             domStyle.set(spinner, {
-              position: "absolute",
-              fontSize: "2.5em",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              position: 'absolute',
+              fontSize: '2.5em',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
               zIndex: 10,
-              backgroundColor: "white",
-              padding: "10px",
-              borderRadius: "4px"
+              backgroundColor: 'white',
+              padding: '10px',
+              borderRadius: '4px'
             });
             var iframe = domConstruct.create('iframe', { style: 'width:100%;height:100%' });
             domConstruct.empty(this.viewer.containerNode);
@@ -180,7 +180,7 @@ define([
             iframe.src = docURL;
 
           }), function () {
-            console.log("Cookie auth failure");
+            console.log('Cookie auth failure');
           });
         } else {
           this.viewSubHeader.set('content', this.formatFileMetaData(true));

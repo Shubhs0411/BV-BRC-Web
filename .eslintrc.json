@@ -17,12 +17,33 @@
     "MauveViewer": true,
     "forester": true,
     "BVBRCClient": true,
-    "Hotmap": true
+    "Hotmap": true,
+    "GexfJS": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 2020
   },
   "rules": {
+    "strict": 0,
+    "no-await-in-loop": 0,
+    "no-tabs": 0,
+    "no-case-declarations": 0,
+    "operator-linebreak": 0,
+    "spaced-comment": 0,
+    "operator-assignment": 0,
+    "object-curly-spacing": 0,
+    "no-useless-escape": 0,
+    "no-multiple-empty-lines": 0,
+    "no-unused-vars": 0,
+    "no-empty": 0,
+    "no-self-assign": 0,
+    "no-useless-concat": 0,
+    "prefer-regex-literals": 0,
+    "prefer-promise-reject-errors": 0,
+    "default-param-last": 0,
+    "no-mixed-spaces-and-tabs": 0,
+    "function-call-argument-newline": 0,
+    "no-lone-blocks": 0,
     "semi": 0,
     "no-else-return": 0,
     "one-var-declaration-per-line": 0,
@@ -45,7 +66,6 @@
     "eqeqeq": 0,
     "camelcase": 0,
     "no-plusplus": [1, {"allowForLoopAfterthoughts": true}],
-    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
     "no-plusplus": 0,
     "no-lonely-if": 0,
     "no-prototype-builtins": 0,

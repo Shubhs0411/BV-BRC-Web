@@ -230,43 +230,43 @@ define([
             // node visualizations to treeDat.
             if (treeSort) {
 
-               // Customize options
-               if (!treeDat.options) { treeDat.options = {}; }
-               treeDat.options.branchWidthDefault = 1;
-               treeDat.options.enableNodeVisualizations = true;
-               treeDat.options.minBranchLengthValueToShow = 0.001;
-               treeDat.options.phylogram = true;
-               treeDat.options.showInternalLabels = true;
-               treeDat.options.showInternalNodes = true;
-               treeDat.options.showNodeName = true;
-               treeDat.options.showNodeVisualizations = true;
+              // Customize options
+              if (!treeDat.options) { treeDat.options = {}; }
+              treeDat.options.branchWidthDefault = 1;
+              treeDat.options.enableNodeVisualizations = true;
+              treeDat.options.minBranchLengthValueToShow = 0.001;
+              treeDat.options.phylogram = true;
+              treeDat.options.showInternalLabels = true;
+              treeDat.options.showInternalNodes = true;
+              treeDat.options.showNodeName = true;
+              treeDat.options.showNodeVisualizations = true;
 
-               // Include node visualizations under "custom".
-               treeDat.custom = {
-                  nodeVisualizations: {
-                     is_reassorted: {
-                        label: 'Is reassorted',
-                        description: 'Is reassorted (TreeSort)',
-                        field: null,
-                        cladeRef: 'ts:is_reassorted',
-                        regex: false,
-                        shapes: ['square', 'diamond', 'triangle-up', 'triangle-down', 'cross', 'circle'],
-                        colors: 'category50',
-                        colorsAlt: ['#000000', '#00FF00'],
-                        sizes: null
-                     },
-                     segment: {
-                        label: 'Segment',
-                        description: 'Segment (TreeSort)',
-                        field: null,
-                        cladeRef: 'ts:segment',
-                        regex: false,
-                        shapes: ['square', 'diamond', 'triangle-up', 'triangle-down', 'cross', 'circle'],
-                        colors: 'category50',
-                        sizes: null
-                     }
+              // Include node visualizations under "custom".
+              treeDat.custom = {
+                nodeVisualizations: {
+                  is_reassorted: {
+                    label: 'Is reassorted',
+                    description: 'Is reassorted (TreeSort)',
+                    field: null,
+                    cladeRef: 'ts:is_reassorted',
+                    regex: false,
+                    shapes: ['square', 'diamond', 'triangle-up', 'triangle-down', 'cross', 'circle'],
+                    colors: 'category50',
+                    colorsAlt: ['#000000', '#00FF00'],
+                    sizes: null
+                  },
+                  segment: {
+                    label: 'Segment',
+                    description: 'Segment (TreeSort)',
+                    field: null,
+                    cladeRef: 'ts:segment',
+                    regex: false,
+                    shapes: ['square', 'diamond', 'triangle-up', 'triangle-down', 'cross', 'circle'],
+                    colors: 'category50',
+                    sizes: null
                   }
-               }
+                }
+              }
             }
 
             _self.prepareTree(treeDat, idType, labelType, labelSearch, fileType);

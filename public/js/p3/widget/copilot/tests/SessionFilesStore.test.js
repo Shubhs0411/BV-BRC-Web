@@ -9,9 +9,13 @@ describe('SessionFilesStore', () => {
     const response = {
       session_id: 's1',
       files: [
-        { file_id: 'f1', file_name: 'file-a.tsv', tool_id: 'query', created_at: '2026-01-01T00:00:00Z' }
+        {
+          file_id: 'f1', file_name: 'file-a.tsv', tool_id: 'query', created_at: '2026-01-01T00:00:00Z'
+        }
       ],
-      pagination: { total: 1, limit: 20, offset: 0, has_more: false },
+      pagination: {
+        total: 1, limit: 20, offset: 0, has_more: false
+      },
       summary: { total_files: 1, total_size_bytes: 12 }
     };
 
@@ -27,13 +31,17 @@ describe('SessionFilesStore', () => {
     const state = SessionFilesStore.createInitialState('s1', 1);
     SessionFilesStore.applyFetchResponse(state, {
       files: [{ file_id: 'f1', file_name: 'a' }],
-      pagination: { total: 3, limit: 1, offset: 0, has_more: true },
+      pagination: {
+        total: 3, limit: 1, offset: 0, has_more: true
+      },
       summary: { total_files: 3, total_size_bytes: 30 }
     }, false);
 
     SessionFilesStore.applyFetchResponse(state, {
       files: [{ file_id: 'f2', file_name: 'b' }],
-      pagination: { total: 3, limit: 1, offset: 1, has_more: true },
+      pagination: {
+        total: 3, limit: 1, offset: 1, has_more: true
+      },
       summary: { total_files: 3, total_size_bytes: 30 }
     }, true);
 
@@ -46,7 +54,9 @@ describe('SessionFilesStore', () => {
     const state = SessionFilesStore.createInitialState('s1', 20);
     SessionFilesStore.applyFetchResponse(state, {
       files: [{ file_id: 'f1', file_name: 'a' }],
-      pagination: { total: 1, limit: 20, offset: 0, has_more: false },
+      pagination: {
+        total: 1, limit: 20, offset: 0, has_more: false
+      },
       summary: { total_files: 1, total_size_bytes: 1 }
     }, false);
 
@@ -76,7 +86,9 @@ describe('SessionFilesStore', () => {
 
     SessionFilesStore.applyFetchResponse(state, {
       files: [{ file_id: 'f1', file_name: 'dedupe.tsv', tool_id: 'query' }],
-      pagination: { total: 1, limit: 20, offset: 0, has_more: false },
+      pagination: {
+        total: 1, limit: 20, offset: 0, has_more: false
+      },
       summary: { total_files: 1, total_size_bytes: 1 }
     }, true);
 
@@ -88,7 +100,9 @@ describe('SessionFilesStore', () => {
     const state = SessionFilesStore.createInitialState('s1', 20);
     SessionFilesStore.applyFetchResponse(state, {
       files: [{ file_id: 'f1', file_name: 'old-file.tsv' }],
-      pagination: { total: 1, limit: 20, offset: 0, has_more: false },
+      pagination: {
+        total: 1, limit: 20, offset: 0, has_more: false
+      },
       summary: { total_files: 1, total_size_bytes: 10 }
     }, false);
 

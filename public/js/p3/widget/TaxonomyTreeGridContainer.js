@@ -170,7 +170,8 @@ define([
         var key = String(id);
         if (!nodes[key]) {
           nodes[key] = {
-            taxon_id: key, taxon_name: name || key,
+            taxon_id: key,
+            taxon_name: name || key,
             taxon_rank: rank || '',
             genomes: null, // null → blank in grid for non-hit ancestors
             _isSearchHit: false
@@ -189,7 +190,7 @@ define([
         // Walk from just-below rootId down to the hit, creating nodes + links.
         var startIdx = 0;
         if (rootIdStr) {
-          for(var i = 0; i < ids.length; i++) {
+          for (var i = 0; i < ids.length; i++) {
             if (String(ids[i]) === rootIdStr) {
               startIdx = i + 1;
               break;
@@ -197,7 +198,7 @@ define([
           }
         }
 
-        for(var j = startIdx; j < ids.length; j++) {
+        for (var j = startIdx; j < ids.length; j++) {
           ensureNode(ids[j], names[j], ranks[j]);
           if (j > startIdx) {
             var parentKey = String(ids[j - 1]);

@@ -72,9 +72,9 @@ define([
         const isMultiple = Array.isArray(newAccession);
         if (isMultiple && (oldAccession.length != newAccession.length)) {
           this.updateAccession(newValue.get('accession'));
-        } else if (oldAccession.pdb_id != newAccession.pdb_id) {{
+        } else if (oldAccession.pdb_id != newAccession.pdb_id) { {
           this.updateAccession([newValue.get('accession')]);
-        }} else if (oldValue.get('workspacePath') != newValue.get('workspacePath')) {
+        } } else if (oldValue.get('workspacePath') != newValue.get('workspacePath')) {
           this.loadFromWorkspace(newValue.get('workspacePath'));
         }
       }));
@@ -196,7 +196,9 @@ define([
         if (url && url.length > 0 && url[0] !== null) {
           const fileName = url[0].match(/\/([^\/]+)\/?$/)[1];
           _self.molstar.load({
-            selections: [{value: url[0], source: 'url', format: 'pdb', label: fileName}],
+            selections: [{
+              value: url[0], source: 'url', format: 'pdb', label: fileName
+            }],
             displaySpikeSequence: true
           });
         }

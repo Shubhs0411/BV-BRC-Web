@@ -421,8 +421,8 @@ define([
             }
           }
         });
-       console.log('in setAltLabel this.featureData', this.featureData);
-       
+        console.log('in setAltLabel this.featureData', this.featureData);
+
         if (Array.isArray(this.featureData) && this.featureData.length > 0) {
           this.featureData.forEach(function (feature) {
             if (dataMap[geneID].feature_id == feature.feature_id) {
@@ -431,7 +431,7 @@ define([
               }
             }
           });
-        }               
+        }
       }));
       console.log('in setAltLabel this.alt_labels', this.alt_labels);
     },
@@ -860,7 +860,7 @@ define([
           if (s.name.match(/^\d+\.\d+$/) || s.name.match(/^fig/)) {
             s.name = label[s.name];
             // console.log('idMenu match genome id or fig s.name=', s.name);
-          } 
+          }
         }));
         console.log('msa_models2= ', msa_models2);
 

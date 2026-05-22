@@ -503,8 +503,8 @@ define([
         );
       };
 
-        // rows - genomes
-        // if genome order is changed, then needs to or-organize distribution in columns.
+      // rows - genomes
+      // if genome order is changed, then needs to or-organize distribution in columns.
       var thisGFS = this.pfState.genomeFilterStatus;
       // this is needed only for protein family since transcriptomics re-generate dist on the fly
       var genomeOrderChangeMap = [];

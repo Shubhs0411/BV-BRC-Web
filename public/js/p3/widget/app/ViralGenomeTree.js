@@ -872,7 +872,7 @@ define([
         msg += ' and you are trying to select ' + count + '.';
         new Dialog({ title: 'Notice', content: msg }).show();
       }
-      console.log("genome_id_list = ", genome_id_list);
+      console.log('genome_id_list = ', genome_id_list);
       if (this.addedGenomes < this.maxGenomes
         && genome_id_list.length > 0
         && count <= this.maxGenomes) {

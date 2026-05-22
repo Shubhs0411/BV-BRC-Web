@@ -123,8 +123,12 @@ define([
         if (data_type === 'feature') {
           var fs_div = domConstruct.create('div', {});
           domConstruct.create('div', { style: 'background:#09456f;color:#fff;margin:0px;margin-bottom:4px;padding:4px;text-align:center;', innerHTML: 'Select Source' }, fs_div);
-          domConstruct.create('div', { 'class': 'wsActionTooltip', 'context': 'blast_feature_source_query', 'source': 'query', innerHTML: 'Query'}, fs_div);
-          domConstruct.create('div', { 'class': 'wsActionTooltip', 'context': 'blast_feature_source_query', 'source': 'source', innerHTML: 'Source'}, fs_div);
+          domConstruct.create('div', {
+            'class': 'wsActionTooltip', 'context': 'blast_feature_source_query', 'source': 'query', innerHTML: 'Query'
+          }, fs_div);
+          domConstruct.create('div', {
+            'class': 'wsActionTooltip', 'context': 'blast_feature_source_query', 'source': 'source', innerHTML: 'Source'
+          }, fs_div);
           if (this.context === 'grid_container') {
             // create group
             var feature_list = data.selection.map(x => x.feature_id).filter(x => x);

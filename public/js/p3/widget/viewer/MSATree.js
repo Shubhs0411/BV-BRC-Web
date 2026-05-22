@@ -488,17 +488,17 @@ define([
             }
           }
         });
-       // console.log('in setAltLabel this.featureData', this.featureData);
+        // console.log('in setAltLabel this.featureData', this.featureData);
 
-       if (Array.isArray(this.featureData) && this.featureData.length > 0) {
-         this.featureData.forEach(function (feature) {
-           if (dataMap[geneID].feature_id == feature.feature_id) {
-             if (feature.gene) {
-               self.alt_labels.gene[geneID] = feature.gene;
-             }
-           }
-         });
-       }
+        if (Array.isArray(this.featureData) && this.featureData.length > 0) {
+          this.featureData.forEach(function (feature) {
+            if (dataMap[geneID].feature_id == feature.feature_id) {
+              if (feature.gene) {
+                self.alt_labels.gene[geneID] = feature.gene;
+              }
+            }
+          });
+        }
       }));
       console.log('in setAltLabel this.alt_labels', this.alt_labels);
     },
@@ -732,7 +732,7 @@ define([
             var keys = Object.keys(seqIds);
             // console.log('in when response keys', keys);
 
-           if (keys.some(k => /^\d+\.\d+$/.test(k))) {
+            if (keys.some(k => /^\d+\.\d+$/.test(k))) {
               seqIdIndex = seqIds[genome.genome_id] - 1;
             } else {
               for (var i = 0; i < keys.length; i++) {
@@ -1020,9 +1020,9 @@ define([
       const idSelectionDiv = query('div.ActionButtonWrapper[rel="IDSelection"]');
       if (idMenuDivs.length > 0) {
         idMenu.set('content', idMenuDivs.join(''));
-        domStyle.set(idSelectionDiv[0], "display", "inline-block");
+        domStyle.set(idSelectionDiv[0], 'display', 'inline-block');
       } else {
-        domStyle.set(idSelectionDiv[0], "display", "none");
+        domStyle.set(idSelectionDiv[0], 'display', 'none');
       }
 
       this.tree.startup();

@@ -11,7 +11,7 @@
 define([
   'dojo/_base/declare',
   'dojo/_base/lang'
-], function(
+], function (
   declare, lang
 ) {
   /**
@@ -25,7 +25,7 @@ define([
      * @param {Object} baseData - Base data object to extend
      * @returns {Object|null} Processed data or null if parsing fails
      */
-    _processWorkflowManifest: function(chunk, baseData) {
+    _processWorkflowManifest: function (chunk, baseData) {
       if (!chunk) {
         return null;
       }
@@ -271,7 +271,7 @@ define([
       }
     },
 
-    _parseToolChunk: function(chunk) {
+    _parseToolChunk: function (chunk) {
       let content;
       let parsedChunk;
 
@@ -301,7 +301,7 @@ define([
       };
     },
 
-    _isLikelyJsonString: function(value) {
+    _isLikelyJsonString: function (value) {
       if (typeof value !== 'string') {
         return false;
       }
@@ -309,7 +309,7 @@ define([
       return trimmed.startsWith('{') || trimmed.startsWith('[');
     },
 
-    _previewForLog: function(value, maxLength) {
+    _previewForLog: function (value, maxLength) {
       var limit = typeof maxLength === 'number' ? maxLength : 180;
       if (value === null || value === undefined) {
         return String(value);
@@ -321,7 +321,7 @@ define([
       return stringValue.substring(0, limit) + '... [truncated ' + stringValue.length + ' chars total]';
     },
 
-    _normalizeWorkspaceBrowsePayload: function(parsedChunk) {
+    _normalizeWorkspaceBrowsePayload: function (parsedChunk) {
       var topLevel = (parsedChunk && typeof parsedChunk === 'object') ? parsedChunk : {};
       var payloadSource = (topLevel.result && typeof topLevel.result === 'object' && !Array.isArray(topLevel.result))
         ? topLevel.result
@@ -354,7 +354,7 @@ define([
       return normalized;
     },
 
-    _flattenWorkspaceBrowseItems: function(items) {
+    _flattenWorkspaceBrowseItems: function (items) {
       if (!Array.isArray(items)) {
         return [];
       }
@@ -389,14 +389,14 @@ define([
       return flattened;
     },
 
-    _countWorkspaceBrowseItems: function(payload) {
+    _countWorkspaceBrowseItems: function (payload) {
       if (!payload || !Array.isArray(payload.items)) {
         return 0;
       }
       return this._flattenWorkspaceBrowseItems(payload.items).length;
     },
 
-    _formatWorkspaceBrowseSummary: function(payload) {
+    _formatWorkspaceBrowseSummary: function (payload) {
       var inferredCount = this._countWorkspaceBrowseItems(payload);
       var count = typeof payload.count === 'number' ? payload.count : inferredCount;
 
@@ -410,9 +410,9 @@ define([
       return 'Found ' + count + ' ' + resultLabel + ' in ' + pathText;
     },
 
-    _createWorkspaceBrowseResultHandlers: function() {
+    _createWorkspaceBrowseResultHandlers: function () {
       return {
-        list_result: lang.hitch(this, function(payload) {
+        list_result: lang.hitch(this, function (payload) {
           return {
             isWorkspaceListing: true,
             workspaceData: {
@@ -432,7 +432,7 @@ define([
             uiAction: 'open_workspace_tab'
           };
         }),
-        search_result: lang.hitch(this, function(payload) {
+        search_result: lang.hitch(this, function (payload) {
           return {
             isWorkspaceListing: true,
             workspaceData: {
@@ -452,7 +452,7 @@ define([
             uiAction: 'open_workspace_tab'
           };
         }),
-        metadata_result: lang.hitch(this, function(payload) {
+        metadata_result: lang.hitch(this, function (payload) {
           var metadata = (payload.raw && payload.raw.metadata) || {};
           var fileName = metadata.name || payload.path.split('/').pop() || 'Unknown file';
           var fileType = metadata.type || 'unknown';
@@ -476,7 +476,7 @@ define([
       };
     },
 
-    _processWorkspaceBrowseResultType: function(payload) {
+    _processWorkspaceBrowseResultType: function (payload) {
       var handlers = this._createWorkspaceBrowseResultHandlers();
       var handler = handlers[payload.result_type];
 
@@ -509,7 +509,7 @@ define([
      * @param {Object} baseData - Base data object to extend
      * @returns {Object|null} Processed data or null if parsing fails
      */
-    _processWorkspaceBrowse: function(chunk, baseData) {
+    _processWorkspaceBrowse: function (chunk, baseData) {
       if (!chunk) {
         return null;
       }
@@ -554,7 +554,7 @@ define([
       }
     },
 
-    _extractJobsFromResult: function(parsedChunk) {
+    _extractJobsFromResult: function (parsedChunk) {
       if (!parsedChunk) {
         return [];
       }
@@ -585,12 +585,12 @@ define([
       return [];
     },
 
-    _normalizeJobsPayload: function(parsedChunk) {
+    _normalizeJobsPayload: function (parsedChunk) {
       var topLevel = (parsedChunk && typeof parsedChunk === 'object') ? parsedChunk : {};
       var payloadSource = (topLevel.result && typeof topLevel.result === 'object' && !Array.isArray(topLevel.result))
         ? topLevel.result
         : topLevel;
-      var jobs = this._extractJobsFromResult(payloadSource).map(function(job) {
+      var jobs = this._extractJobsFromResult(payloadSource).map(function (job) {
         if (!job) {
           return null;
         }
@@ -608,7 +608,7 @@ define([
           parameters: job.parameters || null,
           raw: job
         };
-      }).filter(function(job) { return job !== null; });
+      }).filter(function (job) { return job !== null; });
 
       var payload = {
         jobs: jobs,
@@ -623,7 +623,7 @@ define([
       return payload;
     },
 
-    _formatJobsSummary: function(payload) {
+    _formatJobsSummary: function (payload) {
       var count = payload && typeof payload.count === 'number' ? payload.count : 0;
       var label = count === 1 ? 'job' : 'jobs';
       var bits = ['Found ' + count + ' ' + label];
@@ -636,7 +636,7 @@ define([
       return bits.join(', ');
     },
 
-    _isNumericOnlyChunk: function(chunk) {
+    _isNumericOnlyChunk: function (chunk) {
       if (typeof chunk === 'number') {
         return isFinite(chunk);
       }
@@ -650,7 +650,7 @@ define([
       return /^-?\d+(\.\d+)?$/.test(trimmed);
     },
 
-    _processListJobs: function(chunk, baseData) {
+    _processListJobs: function (chunk, baseData) {
       if (!chunk) {
         return null;
       }
@@ -698,7 +698,7 @@ define([
       }
     },
 
-    _isListJobsTool: function(toolId) {
+    _isListJobsTool: function (toolId) {
       if (!toolId || typeof toolId !== 'string') {
         return false;
       }
@@ -707,7 +707,7 @@ define([
              toolId.indexOf('list_jobs') !== -1;
     },
 
-    _isQueryCollectionTool: function(toolId) {
+    _isQueryCollectionTool: function (toolId) {
       if (!toolId || typeof toolId !== 'string') {
         return false;
       }
@@ -719,7 +719,7 @@ define([
              toolId.indexOf('query_collection') !== -1;
     },
 
-    _isGroupListTool: function(toolId) {
+    _isGroupListTool: function (toolId) {
       if (!toolId || typeof toolId !== 'string') {
         return false;
       }
@@ -727,7 +727,7 @@ define([
              toolId.indexOf('list_feature_groups') !== -1;
     },
 
-    _isServicePlanTool: function(toolId) {
+    _isServicePlanTool: function (toolId) {
       if (!toolId || typeof toolId !== 'string') {
         return false;
       }
@@ -739,7 +739,7 @@ define([
              toolId.indexOf('plan_comparative_systems') !== -1;
     },
 
-    _normalizeServicePlanResponse: function(response) {
+    _normalizeServicePlanResponse: function (response) {
       if (!response || typeof response !== 'object' || !response.app || !response.parameters) {
         return null;
       }
@@ -776,7 +776,7 @@ define([
      * @param {Object} parsed - The parsed event data
      * @returns {Object|null} Processed data or null if no special handling
      */
-    processToolEvent: function(currentEvent, tool, parsed) {
+    processToolEvent: function (currentEvent, tool, parsed) {
       if (this._isQueryCollectionTool(tool)) {
         var eventChunk = parsed ? parsed.chunk : null;
         console.log('[CopilotToolHandler][QueryCollection][processToolEvent] event=' + currentEvent + ', hasChunk=' + !!eventChunk + ', chunkType=' + typeof eventChunk + ', likelyJson=' + this._isLikelyJsonString(eventChunk));
@@ -851,7 +851,7 @@ define([
      * @param {Object} baseData - Base data object to extend
      * @returns {Object|null} Processed data or null if parsing fails
      */
-    _processQueryCollection: function(chunk, baseData) {
+    _processQueryCollection: function (chunk, baseData) {
       if (!chunk) {
         return null;
       }
@@ -933,11 +933,11 @@ define([
         // If chunk is already a fully parsed object with workspace and summary, use it directly
         if (typeof chunk === 'object' && !chunk.content && (chunk.workspace || chunk.summary)) {
           console.log('[CopilotToolHandler] ✓ Path A: Chunk is already parsed query collection data');
-           var directCallInfo = (chunk.call && typeof chunk.call === 'object')
+          var directCallInfo = (chunk.call && typeof chunk.call === 'object')
             ? chunk.call
             : ((baseData && baseData.call && typeof baseData.call === 'object')
-            ? baseData.call
-            : ((baseData && baseData.tool_call && typeof baseData.tool_call === 'object') ? baseData.tool_call : null));
+              ? baseData.call
+              : ((baseData && baseData.tool_call && typeof baseData.tool_call === 'object') ? baseData.tool_call : null));
           var directDownloadUrl = (directCallInfo && directCallInfo.replay && directCallInfo.replay.download_url)
             ? directCallInfo.replay.download_url
             : null;
@@ -1062,7 +1062,7 @@ define([
      * @param {string} sourceTool - The source_tool field from the message
      * @returns {Object} Object with processed content and metadata
      */
-    processMessageContent: function(content, sourceTool) {
+    processMessageContent: function (content, sourceTool) {
       if (!sourceTool || !content) {
         return { content: content };
       }

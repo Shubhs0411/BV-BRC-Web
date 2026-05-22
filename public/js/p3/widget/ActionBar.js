@@ -88,7 +88,7 @@ define([
         }
 
         if (act.options.searchOnly && !this.inSearch) {
-            return false;
+          return false;
         }
 
         // only allow genome sharing if all genomes are owned by user

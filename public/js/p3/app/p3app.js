@@ -86,15 +86,15 @@ define([
           }
 
           // Add click handler for the rectangle button
-          on(showChatRectButton, 'click', function(evt) {
+          on(showChatRectButton, 'click', function (evt) {
             Topic.publish('showChatButton', true);
           });
 
-          Topic.subscribe('hideChatButton', lang.hitch(this, function(checked) {
+          Topic.subscribe('hideChatButton', lang.hitch(this, function (checked) {
             domStyle.set(showChatRectButton, 'display', 'block');
           }));
 
-          Topic.subscribe('showChatButton', lang.hitch(this, function(checked) {
+          Topic.subscribe('showChatButton', lang.hitch(this, function (checked) {
             domStyle.set(showChatRectButton, 'display', 'none');
           }));
         })
@@ -405,16 +405,16 @@ define([
       });
 
       Router.register('/view(/.*)', function (params, path) {
-        console.log("Register Viewer Route: ", params, path);
+        console.log('Register Viewer Route: ', params, path);
         var newState = getState(params, path);
         var parts = newState.pathname.split('/');
         parts.shift();
         var type = parts.shift();
 
         newState.widgetClass = 'p3/widget/viewer/' + type;
-        console.log("window.App:", window.App,window.App.production)
-        newState.layers = ['p3/layer/grids','p3/layer/jbrowse','p3/layer/viewers'];
-        console.log("new state)")
+        console.log('window.App:', window.App, window.App.production)
+        newState.layers = ['p3/layer/grids', 'p3/layer/jbrowse', 'p3/layer/viewers'];
+        console.log('new state)')
         _self.navigate(newState);
       });
 
@@ -488,7 +488,7 @@ define([
 
         // console.log("Parts:", parts, type, path)
         newState.widgetClass = 'p3/widget/app/' + type;
-        newState.layers = ['p3/layer/grids','p3/layer/viewers','p3/layer/jbrowse','p3/layer/apps'];
+        newState.layers = ['p3/layer/grids', 'p3/layer/viewers', 'p3/layer/jbrowse', 'p3/layer/apps'];
 
         newState.value = viewerParams;
         newState.set = 'params';

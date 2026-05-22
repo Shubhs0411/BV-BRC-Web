@@ -16,9 +16,9 @@ define([
   // Check if Leaflet library is loaded
   function waitForLeaflet(maxAttempts) {
     maxAttempts = maxAttempts || 30;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var attempts = 0;
-      var checkInterval = setInterval(function() {
+      var checkInterval = setInterval(function () {
         attempts++;
         if (window.L) {
           clearInterval(checkInterval);
@@ -58,7 +58,7 @@ define([
     },
     flywayJSON: [],
 
-    postCreate: function() {
+    postCreate: function () {
       console.log('MapsCanvas: postCreate() called');
       this.inherited(arguments);
     },
@@ -389,7 +389,7 @@ define([
                 percentage > 7 ? '#FFFF00' :
                   percentage > 0 ? '#869832' :
                     '#00FF00';
-          
+
           const icon = this.createMarkerIcon(marker.count || 1, color);
           marker.setIcon(icon);
         }
@@ -416,7 +416,7 @@ define([
           <circle cx="15" cy="13" r="3" fill="#fff"/>
         </svg>
       `;
-      
+
       return L.icon({
         iconUrl: 'data:image/svg+xml;base64,' + btoa(svgIcon),
         iconSize: [size, size],
@@ -501,10 +501,10 @@ define([
       this.inherited(arguments);
 
       // Wait for Leaflet then initialize map
-      waitForLeaflet().then(lang.hitch(this, function() {
+      waitForLeaflet().then(lang.hitch(this, function () {
         console.log('MapsCanvas: Leaflet is ready, initializing map');
         this._initializeMap();
-      })).catch(lang.hitch(this, function(err) {
+      })).catch(lang.hitch(this, function (err) {
         console.error('Failed to initialize map:', err);
       }));
     },
@@ -512,7 +512,7 @@ define([
     _initializeMap: function () {
       console.log('MapsCanvas: _initializeMap() called');
       console.log('Leaflet available:', typeof window.L !== 'undefined');
-      
+
       const mapData = this.mapData;
 
       if (mapData && mapData.locations) {
@@ -546,7 +546,7 @@ define([
 
         // Store initial zoom level after fitBounds
         const self = this;
-        this.map.on('zoomend', function() {
+        this.map.on('zoomend', function () {
           if (self.initialZoomLevel < 0) {
             self.initialZoomLevel = self.map.getZoom();
           }

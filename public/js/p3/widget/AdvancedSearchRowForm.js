@@ -216,7 +216,7 @@ define([
         domClass.add(this.addIconNode, 'dijitHidden')
       }
 
-      const value = this.fieldSelector.get("value");
+      const value = this.fieldSelector.get('value');
       // Make sure to display the correct input type
       if (value) {
         const col_type = this.columnTypes[value];

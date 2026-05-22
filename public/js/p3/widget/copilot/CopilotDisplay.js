@@ -122,7 +122,7 @@ define([
     _workspaceSelectionHandles: null,
     _jobsSelectionHandles: null,
 
-    _debugContextEvent: function(label, payload) {
+    _debugContextEvent: function (label, payload) {
       try {
         console.log('[ContextDebug][Display] ' + label, payload || {});
       } catch (e) {
@@ -135,9 +135,9 @@ define([
      * Initializes the widget with provided options
      * @param {Object} opts - Configuration options
      */
-    constructor: function(opts) {
+    constructor: function (opts) {
       if (opts) {
-          lang.mixin(this, opts);
+        lang.mixin(this, opts);
       }
     },
 
@@ -150,11 +150,11 @@ define([
      * - Adds required CSS styles
      * - Subscribes to message refresh and error topics
      */
-    postCreate: function() {
-        // Inject styles for suggestion chips if not already injected
-        if (!this._copilotStylesInjected) {
-          var styleTag = domConstruct.create('style', {
-            innerHTML: `
+    postCreate: function () {
+      // Inject styles for suggestion chips if not already injected
+      if (!this._copilotStylesInjected) {
+        var styleTag = domConstruct.create('style', {
+          innerHTML: `
               .copilot-suggested-container { text-align: center; }
               .copilot-suggested-header { font-weight: 600; margin-bottom: 8px; }
               .copilot-suggested-list { list-style: none; padding-left: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -162,112 +162,112 @@ define([
               .copilot-suggested-list li:hover { background: #e2e8f0; border-color: #9ca3af; }
               .copilot-suggested-list li:active { background: #cbd5e1; }
             `
-          }, document.head || document.getElementsByTagName('head')[0]);
-          this._copilotStylesInjected = true;
+        }, document.head || document.getElementsByTagName('head')[0]);
+        this._copilotStylesInjected = true;
+      }
+
+      this.panelContainer = domConstruct.create('div', {
+        class: 'copilot-panel-container',
+        style: 'height: 100%;'
+      }, this.containerNode);
+
+      // Create scrollable container for messages
+      this.resultContainer = domConstruct.create('div', {
+        class: 'copilot-result-container',
+        style: 'padding-right: 10px;padding-left: 10px;'
+      }, this.panelContainer);
+
+      // Create files panel container
+      this.filesContainer = domConstruct.create('div', {
+        class: 'copilot-files-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      this.imagesContainer = domConstruct.create('div', {
+        class: 'copilot-images-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      // Create workflows panel container
+      this.workflowsContainer = domConstruct.create('div', {
+        class: 'copilot-workflows-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      // Create workspace panel container
+      this.workspaceContainer = domConstruct.create('div', {
+        class: 'copilot-workspace-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      this.jobsContainer = domConstruct.create('div', {
+        class: 'copilot-jobs-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      this.dataContainer = domConstruct.create('div', {
+        class: 'copilot-data-container',
+        style: 'display:none;'
+      }, this.panelContainer);
+
+      // Apply initial responsive padding
+      this._updateResponsivePadding();
+
+      // Add scroll event listener to detect user scrolling
+      on(this.resultContainer, 'scroll', lang.hitch(this, function () {
+        this._userIsScrolling = true;
+
+        // Clear existing timeout
+        if (this._scrollTimeout) {
+          clearTimeout(this._scrollTimeout);
         }
 
-        this.panelContainer = domConstruct.create('div', {
-          class: 'copilot-panel-container',
-          style: 'height: 100%;'
-        }, this.containerNode);
+        // Set timeout to reset scrolling flag after 1 second of no scrolling
+        this._scrollTimeout = setTimeout(lang.hitch(this, function () {
+          this._userIsScrolling = false;
+        }), 1000);
+      }));
 
-        // Create scrollable container for messages
-        this.resultContainer = domConstruct.create('div', {
-          class: 'copilot-result-container',
-          style: 'padding-right: 10px;padding-left: 10px;'
-        }, this.panelContainer);
+      // Show initial empty state
+      this.showEmptyState();
+      this._renderFilesPanel();
+      this._renderImagesPanel();
+      this._renderWorkflowsPanel();
+      this._renderWorkspacePanel();
+      this._renderJobsPanel();
+      this._renderDataPanel();
 
-        // Create files panel container
-        this.filesContainer = domConstruct.create('div', {
-          class: 'copilot-files-container',
-          style: 'display:none;'
-        }, this.panelContainer);
+      // Initialize markdown parser with link attributes plugin
+      this.md = markdownit().use(linkAttributes, {
+        attrs: {
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        }
+      });
 
-        this.imagesContainer = domConstruct.create('div', {
-          class: 'copilot-images-container',
-          style: 'display:none;'
-        }, this.panelContainer);
-
-        // Create workflows panel container
-        this.workflowsContainer = domConstruct.create('div', {
-          class: 'copilot-workflows-container',
-          style: 'display:none;'
-        }, this.panelContainer);
-
-        // Create workspace panel container
-        this.workspaceContainer = domConstruct.create('div', {
-          class: 'copilot-workspace-container',
-          style: 'display:none;'
-        }, this.panelContainer);
-
-        this.jobsContainer = domConstruct.create('div', {
-          class: 'copilot-jobs-container',
-          style: 'display:none;'
-        }, this.panelContainer);
-
-        this.dataContainer = domConstruct.create('div', {
-          class: 'copilot-data-container',
-          style: 'display:none;'
-        }, this.panelContainer);
-
-        // Apply initial responsive padding
-        this._updateResponsivePadding();
-
-        // Add scroll event listener to detect user scrolling
-        on(this.resultContainer, 'scroll', lang.hitch(this, function() {
-          this._userIsScrolling = true;
-
-          // Clear existing timeout
-          if (this._scrollTimeout) {
-            clearTimeout(this._scrollTimeout);
-          }
-
-          // Set timeout to reset scrolling flag after 1 second of no scrolling
-          this._scrollTimeout = setTimeout(lang.hitch(this, function() {
-            this._userIsScrolling = false;
-          }), 1000);
-        }));
-
-        // Show initial empty state
-        this.showEmptyState();
-        this._renderFilesPanel();
-        this._renderImagesPanel();
-        this._renderWorkflowsPanel();
-        this._renderWorkspacePanel();
-        this._renderJobsPanel();
-        this._renderDataPanel();
-
-        // Initialize markdown parser with link attributes plugin
-        this.md = markdownit().use(linkAttributes, {
-          attrs: {
-            target: '_blank',
-            rel: 'noopener noreferrer'
-          }
-        });
-
-        // Subscribe to message events
-        topic.subscribe('RefreshSessionDisplay', lang.hitch(this, 'showMessages'));
-        topic.subscribe('CopilotApiError', lang.hitch(this, 'onQueryError'));
-        topic.subscribe('chatTextSizeChanged', lang.hitch(this, 'setFontSize'));
-        topic.subscribe('CopilotWorkspaceBrowseOpen', lang.hitch(this, function(data) {
-          this.setActivePanel('workspace');
-          this._openWorkspaceBrowseData(data || null);
-        }));
-        topic.subscribe('CopilotJobsBrowseOpen', lang.hitch(this, function(data) {
-          this.setActivePanel('jobs');
-          this._openJobsBrowseData(data || null);
-        }));
-        topic.subscribe('CopilotDataBrowseOpen', lang.hitch(this, function(data) {
-          this.setActivePanel('data');
-          this._openDataBrowseData(data || null);
-        }));
-        topic.subscribe('noJobDataError', lang.hitch(this, function(error) {
-            error.message = 'No job data found.\n\n' + error.message;
-            this.onQueryError(error);
-        }));
+      // Subscribe to message events
+      topic.subscribe('RefreshSessionDisplay', lang.hitch(this, 'showMessages'));
+      topic.subscribe('CopilotApiError', lang.hitch(this, 'onQueryError'));
+      topic.subscribe('chatTextSizeChanged', lang.hitch(this, 'setFontSize'));
+      topic.subscribe('CopilotWorkspaceBrowseOpen', lang.hitch(this, function (data) {
+        this.setActivePanel('workspace');
+        this._openWorkspaceBrowseData(data || null);
+      }));
+      topic.subscribe('CopilotJobsBrowseOpen', lang.hitch(this, function (data) {
+        this.setActivePanel('jobs');
+        this._openJobsBrowseData(data || null);
+      }));
+      topic.subscribe('CopilotDataBrowseOpen', lang.hitch(this, function (data) {
+        this.setActivePanel('data');
+        this._openDataBrowseData(data || null);
+      }));
+      topic.subscribe('noJobDataError', lang.hitch(this, function (error) {
+        error.message = 'No job data found.\n\n' + error.message;
+        this.onQueryError(error);
+      }));
     },
 
-    _unwrapReplayResultPayload: function(replayResponse) {
+    _unwrapReplayResultPayload: function (replayResponse) {
       if (!replayResponse || typeof replayResponse !== 'object') {
         return null;
       }
@@ -281,7 +281,7 @@ define([
       return topResult;
     },
 
-    _openWorkspaceBrowseData: function(data) {
+    _openWorkspaceBrowseData: function (data) {
       var payload = data && data.uiPayload ? data.uiPayload : null;
 
       this.setSessionWorkspaceBrowseData({
@@ -290,7 +290,7 @@ define([
         tool_call: payload
       });
 
-      this.copilotApi.replayToolCall(payload, this.sessionId).then(lang.hitch(this, function(replayResponse) {
+      this.copilotApi.replayToolCall(payload, this.sessionId).then(lang.hitch(this, function (replayResponse) {
         var replayPayload = this._unwrapReplayResultPayload(replayResponse) || {};
         var items = Array.isArray(replayPayload.items)
           ? replayPayload.items
@@ -313,7 +313,7 @@ define([
           chatSummary: data && data.chatSummary ? data.chatSummary : ('Found ' + countValue + ' ' + (countValue === 1 ? 'result' : 'results') + ' in ' + (uiPayload.path || 'unknown path')),
           uiAction: data && data.uiAction ? data.uiAction : 'open_workspace_tab'
         });
-      })).catch(lang.hitch(this, function(error) {
+      })).catch(lang.hitch(this, function (error) {
         this.onQueryError({
           message: 'Failed to load workspace tab data',
           details: error && error.message ? error.message : String(error)
@@ -321,7 +321,7 @@ define([
       }));
     },
 
-    _openJobsBrowseData: function(data) {
+    _openJobsBrowseData: function (data) {
       var payload = data && data.uiPayload ? data.uiPayload : null;
       if (payload && Array.isArray(payload.jobs)) {
         this.setSessionJobsBrowseData(data);
@@ -340,7 +340,7 @@ define([
         tool_call: toolCall
       });
 
-      this.copilotApi.replayToolCall(toolCall, this.sessionId).then(lang.hitch(this, function(replayResponse) {
+      this.copilotApi.replayToolCall(toolCall, this.sessionId).then(lang.hitch(this, function (replayResponse) {
         var replayPayload = this._unwrapReplayResultPayload(replayResponse) || {};
         var jobs = Array.isArray(replayPayload.items)
           ? replayPayload.items
@@ -360,7 +360,7 @@ define([
           chatSummary: data && data.chatSummary ? data.chatSummary : ('Found ' + uiPayload.count + ' ' + (uiPayload.count === 1 ? 'job' : 'jobs')),
           uiAction: data && data.uiAction ? data.uiAction : 'open_jobs_tab'
         });
-      })).catch(lang.hitch(this, function(error) {
+      })).catch(lang.hitch(this, function (error) {
         this.onQueryError({
           message: 'Failed to load jobs tab data',
           details: error && error.message ? error.message : String(error)
@@ -368,7 +368,7 @@ define([
       }));
     },
 
-    _resolveDataRows: function(payload) {
+    _resolveDataRows: function (payload) {
       if (Array.isArray(payload)) {
         return payload;
       }
@@ -396,7 +396,7 @@ define([
       return [];
     },
 
-    _loadDataRowsFromRqlReplay: function(rqlReplay, rqlQueryUrl, requestArgs) {
+    _loadDataRowsFromRqlReplay: function (rqlReplay, rqlQueryUrl, requestArgs) {
       var hasReplayQuery = !!(
         rqlReplay &&
         typeof rqlReplay === 'object' &&
@@ -428,7 +428,7 @@ define([
       var maxRows = (requestArgs && typeof requestArgs.limit === 'number' && requestArgs.limit > 0)
         ? requestArgs.limit
         : 100;
-      var ensureLimitedQuery = function(queryText) {
+      var ensureLimitedQuery = function (queryText) {
         if (typeof queryText !== 'string') {
           return '';
         }
@@ -442,7 +442,7 @@ define([
         return trimmed + '&limit(' + maxRows + ')';
       };
 
-      var normalizePayload = lang.hitch(this, function(rawResponse) {
+      var normalizePayload = lang.hitch(this, function (rawResponse) {
         var collection = (requestArgs && requestArgs.collection) ||
           this._extractCollectionFromRqlUrl(resolvedQueryUrl) ||
           null;
@@ -467,7 +467,7 @@ define([
         };
       });
 
-      var buildRqlGetUrl = function(baseUrl, queryText) {
+      var buildRqlGetUrl = function (baseUrl, queryText) {
         if (!baseUrl || typeof baseUrl !== 'string') {
           return null;
         }
@@ -493,11 +493,11 @@ define([
       }).then(normalizePayload);
     },
 
-    _parseTsvRows: function(tsvText) {
+    _parseTsvRows: function (tsvText) {
       if (typeof tsvText !== 'string' || tsvText.trim().length === 0) {
         return [];
       }
-      var lines = tsvText.split(/\r?\n/).filter(function(line) {
+      var lines = tsvText.split(/\r?\n/).filter(function (line) {
         return line && line.trim().length > 0;
       });
       if (!lines.length) {
@@ -507,24 +507,24 @@ define([
       if (!headers.length) {
         return [];
       }
-      return lines.slice(1).map(function(line) {
+      return lines.slice(1).map(function (line) {
         var cells = line.split('\t');
         var row = {};
-        headers.forEach(function(header, idx) {
+        headers.forEach(function (header, idx) {
           row[header] = idx < cells.length ? cells[idx] : '';
         });
         return row;
       });
     },
 
-    _isBvbrcSearchDataTool: function(toolId) {
+    _isBvbrcSearchDataTool: function (toolId) {
       if (!toolId || typeof toolId !== 'string') {
         return false;
       }
       return toolId === 'bvbrc_server.bvbrc_search_data' || toolId.indexOf('bvbrc_search_data') !== -1;
     },
 
-    _extractCollectionFromRqlUrl: function(rqlUrl) {
+    _extractCollectionFromRqlUrl: function (rqlUrl) {
       if (!rqlUrl || typeof rqlUrl !== 'string') {
         return null;
       }
@@ -533,14 +533,14 @@ define([
         return null;
       }
       var withoutQuery = trimmed.split('?')[0];
-      var parts = withoutQuery.split('/').filter(function(part) { return !!part; });
+      var parts = withoutQuery.split('/').filter(function (part) { return !!part; });
       if (!parts.length) {
         return null;
       }
       return parts[parts.length - 1] || null;
     },
 
-    _getCollectionColumnWhitelist: function(collection) {
+    _getCollectionColumnWhitelist: function (collection) {
       if (!collection || typeof collection !== 'string') {
         return null;
       }
@@ -550,7 +550,7 @@ define([
       return Array.isArray(columns) && columns.length > 0 ? columns : null;
     },
 
-    _buildDataReplayParameters: function(baseArgs, cursorId, maxRows, toolCall) {
+    _buildDataReplayParameters: function (baseArgs, cursorId, maxRows, toolCall) {
       var args = lang.mixin({}, (baseArgs && typeof baseArgs === 'object') ? baseArgs : {});
       var toolId = toolCall && typeof toolCall === 'object' ? (toolCall.tool || toolCall.tool_id) : null;
 
@@ -574,7 +574,7 @@ define([
       return args;
     },
 
-    _cloneToolCallWithArgs: function(toolCall, args) {
+    _cloneToolCallWithArgs: function (toolCall, args) {
       if (!toolCall || typeof toolCall !== 'object') {
         return null;
       }
@@ -583,7 +583,7 @@ define([
       return cloned;
     },
 
-    _buildDataBrowseUiPayload: function(replayPayload, requestArgs) {
+    _buildDataBrowseUiPayload: function (replayPayload, requestArgs) {
       var sourcePayload = replayPayload && typeof replayPayload === 'object' ? replayPayload : {};
       var sourceArgs = requestArgs && typeof requestArgs === 'object' ? requestArgs : {};
       var inferredCollection = sourcePayload.collection || sourceArgs.collection || null;
@@ -606,7 +606,7 @@ define([
       };
     },
 
-    _openDataBrowseData: function(data) {
+    _openDataBrowseData: function (data) {
       var payload = data && data.uiPayload ? data.uiPayload : null;
       if (payload && Array.isArray(payload.rows) && payload.rows.length > 0) {
         this.setSessionDataBrowseData(data);
@@ -663,7 +663,7 @@ define([
         if (payload.download_url) originalSnapshotMeta.download_url = payload.download_url;
       }
 
-      this._loadDataRowsFromRqlReplay(rqlReplay, rqlQueryUrl, replayArgs).then(lang.hitch(this, function(nextUiPayload) {
+      this._loadDataRowsFromRqlReplay(rqlReplay, rqlQueryUrl, replayArgs).then(lang.hitch(this, function (nextUiPayload) {
         // Merge snapshot metadata onto the replay-loaded payload
         if (originalSnapshotMeta.is_snapshot) {
           nextUiPayload.numFound = originalSnapshotMeta.numFound || nextUiPayload.total;
@@ -677,7 +677,7 @@ define([
           chatSummary: data && data.chatSummary ? data.chatSummary : ('Loaded ' + nextUiPayload.rows.length + ' rows'),
           uiAction: data && data.uiAction ? data.uiAction : 'open_data_tab'
         });
-      })).catch(lang.hitch(this, function(error) {
+      })).catch(lang.hitch(this, function (error) {
         this.onQueryError({
           message: 'Failed to load data tab rows',
           details: error && error.message ? error.message : String(error)
@@ -685,7 +685,7 @@ define([
       }));
     },
 
-    _loadMoreDataBrowseRows: function() {
+    _loadMoreDataBrowseRows: function () {
       if (!this.sessionDataBrowse || !this.sessionDataBrowse.uiPayload) {
         return;
       }
@@ -710,7 +710,7 @@ define([
       }
       var replayArgs = this._buildDataReplayParameters(baseArgs, nextCursor, 100, toolCall);
       var replayCall = this._cloneToolCallWithArgs(toolCall, replayArgs);
-      this.copilotApi.replayToolCall(replayCall, this.sessionId).then(lang.hitch(this, function(replayResponse) {
+      this.copilotApi.replayToolCall(replayCall, this.sessionId).then(lang.hitch(this, function (replayResponse) {
         var replayPayload = this._unwrapReplayResultPayload(replayResponse) || {};
         var nextUiPayload = this._buildDataBrowseUiPayload(replayPayload, replayArgs);
         var appendedRows = (payload.rows || []).concat(nextUiPayload.rows || []);
@@ -723,7 +723,7 @@ define([
           chatSummary: current.chatSummary || ('Loaded ' + appendedRows.length + ' rows'),
           uiAction: current.uiAction || 'open_data_tab'
         });
-      })).catch(lang.hitch(this, function(error) {
+      })).catch(lang.hitch(this, function (error) {
         payload.isLoadingMore = false;
         this._renderDataPanel();
         this.onQueryError({
@@ -733,7 +733,7 @@ define([
       }));
     },
 
-    setActivePanel: function(panel) {
+    setActivePanel: function (panel) {
       if (panel === 'files') {
         this.activePanel = 'files';
       } else if (panel === 'images') {
@@ -782,7 +782,7 @@ define([
      * @param {number} count - Number of questions to select
      * @returns {Array} Array of randomly selected questions
      */
-    _getRandomQuestions: function(count) {
+    _getRandomQuestions: function (count) {
       var allQuestions = SuggestedQuestions.getAllSuggestedQuestions();
       var questions = allQuestions.slice(); // Create a copy
 
@@ -805,7 +805,7 @@ define([
      * - Shows centered empty state message
      * - Creates clickable suggestion chips with context-specific or randomly selected questions
      */
-    showEmptyState: function() {
+    showEmptyState: function () {
       domConstruct.empty(this.resultContainer);
       domConstruct.create('div', {
         innerHTML: this.emptyMessage,
@@ -837,13 +837,13 @@ define([
           class: 'copilot-suggested-list'
         }, suggestionContainer);
 
-        questionsToShow.forEach(lang.hitch(this, function(q) {
+        questionsToShow.forEach(lang.hitch(this, function (q) {
           var suggestionItem = domConstruct.create('li', {
             innerHTML: q
           }, ul);
 
           // Add click handler to publish suggestion selection with context-specific topic
-          on(suggestionItem, 'click', lang.hitch(this, function() {
+          on(suggestionItem, 'click', lang.hitch(this, function () {
             var topicKey = this.context === 'side-panel' ? 'populateInputSuggestionSidePanel' : 'populateInputSuggestion';
             topic.publish(topicKey, q);
           }));
@@ -855,7 +855,7 @@ define([
      * Sets the font size and redraws messages
      * @param {number} size The new font size
      */
-    setFontSize: function(size) {
+    setFontSize: function (size) {
       this.fontSize = size;
       if (this.messages && this.messages.length > 0) {
         this.showMessages(this.messages, false);
@@ -866,7 +866,7 @@ define([
      * Checks if the user is currently scrolled near the bottom
      * @returns {boolean} True if user is at or near the bottom and not actively scrolling
      */
-    _isNearBottom: function() {
+    _isNearBottom: function () {
       if (!this.resultContainer) return true;
 
       // Don't auto-scroll if user is actively scrolling or just stopped scrolling
@@ -888,7 +888,7 @@ define([
      * - Scrolls to bottom after rendering
      * - Shows empty state if no messages
      */
-    showMessages: function(messages, scrollToBottom = false) {
+    showMessages: function (messages, scrollToBottom = false) {
       if (!Array.isArray(messages)) {
         messages = [];
       }
@@ -904,7 +904,7 @@ define([
           stalePopovers[pi].parentNode.removeChild(stalePopovers[pi]);
         }
         domConstruct.empty(this.resultContainer);
-        messages.forEach(lang.hitch(this, function(message) {
+        messages.forEach(lang.hitch(this, function (message) {
           new ChatMessage({
             ...message,
             fontSize: this.fontSize,
@@ -923,7 +923,7 @@ define([
       }
     },
 
-    resetSessionFiles: function() {
+    resetSessionFiles: function () {
       this.sessionFiles = [];
       this.sessionFilesPagination = {
         has_more: false,
@@ -940,7 +940,7 @@ define([
       this._renderFilesPanel();
     },
 
-    setSessionFilesData: function(files, pagination, summary) {
+    setSessionFilesData: function (files, pagination, summary) {
       this.sessionFiles = Array.isArray(files) ? files : [];
       this.sessionFilesPagination = pagination || this.sessionFilesPagination || { has_more: false };
       this.sessionFileSummary = summary || this.sessionFileSummary || null;
@@ -948,25 +948,25 @@ define([
       this._renderFilesPanel();
     },
 
-    setSessionFilesLoading: function(isLoading) {
+    setSessionFilesLoading: function (isLoading) {
       this.sessionFilesLoading = Boolean(isLoading);
       this._renderFilesPanel();
     },
 
-    setSessionFilesError: function(error) {
+    setSessionFilesError: function (error) {
       this.sessionFilesError = error || null;
       this.sessionFilesLoading = false;
       this._renderFilesPanel();
     },
 
-    _formatTimestamp: function(value) {
+    _formatTimestamp: function (value) {
       if (!value) return 'Unknown';
       var date = new Date(value);
       if (isNaN(date.getTime())) return value;
       return date.toLocaleString();
     },
 
-    _formatSize: function(file) {
+    _formatSize: function (file) {
       if (file && file.size_formatted) {
         return file.size_formatted;
       }
@@ -976,7 +976,7 @@ define([
       return 'Unknown';
     },
 
-    _renderFilesPanel: function() {
+    _renderFilesPanel: function () {
       if (!this.filesContainer) return;
       domConstruct.empty(this.filesContainer);
 
@@ -1057,7 +1057,7 @@ define([
           loadMoreButton.disabled = true;
         }
 
-        on(loadMoreButton, 'click', lang.hitch(this, function() {
+        on(loadMoreButton, 'click', lang.hitch(this, function () {
           if (this.sessionFilesLoading) return;
           if (typeof this.onLoadMoreFiles === 'function') {
             this.onLoadMoreFiles();
@@ -1072,7 +1072,7 @@ define([
      * - Creates new ChatMessage widget
      * - Appends to container
      */
-    addMessage: function(message) {
+    addMessage: function (message) {
       new ChatMessage({
         ...message,
         copilotApi: this.copilotApi,
@@ -1085,7 +1085,7 @@ define([
      * Implementation:
      * - Sets scrollTop to maximum scroll height
      */
-    scrollToBottom: function() {
+    scrollToBottom: function () {
       if (this.resultContainer) {
         this.resultContainer.scrollTop = this.resultContainer.scrollHeight;
       }
@@ -1097,7 +1097,7 @@ define([
      * - Clears existing messages
      * - Shows error message with reload button
      */
-    onQueryError: function(error = null) {
+    onQueryError: function (error = null) {
       console.log('onQueryError', error);
       domConstruct.empty(this.resultContainer);
 
@@ -1162,7 +1162,7 @@ define([
         class: 'copilot-error-reload-button'
       }, errorContainer);
 
-      on(reloadButton, 'click', lang.hitch(this, function() {
+      on(reloadButton, 'click', lang.hitch(this, function () {
         // If we have a session ID, reload it; otherwise start new chat
         if (this.sessionId) {
           // Clear the error display
@@ -1175,7 +1175,7 @@ define([
           }, this.resultContainer);
 
           // Reload session messages
-          this.copilotApi.getSessionMessages(this.sessionId).then(lang.hitch(this, function(res) {
+          this.copilotApi.getSessionMessages(this.sessionId).then(lang.hitch(this, function (res) {
             var messages = [];
             if (res && Array.isArray(res.messages)) {
               if (res.messages.length > 0 && Array.isArray(res.messages[0] && res.messages[0].messages)) {
@@ -1186,7 +1186,7 @@ define([
             }
             this.messages = messages;
             this.showMessages(messages);
-          })).catch(lang.hitch(this, function(error) {
+          })).catch(lang.hitch(this, function (error) {
             console.error('Error reloading session:', error);
             this.showError(error);
           }));
@@ -1203,7 +1203,7 @@ define([
      * - Empties messages array
      * - Shows empty state message
      */
-    clearMessages: function() {
+    clearMessages: function () {
       this.messages = [];
       this.showEmptyState();
     },
@@ -1213,7 +1213,7 @@ define([
      * Implementation:
      * - Clears existing messages
      */
-    startNewChat: function() {
+    startNewChat: function () {
       this.clearMessages();
       this._contextEntriesByCategory = null;
       this._contextHiddenIdsByCategory = {};
@@ -1233,7 +1233,7 @@ define([
      * Implementation:
      * - Sets new session identifier
      */
-    setSessionId: function(sessionId) {
+    setSessionId: function (sessionId) {
       this.sessionId = sessionId;
       this._contextEntriesByCategory = null;
       this._contextHiddenIdsByCategory = {};
@@ -1245,7 +1245,7 @@ define([
      * - Only adds loading indicator message without re-rendering existing messages
      * - Scrolls to bottom
      */
-    showLoadingIndicator: function(chatMessages) {
+    showLoadingIndicator: function (chatMessages) {
       // Only add the loading indicator, don't re-render existing messages
       // since they're already displayed in the container
       this.addMessage({
@@ -1262,7 +1262,7 @@ define([
      * Implementation:
      * - Destroys loading indicator element if exists
      */
-    hideLoadingIndicator: function() {
+    hideLoadingIndicator: function () {
       if (this._loadingIndicator) {
         domConstruct.destroy(this._loadingIndicator);
         this._loadingIndicator = null;
@@ -1273,46 +1273,46 @@ define([
      * Updates the padding of resultContainer based on current display width
      * @private
      */
-    _updateResponsivePadding: function() {
+    _updateResponsivePadding: function () {
       if (!this.resultContainer) return;
 
-        // Get the width of the container or window
-        var containerWidth = this.domNode ?
-            domStyle.get(this.domNode, 'width') :
-            window.innerWidth;
+      // Get the width of the container or window
+      var containerWidth = this.domNode ?
+        domStyle.get(this.domNode, 'width') :
+        window.innerWidth;
 
-        // Calculate padding based on width
-        var padding;
-        if (containerWidth < 600) {
-            padding = '10px';
-        } else {
-          // Linear increase from 10px to 100px between 600px and 1200px
-          var minPadding = 10;
-          var maxPadding = 100;
-          var minWidth = 600;
-          var maxWidth = 1200;
+      // Calculate padding based on width
+      var padding;
+      if (containerWidth < 600) {
+        padding = '10px';
+      } else {
+        // Linear increase from 10px to 100px between 600px and 1200px
+        var minPadding = 10;
+        var maxPadding = 100;
+        var minWidth = 600;
+        var maxWidth = 1200;
 
-          // Calculate linear interpolation
-          var ratio = 2.3*Math.min(1, (containerWidth - minWidth) / (maxWidth - minWidth));
-          var calculatedPadding = Math.round(minPadding + (maxPadding - minPadding) * ratio);
-          padding = calculatedPadding + 'px';
-        }
+        // Calculate linear interpolation
+        var ratio = 2.3 * Math.min(1, (containerWidth - minWidth) / (maxWidth - minWidth));
+        var calculatedPadding = Math.round(minPadding + (maxPadding - minPadding) * ratio);
+        padding = calculatedPadding + 'px';
+      }
 
-        domStyle.set(this.resultContainer, {
-            'padding-left': padding,
-            'padding-right': padding
-        });
-      },
+      domStyle.set(this.resultContainer, {
+        'padding-left': padding,
+        'padding-right': padding
+      });
+    },
 
-      /**
+    /**
        * Override resize method to update responsive padding
        */
-      resize: function() {
-          this.inherited(arguments);
-          this._updateResponsivePadding();
-      },
+    resize: function () {
+      this.inherited(arguments);
+      this._updateResponsivePadding();
+    },
 
-    _filesIdentity: function(item) {
+    _filesIdentity: function (item) {
       if (item && item.id !== undefined && item.id !== null && item.id !== '') {
         return String(item.id);
       }
@@ -1327,12 +1327,12 @@ define([
       return name + '|' + createdAt;
     },
 
-    _workflowsIdentity: function(item) {
+    _workflowsIdentity: function (item) {
       var id = item && (item.id || item.workflow_id);
       return id ? String(id) : '';
     },
 
-    _workspaceIdentity: function(item) {
+    _workspaceIdentity: function (item) {
       if (item && item.id) {
         return 'id:' + item.id;
       }
@@ -1345,12 +1345,12 @@ define([
       return 'fallback:' + path + '|' + name + '|' + type;
     },
 
-    _jobsIdentity: function(item) {
+    _jobsIdentity: function (item) {
       var id = item && (item.id || item.job_id || item.task_id);
       return id !== undefined && id !== null && id !== '' ? String(id) : '';
     },
 
-    _getContextItemsByCategory: function(category) {
+    _getContextItemsByCategory: function (category) {
       if (category === 'files') return this.sessionFilesSelectionItems || [];
       if (category === 'workflows') return this.sessionWorkflowsSelectionItems || [];
       if (category === 'workspace') return this.sessionWorkspaceSelectionItems || [];
@@ -1359,11 +1359,11 @@ define([
       return [];
     },
 
-    _dedupeItemsByCategory: function(category, items) {
+    _dedupeItemsByCategory: function (category, items) {
       var source = Array.isArray(items) ? items : [];
       var seen = {};
       var deduped = [];
-      source.forEach(lang.hitch(this, function(item) {
+      source.forEach(lang.hitch(this, function (item) {
         var identity = this._itemIdentityByCategory(category, item);
         if (!identity || seen[identity]) {
           return;
@@ -1374,7 +1374,7 @@ define([
       return deduped;
     },
 
-    _ensureContextEntryState: function() {
+    _ensureContextEntryState: function () {
       if (!this._contextEntriesByCategory) {
         this._contextEntriesByCategory = {
           workflows: [],
@@ -1385,7 +1385,7 @@ define([
       }
     },
 
-    _mergeContextEntriesByCategory: function(category, items) {
+    _mergeContextEntriesByCategory: function (category, items) {
       if (category === 'files') {
         return;
       }
@@ -1394,14 +1394,14 @@ define([
       var existing = Array.isArray(this._contextEntriesByCategory[category]) ? this._contextEntriesByCategory[category] : [];
       var seen = {};
       var merged = [];
-      existing.forEach(lang.hitch(this, function(item) {
+      existing.forEach(lang.hitch(this, function (item) {
         var key = this._itemIdentityByCategory(category, item);
         if (key && !seen[key]) {
           seen[key] = true;
           merged.push(item);
         }
       }));
-      nextItems.forEach(lang.hitch(this, function(item) {
+      nextItems.forEach(lang.hitch(this, function (item) {
         var key = this._itemIdentityByCategory(category, item);
         if (key && !seen[key]) {
           seen[key] = true;
@@ -1414,7 +1414,7 @@ define([
       this._contextEntriesByCategory[category] = merged;
     },
 
-    _removeContextEntryByCategory: function(category, item) {
+    _removeContextEntryByCategory: function (category, item) {
       if (category === 'files') {
         return;
       }
@@ -1424,12 +1424,12 @@ define([
         return;
       }
       var existing = Array.isArray(this._contextEntriesByCategory[category]) ? this._contextEntriesByCategory[category] : [];
-      this._contextEntriesByCategory[category] = existing.filter(lang.hitch(this, function(candidate) {
+      this._contextEntriesByCategory[category] = existing.filter(lang.hitch(this, function (candidate) {
         return this._itemIdentityByCategory(category, candidate) !== targetIdentity;
       }));
     },
 
-    _itemIdentityByCategory: function(category, item) {
+    _itemIdentityByCategory: function (category, item) {
       if (category === 'files') return this._filesIdentity(item);
       if (category === 'workflows') return this._workflowsIdentity(item);
       if (category === 'workspace') return this._workspaceIdentity(item);
@@ -1438,7 +1438,7 @@ define([
       return '';
     },
 
-    _removeItemFromContextView: function(category, item) {
+    _removeItemFromContextView: function (category, item) {
       var targetIdentity = this._itemIdentityByCategory(category, item);
       if (!targetIdentity) {
         return;
@@ -1447,14 +1447,14 @@ define([
       if (category === 'files') {
         // For files, remove from sessionFiles (which removes from context view)
         var currentFiles = Array.isArray(this.sessionFiles) ? this.sessionFiles : [];
-        var nextFiles = currentFiles.filter(lang.hitch(this, function(file) {
+        var nextFiles = currentFiles.filter(lang.hitch(this, function (file) {
           var identity = this._filesIdentity(file);
           return identity !== targetIdentity;
         }));
         this.setSessionFilesData(nextFiles, this.sessionFilesPagination, this.sessionFileSummary);
         // Also remove from selection if it was selected
         var selectedFiles = Array.isArray(this.sessionFilesSelectionItems) ? this.sessionFilesSelectionItems : [];
-        var nextSelected = selectedFiles.filter(lang.hitch(this, function(selectedFile) {
+        var nextSelected = selectedFiles.filter(lang.hitch(this, function (selectedFile) {
           var identity = this._filesIdentity(selectedFile);
           return identity !== targetIdentity;
         }));
@@ -1471,7 +1471,7 @@ define([
 
         // Deselect hidden item so it is not sent in context payloads.
         var selectedItems = this._getContextItemsByCategory(category);
-        var nextItems = selectedItems.filter(lang.hitch(this, function(candidate) {
+        var nextItems = selectedItems.filter(lang.hitch(this, function (candidate) {
           var identity = this._itemIdentityByCategory(category, candidate);
           return identity !== targetIdentity;
         }));
@@ -1488,7 +1488,7 @@ define([
       }
     },
 
-    _emitCategorySelection: function(category, items) {
+    _emitCategorySelection: function (category, items) {
       var payload = {
         sessionId: this.sessionId,
         items: this._dedupeItemsByCategory(category, items)
@@ -1496,7 +1496,7 @@ define([
       this._debugContextEvent('emit category selection', {
         category: category,
         count: payload.items.length,
-        itemIds: payload.items.map(lang.hitch(this, function(item) {
+        itemIds: payload.items.map(lang.hitch(this, function (item) {
           return this._itemIdentityByCategory(category, item);
         }))
       });
@@ -1538,13 +1538,13 @@ define([
       }
     },
 
-    setSessionImageContextData: function(selectedItems) {
+    setSessionImageContextData: function (selectedItems) {
       this.sessionImageContextItems = this._dedupeItemsByCategory('images', selectedItems);
       this._mergeContextEntriesByCategory('images', this.sessionImageContextItems);
       this._renderImagesPanel();
     },
 
-    _renderImagesPanel: function() {
+    _renderImagesPanel: function () {
       if (!this.imagesContainer) {
         return;
       }
@@ -1574,7 +1574,7 @@ define([
         innerHTML: 'Clear All',
         style: 'border: 1px solid #d1d5db; background: #ffffff; border-radius: 4px; padding: 4px 8px; cursor: pointer;'
       }, headerNode);
-      on(clearButton, 'click', lang.hitch(this, function() {
+      on(clearButton, 'click', lang.hitch(this, function () {
         this._emitCategorySelection('images', []);
       }));
 
@@ -1582,7 +1582,7 @@ define([
         style: 'padding: 0;'
       }, this.imagesContainer);
 
-      imageItems.forEach(lang.hitch(this, function(item) {
+      imageItems.forEach(lang.hitch(this, function (item) {
         var itemNode = domConstruct.create('div', {
           style: 'display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #f1f5f9;'
         }, listNode);
@@ -1607,7 +1607,7 @@ define([
           title: 'Remove image',
           style: 'border: 1px solid #d1d5db; background: #ffffff; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; line-height: 20px; text-align:center; padding:0; font-size:16px; flex-shrink:0;'
         }, itemNode);
-        on(removeButton, 'click', lang.hitch(this, function() {
+        on(removeButton, 'click', lang.hitch(this, function () {
           this._removeItemFromContextView('images', item);
         }));
       }));
@@ -1616,42 +1616,42 @@ define([
     /**
      * Resets workflows panel state
      */
-    resetSessionWorkflows: function() {
+    resetSessionWorkflows: function () {
       this.sessionWorkflows = [];
       this._renderWorkflowsPanel();
     },
 
-    resetSessionWorkspaceBrowse: function() {
+    resetSessionWorkspaceBrowse: function () {
       this.sessionWorkspaceBrowse = null;
       this._renderWorkspacePanel();
     },
 
-    setSessionWorkspaceBrowseData: function(workspaceBrowseData) {
+    setSessionWorkspaceBrowseData: function (workspaceBrowseData) {
       this.sessionWorkspaceBrowse = workspaceBrowseData || null;
       this._renderWorkspacePanel();
     },
 
-    resetSessionJobsBrowse: function() {
+    resetSessionJobsBrowse: function () {
       this.sessionJobsBrowse = null;
       this._renderJobsPanel();
     },
 
-    setSessionJobsBrowseData: function(jobsBrowseData) {
+    setSessionJobsBrowseData: function (jobsBrowseData) {
       this.sessionJobsBrowse = jobsBrowseData || null;
       this._renderJobsPanel();
     },
 
-    resetSessionDataBrowse: function() {
+    resetSessionDataBrowse: function () {
       this.sessionDataBrowse = null;
       this._renderDataPanel();
     },
 
-    setSessionDataBrowseData: function(dataBrowseData) {
+    setSessionDataBrowseData: function (dataBrowseData) {
       this.sessionDataBrowse = dataBrowseData || null;
       this._renderDataPanel();
     },
 
-    setSessionWorkspaceSelectionData: function(selectedItems) {
+    setSessionWorkspaceSelectionData: function (selectedItems) {
       this.sessionWorkspaceSelectionItems = this._dedupeItemsByCategory('workspace', selectedItems);
       this._mergeContextEntriesByCategory('workspace', this.sessionWorkspaceSelectionItems);
       if (this.workspaceExplorerWidget && typeof this.workspaceExplorerWidget.setSelectedWorkspaceItems === 'function') {
@@ -1659,7 +1659,7 @@ define([
       }
     },
 
-    setSessionJobsSelectionData: function(selectedItems) {
+    setSessionJobsSelectionData: function (selectedItems) {
       this.sessionJobsSelectionItems = this._dedupeItemsByCategory('jobs', selectedItems);
       this._mergeContextEntriesByCategory('jobs', this.sessionJobsSelectionItems);
       if (this.jobsExplorerWidget && typeof this.jobsExplorerWidget.setSelectedJobs === 'function') {
@@ -1667,14 +1667,14 @@ define([
       }
     },
 
-    setSessionFilesSelectionData: function(selectedItems) {
+    setSessionFilesSelectionData: function (selectedItems) {
       this.sessionFilesSelectionItems = this._dedupeItemsByCategory('files', selectedItems);
       if (this.filesExplorerWidget && typeof this.filesExplorerWidget.setSelectedFiles === 'function') {
         this.filesExplorerWidget.setSelectedFiles(this.sessionFilesSelectionItems);
       }
     },
 
-    setSessionWorkflowsSelectionData: function(selectedItems) {
+    setSessionWorkflowsSelectionData: function (selectedItems) {
       this.sessionWorkflowsSelectionItems = this._dedupeItemsByCategory('workflows', selectedItems);
       this._mergeContextEntriesByCategory('workflows', this.sessionWorkflowsSelectionItems);
       if (this.workflowsExplorerWidget && typeof this.workflowsExplorerWidget.setSelectedWorkflows === 'function') {
@@ -1682,9 +1682,9 @@ define([
       }
     },
 
-    _clearFilesSelectionHandles: function() {
+    _clearFilesSelectionHandles: function () {
       if (!this._filesSelectionHandles) return;
-      this._filesSelectionHandles.forEach(function(handle) {
+      this._filesSelectionHandles.forEach(function (handle) {
         if (handle && typeof handle.remove === 'function') {
           handle.remove();
         }
@@ -1692,9 +1692,9 @@ define([
       this._filesSelectionHandles = [];
     },
 
-    _clearWorkflowsSelectionHandles: function() {
+    _clearWorkflowsSelectionHandles: function () {
       if (!this._workflowsSelectionHandles) return;
-      this._workflowsSelectionHandles.forEach(function(handle) {
+      this._workflowsSelectionHandles.forEach(function (handle) {
         if (handle && typeof handle.remove === 'function') {
           handle.remove();
         }
@@ -1702,11 +1702,11 @@ define([
       this._workflowsSelectionHandles = [];
     },
 
-    _clearWorkspaceSelectionHandles: function() {
+    _clearWorkspaceSelectionHandles: function () {
       if (!this._workspaceSelectionHandles) {
         return;
       }
-      this._workspaceSelectionHandles.forEach(function(handle) {
+      this._workspaceSelectionHandles.forEach(function (handle) {
         if (handle && typeof handle.remove === 'function') {
           handle.remove();
         }
@@ -1714,11 +1714,11 @@ define([
       this._workspaceSelectionHandles = [];
     },
 
-    _clearJobsSelectionHandles: function() {
+    _clearJobsSelectionHandles: function () {
       if (!this._jobsSelectionHandles) {
         return;
       }
-      this._jobsSelectionHandles.forEach(function(handle) {
+      this._jobsSelectionHandles.forEach(function (handle) {
         if (handle && typeof handle.remove === 'function') {
           handle.remove();
         }
@@ -1726,7 +1726,7 @@ define([
       this._jobsSelectionHandles = [];
     },
 
-    _publishWorkspaceSelectionChange: function() {
+    _publishWorkspaceSelectionChange: function () {
       if (typeof this.onWorkspaceSelectionChanged !== 'function' || !this.workspaceExplorerWidget) {
         return;
       }
@@ -1740,12 +1740,12 @@ define([
       });
     },
 
-    _bindWorkspaceSelectionEvents: function() {
+    _bindWorkspaceSelectionEvents: function () {
       this._clearWorkspaceSelectionHandles();
       if (!this.workspaceExplorerWidget) {
         return;
       }
-      var notifySelectionChanged = lang.hitch(this, function() {
+      var notifySelectionChanged = lang.hitch(this, function () {
         // Defer to let dgrid finalize selection state before we read selected rows.
         setTimeout(lang.hitch(this, this._publishWorkspaceSelectionChange), 0);
       });
@@ -1757,7 +1757,7 @@ define([
       ];
     },
 
-    _publishJobsSelectionChange: function() {
+    _publishJobsSelectionChange: function () {
       if (typeof this.onJobsSelectionChanged !== 'function' || !this.jobsExplorerWidget) {
         return;
       }
@@ -1774,7 +1774,7 @@ define([
       });
     },
 
-    _publishFilesSelectionChange: function() {
+    _publishFilesSelectionChange: function () {
       if (!this.filesExplorerWidget) {
         return;
       }
@@ -1794,7 +1794,7 @@ define([
       }
     },
 
-    _bindFilesSelectionEvents: function() {
+    _bindFilesSelectionEvents: function () {
       this._clearFilesSelectionHandles();
       if (!this.filesExplorerWidget) {
         return;
@@ -1805,7 +1805,7 @@ define([
       ];
     },
 
-    _publishWorkflowsSelectionChange: function() {
+    _publishWorkflowsSelectionChange: function () {
       if (!this.workflowsExplorerWidget) {
         return;
       }
@@ -1825,7 +1825,7 @@ define([
       }
     },
 
-    _bindWorkflowsSelectionEvents: function() {
+    _bindWorkflowsSelectionEvents: function () {
       this._clearWorkflowsSelectionHandles();
       if (!this.workflowsExplorerWidget) {
         return;
@@ -1836,7 +1836,7 @@ define([
       ];
     },
 
-    _bindJobsSelectionEvents: function() {
+    _bindJobsSelectionEvents: function () {
       this._clearJobsSelectionHandles();
       if (!this.jobsExplorerWidget) {
         return;
@@ -1851,7 +1851,7 @@ define([
      * Sets workflow data from session metadata
      * @param {Array} workflowIds - Array of workflow IDs from session metadata
      */
-    setSessionWorkflows: function(workflowIds) {
+    setSessionWorkflows: function (workflowIds) {
       this.sessionWorkflows = Array.isArray(workflowIds) ? workflowIds : [];
       this._renderWorkflowsPanel();
     },
@@ -1859,7 +1859,7 @@ define([
     /**
      * Renders the workflows panel
      */
-    _renderWorkflowsPanel: function() {
+    _renderWorkflowsPanel: function () {
       if (!this.workflowsContainer) return;
       domConstruct.empty(this.workflowsContainer);
 
@@ -1897,7 +1897,7 @@ define([
       }
 
       // Support either legacy array of IDs or pre-shaped workflow rows.
-      var hasWorkflowObjects = Array.isArray(this.sessionWorkflows) && this.sessionWorkflows.some(function(item) {
+      var hasWorkflowObjects = Array.isArray(this.sessionWorkflows) && this.sessionWorkflows.some(function (item) {
         return item && typeof item === 'object' && (item.workflow_id || item.id);
       });
       if (hasWorkflowObjects) {
@@ -1910,7 +1910,7 @@ define([
       }
     },
 
-    _renderWorkspacePanel: function() {
+    _renderWorkspacePanel: function () {
       if (!this.workspaceContainer) return;
       domConstruct.empty(this.workspaceContainer);
 
@@ -1931,7 +1931,7 @@ define([
       var payload = this.sessionWorkspaceBrowse.uiPayload;
       var flattenedCount = 0;
       if (Array.isArray(payload.items)) {
-        payload.items.forEach(function(item) {
+        payload.items.forEach(function (item) {
           if (Array.isArray(item)) {
             flattenedCount += 1;
           } else if (item && typeof item === 'object') {
@@ -2004,7 +2004,7 @@ define([
       }
     },
 
-    _renderJobsPanel: function() {
+    _renderJobsPanel: function () {
       if (!this.jobsContainer) return;
       domConstruct.empty(this.jobsContainer);
 
@@ -2061,7 +2061,7 @@ define([
       }
     },
 
-    _renderDataPanel: function() {
+    _renderDataPanel: function () {
       if (!this.dataContainer) return;
       domConstruct.empty(this.dataContainer);
 
@@ -2134,7 +2134,7 @@ define([
           innerHTML: tsvLabel,
           style: 'display: inline-block;'
         }, actionsNode);
-        on(tsvLink, 'click', function(evt) {
+        on(tsvLink, 'click', function (evt) {
           evt.preventDefault();
           var tsvDownloadUrl = downloadUrl;
           if (window.App && window.App.authorizationToken) {
@@ -2159,7 +2159,7 @@ define([
      * @param {string} workflowId - The workflow ID to fetch and display
      * @param {DOMNode} container - The container to add the card to
      */
-    _renderWorkflowCard: function(workflowId, container) {
+    _renderWorkflowCard: function (workflowId, container) {
       var card = domConstruct.create('div', {
         class: 'copilot-workflow-card'
       }, container);
@@ -2179,13 +2179,13 @@ define([
           'Accept': 'application/json'
         },
         handleAs: 'json'
-      }).then(lang.hitch(this, function(workflowData) {
+      }).then(lang.hitch(this, function (workflowData) {
         // Remove loading indicator
         domConstruct.empty(card);
 
         // Render workflow metadata
         this._renderWorkflowMetadata(workflowData, card);
-      }), lang.hitch(this, function(error) {
+      }), lang.hitch(this, function (error) {
         // Remove loading indicator and show error
         domConstruct.empty(card);
 
@@ -2204,7 +2204,7 @@ define([
      * @param {Object} workflow - The workflow data object
      * @param {DOMNode} card - The card DOM node
      */
-    _renderWorkflowMetadata: function(workflow, card) {
+    _renderWorkflowMetadata: function (workflow, card) {
       // Create header section
       var header = domConstruct.create('div', {
         class: 'copilot-workflow-header',
@@ -2300,7 +2300,7 @@ define([
           style: 'margin-bottom: 8px;'
         }, stepsSection);
 
-        workflow.steps.forEach(lang.hitch(this, function(step, index) {
+        workflow.steps.forEach(lang.hitch(this, function (step, index) {
           this._renderStepItem(step, index + 1, stepsSection);
         }));
       }
@@ -2312,7 +2312,7 @@ define([
      * @param {string|number} value - The value to display
      * @param {DOMNode} container - The container to add to
      */
-    _addMetadataItem: function(label, value, container) {
+    _addMetadataItem: function (label, value, container) {
       domConstruct.create('div', {
         innerHTML: '<small style="color: #666;">' + label + ':</small> ' +
                   '<strong style="color: #333;">' + value + '</strong>',
@@ -2326,7 +2326,7 @@ define([
      * @param {number} stepNum - The step number
      * @param {DOMNode} container - The container to add to
      */
-    _renderStepItem: function(step, stepNum, container) {
+    _renderStepItem: function (step, stepNum, container) {
       var stepDiv = domConstruct.create('div', {
         style: 'padding: 8px; margin-bottom: 6px; background: #fafafa; border-left: 3px solid ' +
                this._getStatusColor(step.status).bg + '; border-radius: 3px;'
@@ -2362,7 +2362,7 @@ define([
      * @param {string} status - The status string
      * @returns {Object} Object with bg and text color properties
      */
-    _getStatusColor: function(status) {
+    _getStatusColor: function (status) {
       var colors = {
         'succeeded': { bg: '#4caf50', text: '#ffffff' },
         'running': { bg: '#2196f3', text: '#ffffff' },
@@ -2379,7 +2379,7 @@ define([
      * @param {number} ms - Duration in milliseconds
      * @returns {string} Formatted duration string
      */
-    _formatDuration: function(ms) {
+    _formatDuration: function (ms) {
       var seconds = Math.floor(ms / 1000);
       var minutes = Math.floor(seconds / 60);
       var hours = Math.floor(minutes / 60);

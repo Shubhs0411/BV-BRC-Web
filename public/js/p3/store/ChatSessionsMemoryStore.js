@@ -6,7 +6,7 @@ define([
   Memory
 ) {
   return declare([Memory], {
-    constructor: function(options) {
+    constructor: function (options) {
       this.inherited(arguments);
       this.idProperty = 'session_id';
       this.data = [];
@@ -14,8 +14,8 @@ define([
     },
 
     // Replace entire sessions list
-    setSessions: function(sessions) {
-      var sanitized = (sessions || []).map(function(s) {
+    setSessions: function (sessions) {
+      var sanitized = (sessions || []).map(function (s) {
         if (s && s.messages) {
           delete s.messages;
         }
@@ -26,24 +26,24 @@ define([
     },
 
     // Add or move session to front (most recent first)
-    addSession: function(session) {
+    addSession: function (session) {
       if (!session) return;
       if (session.messages) delete session.messages;
-      this.data = this.data.filter(function(s) { return s.session_id !== session.session_id; });
+      this.data = this.data.filter(function (s) { return s.session_id !== session.session_id; });
       this.data.unshift(session);
       this._rebuildIndex();
     },
 
-    removeSession: function(sessionId) {
-      this.data = this.data.filter(function(s) { return s.session_id !== sessionId; });
+    removeSession: function (sessionId) {
+      this.data = this.data.filter(function (s) { return s.session_id !== sessionId; });
       this._rebuildIndex();
     },
 
-    updateSessionTitle: function(sessionId, newTitle) {
-      this.data.forEach(function(s) { if (s.session_id === sessionId) { s.title = newTitle; } });
+    updateSessionTitle: function (sessionId, newTitle) {
+      this.data.forEach(function (s) { if (s.session_id === sessionId) { s.title = newTitle; } });
     },
 
-    _rebuildIndex: function() {
+    _rebuildIndex: function () {
       this.index = {};
       for (var i = 0; i < this.data.length; i++) {
         this.index[this.data[i].session_id] = i;

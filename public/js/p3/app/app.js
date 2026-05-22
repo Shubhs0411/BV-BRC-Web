@@ -1,12 +1,12 @@
 define([
-  'dojo/_base/declare', 'dojo/parser',"dijit/registry",
+  'dojo/_base/declare', 'dojo/parser', 'dijit/registry',
   'dojo/topic', 'dojo/on', 'dojo/dom', 'dojo/dom-class', 'dojo/dom-attr', 'dojo/dom-style',
   'dijit/registry', 'dojo/request', 'dijit/layout/ContentPane', 'dojo/_base/fx',
   'dojo/_base/Deferred', 'dojo/query', 'dojo/NodeList-dom',
   'dojo/ready', 'dojo/parser', 'rql/query', 'dojo/_base/lang',
   'p3/router', 'dijit/Dialog', 'dojo/dom-construct', 'dojo/window'
 ], function (
-  declare, parser,registry,
+  declare, parser, registry,
   Topic, on, dom, domClass, domAttr, domStyle,
   Registry, xhr, ContentPane, fx,
   Deferred, query, nodeListDom,
@@ -306,9 +306,9 @@ define([
           msg = JSON.parse(msg.data);
           // console.log('Message From Remote: ', msg);
           if (msg && msg.topic) {
-           Topic.publish(msg.topic, msg.payload);
+            Topic.publish(msg.topic, msg.payload);
           }
-        } catch (err){
+        } catch (err) {
           // Silently ignore parse errors from non-JSON messages
         }
       }, '*');
@@ -361,10 +361,10 @@ define([
         var dlg = new Dialog({
           title: 'User Profile',
           content: "<div class=\"UserProfileForm\" data-dojo-id=\"userProfile\" data-dojo-type=\"p3/widget/UserProfileForm\" style=\"width:600px; margin-left:auto;margin-right:auto;font-size:1.1em;margin-bottom:10px;margin-top:10px;padding:10px;\" data-dojo-props='callbackURL: \"<%- callbackURL %>\"'></div>",
-          onHide: function(){
-            console.log("Destroy User Dialog")
+          onHide: function () {
+            console.log('Destroy User Dialog')
             var up = registry.byId('userProfile')
-            console.log("userProfile: ", up)
+            console.log('userProfile: ', up)
             dlg.destroyRecursive()
           }
         });
@@ -521,7 +521,7 @@ define([
       return ch[0];
     },
 
-    getConstructor: function (cls,layers) {
+    getConstructor: function (cls, layers) {
       var def = new Deferred();
       if (layers && layers.length > 0) {
         require(layers, function () {
@@ -550,7 +550,7 @@ define([
 
       /*  istanbul ignore else */
       if (newNavState.widgetClass) {
-        layers = (window.App && window.App.production && newNavState.layers)?newNavState.layers:[]
+        layers = (window.App && window.App.production && newNavState.layers) ? newNavState.layers : []
         ctor = this.getConstructor(newNavState.widgetClass, layers);
       } else {
         ctor = ContentPane;

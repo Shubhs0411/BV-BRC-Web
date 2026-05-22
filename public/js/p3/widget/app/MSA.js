@@ -363,7 +363,7 @@ define([
       if (this.aligner.get('value') === 'Muscle' || this.aligned.checked == true) {
         this.strategy.style.display = 'none';
         this.strategyrow.style.display = 'none';
-      } else if (!(value && value.srcElement && value.srcElement.name && value.srcElement.name === 'strategy_settings')){
+      } else if (!(value && value.srcElement && value.srcElement.name && value.srcElement.name === 'strategy_settings')) {
         this.strategy.style.display = 'inline-block';
         this.strategyrow.turnedOn = false;
         this.strategyrow.style.display = 'none';
@@ -568,7 +568,7 @@ define([
         values.fasta_files = fastaFiles;
       }
       if (this.aligner.get('value') === 'Mafft') {
-        values.strategy = query("input[type=radio][name=strategy_settings]:checked")[0].value;
+        values.strategy = query('input[type=radio][name=strategy_settings]:checked')[0].value;
       }
       return values;
     },

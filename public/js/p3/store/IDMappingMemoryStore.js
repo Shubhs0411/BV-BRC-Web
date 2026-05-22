@@ -96,7 +96,7 @@ define([
         mapped: 0
       };
 
-        // console.log(this.state);
+      // console.log(this.state);
       if (fromIdGroup === 'PATRIC') {
         if (toIdGroup === 'PATRIC') {
           this._loadingDeferred = when(request.post(_self.apiServer + '/genome_feature/', {

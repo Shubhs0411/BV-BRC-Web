@@ -69,33 +69,33 @@ define([
       });
 
       // Initialize FilteringSelect widget
-      var filteringSelect_ = registry.byId("input_schema_selection");
+      var filteringSelect_ = registry.byId('input_schema_selection');
 
       if (filteringSelect_) {
-        filteringSelect_.set("store", schemaStore);
-        filteringSelect_.set("searchAttr", "name");
+        filteringSelect_.set('store', schemaStore);
+        filteringSelect_.set('searchAttr', 'name');
         filteringSelect_.startup();
-        console.log("FilteringSelect widget started successfully.");
+        console.log('FilteringSelect widget started successfully.');
       } else {
-        console.error("FilteringSelect widget not found!");
+        console.error('FilteringSelect widget not found!');
       }
     },
 
     onAddGenomeGroup: function () {
-      console.log("Fetching genome group path...");
+      console.log('Fetching genome group path...');
 
       var path = this.input_genome_group;
       if (!path) {
-        console.warn("No genome group path provided.");
+        console.warn('No genome group path provided.');
         return;
       }
 
       when(WorkspaceManager.getObject(path), lang.hitch(this, function (res) {
-        if (typeof res.data === "string") {
+        if (typeof res.data === 'string') {
           res.data = JSON.parse(res.data);
         }
 
-	// rewritten to not use chaining; crashed the optimizer
+        // rewritten to not use chaining; crashed the optimizer
         if (res && res.data && res.data.id_list && res.data.id_list.genome_id) {
           var newGenomeIds = res.data.id_list.genome_id;
           this.checkBacterialGenomes(newGenomeIds, groupType, false, path);
@@ -126,52 +126,52 @@ define([
     onSelectSchema: function () {
       var schemaStore = new Memory({
         data: [
-          { name: "Acinetobacter baumannii", id: "Acinetobacter_baumannii" },
-          { name: "Bacillus anthracis", id: "Bacillus_anthracis" },
-          { name: "Bordetella pertussis", id: "Bordetella_pertussis" },
-          { name: "Brucella melitensis", id: "Brucella_melitensis" },
-          { name: "Brucella spp.", id: "Brucella_spp." },
-          { name: "Burkholderia mallei (FLI)", id: "Burkholderia_mallei_FLI" },
-          { name: "Burkholderia mallei (RKI)", id: "Burkholderia_mallei_RKI" },
-          { name: "Burkholderia pseudomallei", id: "Burkholderia_pseudomallei" },
-          { name: "Campylobacter jejuni/coli", id: "Campylobacter_jejuni_coli" },
-          { name: "Clostridioides difficile", id: "Clostridioides_difficile" },
-          { name: "Clostridium perfringens", id: "Clostridium_perfringens" },
-          { name: "Corynebacterium diphtheriae", id: "Corynebacterium_diphtheriae" },
-          { name: "Corynebacterium pseudotuberculosis", id: "Corynebacterium_pseudotuberculosis" },
-          { name: "Cronobacter sakazakii/malonaticus", id: "Cronobacter_sakazakii_malonaticus" },
-          { name: "Enterococcus faecalis", id: "Enterococcus_faecalis" },
-          { name: "Enterococcus faecium", id: "Enterococcus_faecium" },
-          { name: "Escherichia coli", id: "Escherichia_coli" },
-          { name: "Francisella tularensis", id: "Francisella_tularensis" },
-          { name: "Klebsiella oxytoca/grimontii/michiganensis/pasteurii", id: "Klebsiella_oxytoca_grimontii_michiganensis_pasteurii" },
-          { name: "Klebsiella pneumoniae/variicola/quasipneumoniae", id: "Klebsiella_pneumoniae_variicola_quasipneumoniae" },
-          { name: "Legionella pneumophila", id: "Legionella_pneumophila" },
-          { name: "Listeria monocytogenes", id: "Listeria_monocytogenes" },
-          { name: "Mycobacterium tuberculosis/bovis/africanum/canettii", id: "Mycobacterium_tuberculosis_bovis_africanum_canettii" },
-          { name: "Mycobacteroides abscessus", id: "Mycobacteroides_abscessus" },
-          { name: "Mycoplasma gallisepticum", id: "Mycoplasma_gallisepticum" },
-          { name: "Paenibacillus larvae", id: "Paenibacillus_larvae" },
-          { name: "Pseudomonas aeruginosa", id: "Pseudomonas_aeruginosa" },
-          { name: "Salmonella enterica", id: "Salmonella_enterica" },
-          { name: "Serratia marcescens", id: "Serratia_marcescens" },
-          { name: "Staphylococcus aureus", id: "Staphylococcus_aureus" },
-          { name: "Staphylococcus capitis", id: "Staphylococcus_capitis" },
-          { name: "Streptococcus pyogenes", id: "Streptococcus_pyogenes" },
-          { name: "Yersinia enterocolitica", id: "Yersinia_enterocolitica" }
+          { name: 'Acinetobacter baumannii', id: 'Acinetobacter_baumannii' },
+          { name: 'Bacillus anthracis', id: 'Bacillus_anthracis' },
+          { name: 'Bordetella pertussis', id: 'Bordetella_pertussis' },
+          { name: 'Brucella melitensis', id: 'Brucella_melitensis' },
+          { name: 'Brucella spp.', id: 'Brucella_spp.' },
+          { name: 'Burkholderia mallei (FLI)', id: 'Burkholderia_mallei_FLI' },
+          { name: 'Burkholderia mallei (RKI)', id: 'Burkholderia_mallei_RKI' },
+          { name: 'Burkholderia pseudomallei', id: 'Burkholderia_pseudomallei' },
+          { name: 'Campylobacter jejuni/coli', id: 'Campylobacter_jejuni_coli' },
+          { name: 'Clostridioides difficile', id: 'Clostridioides_difficile' },
+          { name: 'Clostridium perfringens', id: 'Clostridium_perfringens' },
+          { name: 'Corynebacterium diphtheriae', id: 'Corynebacterium_diphtheriae' },
+          { name: 'Corynebacterium pseudotuberculosis', id: 'Corynebacterium_pseudotuberculosis' },
+          { name: 'Cronobacter sakazakii/malonaticus', id: 'Cronobacter_sakazakii_malonaticus' },
+          { name: 'Enterococcus faecalis', id: 'Enterococcus_faecalis' },
+          { name: 'Enterococcus faecium', id: 'Enterococcus_faecium' },
+          { name: 'Escherichia coli', id: 'Escherichia_coli' },
+          { name: 'Francisella tularensis', id: 'Francisella_tularensis' },
+          { name: 'Klebsiella oxytoca/grimontii/michiganensis/pasteurii', id: 'Klebsiella_oxytoca_grimontii_michiganensis_pasteurii' },
+          { name: 'Klebsiella pneumoniae/variicola/quasipneumoniae', id: 'Klebsiella_pneumoniae_variicola_quasipneumoniae' },
+          { name: 'Legionella pneumophila', id: 'Legionella_pneumophila' },
+          { name: 'Listeria monocytogenes', id: 'Listeria_monocytogenes' },
+          { name: 'Mycobacterium tuberculosis/bovis/africanum/canettii', id: 'Mycobacterium_tuberculosis_bovis_africanum_canettii' },
+          { name: 'Mycobacteroides abscessus', id: 'Mycobacteroides_abscessus' },
+          { name: 'Mycoplasma gallisepticum', id: 'Mycoplasma_gallisepticum' },
+          { name: 'Paenibacillus larvae', id: 'Paenibacillus_larvae' },
+          { name: 'Pseudomonas aeruginosa', id: 'Pseudomonas_aeruginosa' },
+          { name: 'Salmonella enterica', id: 'Salmonella_enterica' },
+          { name: 'Serratia marcescens', id: 'Serratia_marcescens' },
+          { name: 'Staphylococcus aureus', id: 'Staphylococcus_aureus' },
+          { name: 'Staphylococcus capitis', id: 'Staphylococcus_capitis' },
+          { name: 'Streptococcus pyogenes', id: 'Streptococcus_pyogenes' },
+          { name: 'Yersinia enterocolitica', id: 'Yersinia_enterocolitica' }
         ]
       });
 
       // Using the attach point to get the widget instance
-      var filteringSelect_ = registry.byId("input_schema_selection");  // Assuming you have the id attribute set
+      var filteringSelect_ = registry.byId('input_schema_selection');  // Assuming you have the id attribute set
 
       if (filteringSelect_) {
-        filteringSelect_.set("store", schemaStore);
-        filteringSelect_.set("searchAttr", "name");
+        filteringSelect_.set('store', schemaStore);
+        filteringSelect_.set('searchAttr', 'name');
         filteringSelect_.startup();
-        console.log("FilteringSelect widget started");
+        console.log('FilteringSelect widget started');
       } else {
-        console.error("FilteringSelect widget not found!");
+        console.error('FilteringSelect widget not found!');
       }
     },
 
@@ -182,8 +182,8 @@ define([
     getValues: function () {
       var values = this.inherited(arguments);
       //  Adding genome type and analysis type for future dev
-      values.input_genome_type = "genome_group";
-      values.analysis_type = "chewbbaca";
+      values.input_genome_type = 'genome_group';
+      values.analysis_type = 'chewbbaca';
       if (values.select_genomegroup) {
         values.select_genomegroup = [values.select_genomegroup];
       }

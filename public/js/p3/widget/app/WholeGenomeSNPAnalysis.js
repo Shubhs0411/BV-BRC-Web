@@ -59,16 +59,16 @@ define([
     },
 
     onAddGenomeGroup: function () {
-      console.log("Fetching genome group path...");
+      console.log('Fetching genome group path...');
 
       var path = this.input_genome_group;
       if (!path) {
-        console.warn("No genome group path provided.");
+        console.warn('No genome group path provided.');
         return;
       }
 
       when(WorkspaceManager.getObject(path), lang.hitch(this, function (res) {
-        if (typeof res.data === "string") {
+        if (typeof res.data === 'string') {
           res.data = JSON.parse(res.data);
         }
 
@@ -81,8 +81,8 @@ define([
     },
 
 
-        // function is from phylogenetic tree
-        //  TO DO update to check genome
+    // function is from phylogenetic tree
+    //  TO DO update to check genome
     validate: function () {
       //  from MSA
       //  just check that the genome Id is valid?
@@ -117,8 +117,8 @@ define([
     getValues: function () {
       var values = this.inherited(arguments);
       //  Adding genome type and analysis type for future dev
-      values.input_genome_type = "genome_group";
-      values.analysis_type = "Whole Genome SNP Analysis";
+      values.input_genome_type = 'genome_group';
+      values.analysis_type = 'Whole Genome SNP Analysis';
       if (values.select_genomegroup) {
         values.select_genomegroup = [values.select_genomegroup];
       }

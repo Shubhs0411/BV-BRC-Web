@@ -42,7 +42,7 @@ define([
           var obj = await WorkspaceManager.getObject(path, true);
           objs.push(obj);
         } catch (e) {
-          console.warn("Failed to load:", path, e);
+          console.warn('Failed to load:', path, e);
         }
       }
       return objs;
@@ -82,11 +82,11 @@ define([
         return basePath + '/' + f;
       });
 
-      console.log("SeqComparison decoded paths:", paths);
+      console.log('SeqComparison decoded paths:', paths);
 
       this.get_object_metadata(paths).then(lang.hitch(this, function (objs) {
         this._resultObjects = objs.filter(Boolean);
-        console.log("got objects:", this._resultObjects);
+        console.log('got objects:', this._resultObjects);
         this.refresh();
       }));
     },
@@ -99,16 +99,16 @@ define([
 
           const fullPath = obj.path.replace(/\/$/, '') + '/' + obj.name;
 
-          console.log("Fetching full HTML from:", fullPath);
+          console.log('Fetching full HTML from:', fullPath);
 
           // IMPORTANT: use "false" to get file content
           WorkspaceManager.getObject(fullPath, false)
             .then(lang.hitch(this, function (file) {
-              console.log("HTML file object:", file);
+              console.log('HTML file object:', file);
               this.viewer.set('content', file.data);
             }))
             .catch(function (err) {
-              console.error("Failed to fetch HTML:", err);
+              console.error('Failed to fetch HTML:', err);
             });
 
           return true;

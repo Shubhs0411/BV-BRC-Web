@@ -366,7 +366,7 @@ define([
 
       // If the treeData includes any custom visualizations, save them for later use.
       if (treeDat.custom && treeDat.custom.nodeVisualizations) {
-         this.set('customVisualization', treeDat.custom);
+        this.set('customVisualization', treeDat.custom);
       }
 
       this.set('idType', idType);
@@ -503,7 +503,7 @@ define([
           // Were any custom node visualizations provided in the treeDat? If so, include them here.
           if (this.customVisualization && this.customVisualization.nodeVisualizations) {
             for (const key of Object.keys(this.customVisualization.nodeVisualizations)) {
-               nodeVisualizations[key] = this.customVisualization.nodeVisualizations[key];
+              nodeVisualizations[key] = this.customVisualization.nodeVisualizations[key];
             }
           }
         }

@@ -290,7 +290,7 @@ define([
       }
     },
 
-    _ensureCheckboxSelectionColumn: function() {
+    _ensureCheckboxSelectionColumn: function () {
       if (this.columns && this.columns[this._copilotSelectionColumnKey]) {
         return;
       }
@@ -317,7 +317,7 @@ define([
       this.set('columns', nextColumns);
     },
 
-    _itemIdentity: function(item) {
+    _itemIdentity: function (item) {
       if (item && item.id) {
         return 'id:' + item.id;
       }
@@ -327,7 +327,7 @@ define([
       return 'fallback:' + path + '|' + name + '|' + type;
     },
 
-    getSelectedWorkspaceItems: function() {
+    getSelectedWorkspaceItems: function () {
       var selected = [];
       var selectionMap = this.selection || {};
       for (var rowId in selectionMap) {
@@ -342,9 +342,9 @@ define([
       return selected;
     },
 
-    _applyWorkspaceSelection: function(selectedItems) {
+    _applyWorkspaceSelection: function (selectedItems) {
       var identityMap = {};
-      selectedItems.forEach(lang.hitch(this, function(item) {
+      selectedItems.forEach(lang.hitch(this, function (item) {
         identityMap[this._itemIdentity(item)] = true;
       }));
 
@@ -353,14 +353,14 @@ define([
       }
 
       var currentItems = Array.isArray(this._items) ? this._items : [];
-      currentItems.forEach(lang.hitch(this, function(item) {
+      currentItems.forEach(lang.hitch(this, function (item) {
         if (item && item.type !== 'parentfolder' && identityMap[this._itemIdentity(item)]) {
           this.select(item.id);
         }
       }));
     },
 
-    setSelectedWorkspaceItems: function(items) {
+    setSelectedWorkspaceItems: function (items) {
       var selectedItems = Array.isArray(items) ? items : [];
       this._pendingSelectedItems = selectedItems.slice();
       if (!this._items || !this._items.length) {
@@ -394,7 +394,7 @@ define([
       this.inherited(arguments);
     },
 
-    render: function(val, items) {
+    render: function (val, items) {
       // Update the store with new data before rendering
       if (this.store && Array.isArray(items)) {
         this.store.setData(items);
